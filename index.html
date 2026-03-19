@@ -30,7 +30,6 @@
       overflow-x: hidden;
     }
 
-    /* ── HEADER ── */
     .header {
       padding: 28px 20px 16px;
       border-bottom: 1px solid var(--border);
@@ -44,12 +43,10 @@
     .header h1 span { color: var(--accent); }
     .header p { color: var(--muted); font-size: 13px; margin-top: 4px; }
 
-    /* ── SCREENS ── */
     .screen { display: none; animation: fadeIn 0.3s ease; }
     .screen.active { display: block; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
 
-    /* ── SUBJECTS SCREEN ── */
     #subjects-screen { padding: 20px; }
     .section-title {
       font-family: 'Unbounded', sans-serif;
@@ -75,15 +72,6 @@
       position: relative;
       overflow: hidden;
     }
-    .subject-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--accent);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .subject-card:active::after { opacity: 0.07; }
     .subject-card:hover { border-color: var(--accent); transform: translateY(-2px); }
     .subject-card .emoji { font-size: 32px; display: block; margin-bottom: 10px; }
     .subject-card .name {
@@ -93,7 +81,6 @@
       line-height: 1.3;
     }
 
-    /* ── QUIZ SCREEN ── */
     #quiz-screen { padding: 16px 20px; }
     .quiz-header {
       display: flex;
@@ -186,10 +173,6 @@
     .option-btn:hover:not(:disabled) { border-color: var(--accent); }
     .option-btn.selected { border-color: var(--accent); background: rgba(200,255,0,0.07); }
     .option-btn.selected .letter { background: var(--accent); color: #000; }
-    .option-btn.correct { border-color: #4ade80; background: rgba(74,222,128,0.1); }
-    .option-btn.correct .letter { background: #4ade80; color: #000; }
-    .option-btn.wrong { border-color: #f87171; background: rgba(248,113,113,0.1); }
-    .option-btn.wrong .letter { background: #f87171; color: #000; }
     .option-btn:disabled { cursor: default; }
 
     .next-btn {
@@ -209,7 +192,6 @@
     }
     .next-btn:hover { opacity: 0.85; }
 
-    /* ── RESULT SCREEN ── */
     #result-screen { padding: 40px 20px; text-align: center; }
     .result-circle {
       width: 130px; height: 130px;
@@ -247,7 +229,6 @@
     }
     .retry-btn:hover { border-color: var(--accent); }
 
-    /* ── LOADING ── */
     .loader {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -284,7 +265,6 @@
 
 <div id="error-global" class="error-msg" style="margin: 16px;"></div>
 
-<!-- ЭКРАН 1: Выбор предмета -->
 <div id="subjects-screen" class="screen active">
   <div id="subjects-loader" class="loader">
     <div class="spinner"></div>
@@ -296,7 +276,6 @@
   </div>
 </div>
 
-<!-- ЭКРАН 2: Тест -->
 <div id="quiz-screen" class="screen">
   <div class="quiz-header">
     <button class="back-btn" onclick="goBack()">←</button>
@@ -323,7 +302,6 @@
   </button>
 </div>
 
-<!-- ЭКРАН 3: Результат -->
 <div id="result-screen" class="screen">
   <div class="result-circle">
     <div class="result-score" id="res-score"></div>
@@ -335,29 +313,24 @@
 </div>
 
 <script>
-// ──────────────────────────────────────────────────────────────────────────
-// КОНФИГ — замени на URL своего бэкенда!
-// ──────────────────────────────────────────────────────────────────────────
-const API_BASE = "https://bec-2805.onrender.com/";  // ← СЮДА ВСТАВЬ СВОЙ URL
-
-// ──────────────────────────────────────────────────────────────────────────
+// ── КОНФИГ ────────────────────────────────────────────────────────────────
+const API_BASE = "https://bec-2805.onrender.com";
+// ─────────────────────────────────────────────────────────────────────────
 
 const tg = window.Telegram.WebApp;
 tg.expand();
 tg.setHeaderColor('#0d0d0d');
 
-// Данные авторизации (отправляем в каждом запросе)
-const initData = tg.initData || "";
+// Если открыто в браузере (не в Telegram) — используем "test"
+const initData = tg.initData || "test";
 
 const state = {
   questions: [],
   currentIndex: 0,
-  answers: {},    // { question_id: chosen_index }
+  answers: {},
   score: 0,
   selectedSubjectId: null,
 };
-
-// ── API HELPER ────────────────────────────────────────────────────────────
 
 async function apiGet(path) {
   const res = await fetch(API_BASE + path, {
@@ -380,18 +353,15 @@ async function apiPost(path, body) {
   return res.json();
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────
-
 async function init() {
   const user = tg.initDataUnsafe?.user;
   if (user) {
-    document.getElementById("user-greeting").textContent =
-      `Привет, ${user.first_name}! 👋`;
+    document.getElementById("user-greeting").textContent = `Привет, ${user.first_name}! 👋`;
+  } else {
+    document.getElementById("user-greeting").textContent = "Тестовый режим 🛠";
   }
   await loadSubjects();
 }
-
-// ── SUBJECTS ──────────────────────────────────────────────────────────────
 
 async function loadSubjects() {
   try {
@@ -399,13 +369,14 @@ async function loadSubjects() {
     const grid = document.getElementById("subjects-grid");
     grid.innerHTML = "";
 
+    if (subjects.length === 0) {
+      grid.innerHTML = '<p style="color:var(--muted);font-size:14px;grid-column:span 2">Предметов пока нет.<br>Добавь их в admin.html</p>';
+    }
+
     subjects.forEach(s => {
       const card = document.createElement("div");
       card.className = "subject-card";
-      card.innerHTML = `
-        <span class="emoji">${s.emoji}</span>
-        <div class="name">${s.title}</div>
-      `;
+      card.innerHTML = `<span class="emoji">${s.emoji}</span><div class="name">${s.title}</div>`;
       card.onclick = () => startQuiz(s.id, s.title);
       grid.appendChild(card);
     });
@@ -414,10 +385,10 @@ async function loadSubjects() {
     document.getElementById("subjects-content").style.display = "block";
   } catch (e) {
     showError("Не удалось загрузить предметы: " + e.message);
+    document.getElementById("subjects-loader").style.display = "none";
+    document.getElementById("subjects-content").style.display = "block";
   }
 }
-
-// ── QUIZ ──────────────────────────────────────────────────────────────────
 
 async function startQuiz(subjectId, subjectTitle) {
   state.selectedSubjectId = subjectId;
@@ -446,12 +417,9 @@ function renderQuestion() {
   const total = state.questions.length;
   const idx = state.currentIndex;
 
-  // Прогресс
   document.getElementById("q-counter").textContent = `Вопрос ${idx + 1} из ${total}`;
   document.getElementById("q-score-live").textContent = `${state.score} правильных`;
   document.getElementById("progress-fill").style.width = `${(idx / total) * 100}%`;
-
-  // Вопрос
   document.getElementById("q-text").textContent = q.text;
 
   const img = document.getElementById("q-image");
@@ -462,7 +430,6 @@ function renderQuestion() {
     img.style.display = "none";
   }
 
-  // Варианты
   const letters = ["A", "Б", "В", "Г", "Д"];
   const list = document.getElementById("options-list");
   list.innerHTML = "";
@@ -479,21 +446,12 @@ function renderQuestion() {
 }
 
 function selectAnswer(chosenIndex, clickedBtn, question) {
-  // Блокируем повторный выбор
   document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
-
   state.answers[question.id] = chosenIndex;
-
-  // Показываем правильный/неправильный
-  // НА ЭТОМ ЭТАПЕ мы не знаем правильный ответ с сервера (он скрыт).
-  // После сабмита сервер пришлёт баллы. Пока просто выделим выбранный.
   clickedBtn.classList.add("selected");
-
   document.getElementById("next-btn").style.display = "block";
   document.getElementById("next-btn").textContent =
-    state.currentIndex < state.questions.length - 1
-      ? "Следующий →"
-      : "Завершить тест ✓";
+    state.currentIndex < state.questions.length - 1 ? "Следующий →" : "Завершить тест ✓";
 }
 
 async function nextQuestion() {
@@ -513,7 +471,7 @@ async function submitResults() {
     });
     showResult(result);
   } catch (e) {
-    showError("Ошибка отправки результата: " + e.message);
+    showError("Ошибка отправки: " + e.message);
   }
 }
 
@@ -533,8 +491,6 @@ function showResult(result) {
   document.getElementById("res-sub").textContent = sub;
 }
 
-// ── НАВИГАЦИЯ ─────────────────────────────────────────────────────────────
-
 function showScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -550,7 +506,6 @@ function showError(msg) {
   setTimeout(() => el.style.display = "none", 5000);
 }
 
-// ── СТАРТ ─────────────────────────────────────────────────────────────────
 init();
 </script>
 </body>
