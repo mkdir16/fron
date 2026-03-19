@@ -41,28 +41,16 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
     }
-    .header h1 {
-      font-family: 'Unbounded', sans-serif;
-      font-size: 16px;
-      font-weight: 900;
-    }
+    .header h1 { font-family: 'Unbounded', sans-serif; font-size: 16px; font-weight: 900; }
     .header p { color: var(--muted); font-size: 12px; }
 
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-      padding: 0 20px;
-    }
+    .tabs { display: flex; border-bottom: 1px solid var(--border); padding: 0 20px; }
     .tab {
       padding: 12px 16px;
       font-family: 'Unbounded', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--muted);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
       transition: all 0.2s;
     }
     .tab.active { color: var(--accent); border-color: var(--accent); }
@@ -70,182 +58,97 @@
     .tab-content { display: none; padding: 20px; }
     .tab-content.active { display: block; }
 
-    /* FORM */
     label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 6px;
     }
 
     select, input[type="text"], textarea {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      font-family: 'Onest', sans-serif;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s;
-      margin-bottom: 16px;
+      width: 100%; background: var(--card);
+      border: 1px solid var(--border); color: var(--text);
+      border-radius: var(--radius); padding: 12px 14px;
+      font-family: 'Onest', sans-serif; font-size: 15px;
+      outline: none; transition: border-color 0.2s; margin-bottom: 16px;
     }
     select:focus, input:focus, textarea:focus { border-color: var(--accent); }
     textarea { resize: vertical; min-height: 80px; }
 
     .form-group { margin-bottom: 20px; }
 
-    .option-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
+    .option-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
     .option-row input { margin-bottom: 0; flex: 1; }
     .option-letter {
-      width: 32px; height: 32px;
-      background: var(--border);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Unbounded', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      flex-shrink: 0;
+      width: 32px; height: 32px; background: var(--border);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 700; flex-shrink: 0;
     }
-    .correct-radio {
-      width: 20px; height: 20px;
-      accent-color: var(--accent);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
+    .correct-radio { width: 20px; height: 20px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
 
     .add-option-btn {
-      background: transparent;
-      border: 1px dashed var(--border);
-      color: var(--muted);
-      border-radius: var(--radius);
-      padding: 10px;
-      width: 100%;
-      font-family: 'Onest', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      margin-bottom: 20px;
-      transition: all 0.2s;
+      background: transparent; border: 1px dashed var(--border);
+      color: var(--muted); border-radius: var(--radius);
+      padding: 10px; width: 100%;
+      font-family: 'Onest', sans-serif; font-size: 14px;
+      cursor: pointer; margin-bottom: 20px; transition: all 0.2s;
     }
     .add-option-btn:hover { border-color: var(--accent); color: var(--accent); }
 
     .upload-zone {
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      margin-bottom: 20px;
-      transition: border-color 0.2s;
+      border: 1px dashed var(--border); border-radius: var(--radius);
+      padding: 20px; text-align: center; cursor: pointer;
+      margin-bottom: 20px; transition: border-color 0.2s;
     }
     .upload-zone:hover { border-color: var(--accent); }
     .upload-zone p { color: var(--muted); font-size: 13px; margin-top: 4px; }
     .upload-zone .icon { font-size: 28px; }
-    .preview-img {
-      width: 100%; border-radius: 10px;
-      margin-top: 10px; display: none;
-      max-height: 200px; object-fit: cover;
-    }
+    .preview-img { width: 100%; border-radius: 10px; margin-top: 10px; display: none; max-height: 200px; object-fit: cover; }
 
     .btn-primary {
-      width: 100%;
-      background: var(--accent);
-      color: #000;
-      border: none;
-      border-radius: var(--radius);
-      padding: 16px;
-      font-family: 'Unbounded', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s;
+      width: 100%; background: var(--accent); color: #000; border: none;
+      border-radius: var(--radius); padding: 16px;
+      font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.2s;
     }
     .btn-primary:hover { opacity: 0.85; }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .btn-secondary {
-      width: 100%;
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      font-family: 'Unbounded', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: border-color 0.2s;
+      width: 100%; background: var(--card); color: var(--text);
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;
+      font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700;
+      cursor: pointer; margin-top: 10px; transition: border-color 0.2s;
     }
     .btn-secondary:hover { border-color: var(--accent); }
 
     .toast {
-      position: fixed;
-      bottom: 24px; left: 50%;
+      position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: var(--green);
-      color: #000;
-      border-radius: 100px;
-      padding: 12px 24px;
-      font-family: 'Unbounded', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      transition: transform 0.3s ease;
-      z-index: 999;
-      white-space: nowrap;
+      background: var(--green); color: #000; border-radius: 100px;
+      padding: 12px 24px; font-family: 'Unbounded', sans-serif;
+      font-size: 13px; font-weight: 700; transition: transform 0.3s ease;
+      z-index: 999; white-space: nowrap;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast.error { background: var(--red); color: #fff; }
 
-    /* RESULTS TABLE */
     .results-table { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th {
-      text-align: left;
-      font-family: 'Unbounded', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
+      text-align: left; font-family: 'Unbounded', sans-serif;
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 10px 12px; border-bottom: 1px solid var(--border);
     }
-    td {
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-    }
+    td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     .score-badge {
-      display: inline-block;
-      background: rgba(200,255,0,0.15);
-      color: var(--accent);
-      border-radius: 100px;
-      padding: 2px 10px;
-      font-weight: 600;
-      font-size: 12px;
+      display: inline-block; background: rgba(200,255,0,0.15);
+      color: var(--accent); border-radius: 100px;
+      padding: 2px 10px; font-weight: 600; font-size: 12px;
     }
 
-    /* SUBJECT FORM */
     .subject-form { display: flex; gap: 10px; margin-bottom: 20px; }
     .subject-form input { margin-bottom: 0; }
     .subject-form .emoji-input { max-width: 70px; text-align: center; font-size: 20px; }
-
-    .access-denied {
-      padding: 60px 20px;
-      text-align: center;
-    }
-    .access-denied .icon { font-size: 48px; margin-bottom: 16px; }
-    .access-denied p { color: var(--muted); font-size: 14px; }
   </style>
 </head>
 <body>
@@ -258,20 +161,13 @@
   </div>
 </div>
 
-<div id="access-denied" class="access-denied" style="display:none">
-  <div class="icon">🔒</div>
-  <h2 style="font-family:'Unbounded',sans-serif; margin-bottom:8px">Нет доступа</h2>
-  <p>Эта страница только для администраторов</p>
-</div>
-
-<div id="admin-panel" style="display:none">
+<div id="admin-panel">
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('tab-add')">Добавить вопрос</div>
-    <div class="tab" onclick="switchTab('tab-subjects')">Предметы</div>
-    <div class="tab" onclick="switchTab('tab-results')">Результаты</div>
+    <div class="tab active" onclick="switchTab('tab-add', this)">Добавить вопрос</div>
+    <div class="tab" onclick="switchTab('tab-subjects', this)">Предметы</div>
+    <div class="tab" onclick="switchTab('tab-results', this)">Результаты</div>
   </div>
 
-  <!-- TAB 1: Добавить вопрос -->
   <div id="tab-add" class="tab-content active">
     <div class="form-group">
       <label>Предмет</label>
@@ -304,7 +200,6 @@
     <button class="btn-primary" onclick="saveQuestion()">Сохранить вопрос</button>
   </div>
 
-  <!-- TAB 2: Предметы -->
   <div id="tab-subjects" class="tab-content">
     <div class="form-group">
       <label>Добавить предмет</label>
@@ -314,25 +209,17 @@
       </div>
       <button class="btn-primary" onclick="createSubject()">Добавить предмет</button>
     </div>
-
     <div>
       <label>Существующие предметы</label>
       <div id="subjects-list-admin"></div>
     </div>
   </div>
 
-  <!-- TAB 3: Результаты -->
   <div id="tab-results" class="tab-content">
     <button class="btn-secondary" onclick="loadResults()" style="margin-bottom:16px">🔄 Обновить</button>
     <div class="results-table">
       <table>
-        <thead>
-          <tr>
-            <th>Студент</th>
-            <th>Предмет</th>
-            <th>Результат</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Студент</th><th>Предмет</th><th>Результат</th></tr></thead>
         <tbody id="results-tbody"></tbody>
       </table>
     </div>
@@ -342,12 +229,14 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API_BASE = "https://bec-2805.onrender.com/";  // ← СЮДА ВСТАВЬ СВОЙ URL
+// ── КОНФИГ ────────────────────────────────────────────────────────────────
+const API_BASE = "https://bec-2805.onrender.com";
+// ─────────────────────────────────────────────────────────────────────────
 
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-const initData = tg.initData || "";
+const initData = tg.initData || "test";
 let optionCount = 0;
 let uploadedImageUrl = null;
 
@@ -367,51 +256,38 @@ async function apiPost(path, body) {
   return res.json();
 }
 
-// ── INIT ────────────────────────────────────────────────────────────────
-
 async function init() {
   const user = tg.initDataUnsafe?.user;
-  if (user) {
-    document.getElementById("admin-name").textContent = user.first_name + " (ID: " + user.id + ")";
-  }
+  document.getElementById("admin-name").textContent = user
+    ? `${user.first_name} (ID: ${user.id})`
+    : "Тестовый режим 🛠";
 
-  try {
-    // Проверяем, что юзер — админ, через запрос к API
-    await apiGet("/subjects");  // если не авторизован — 401
-    document.getElementById("admin-panel").style.display = "block";
-    await loadSubjects();
-    addOption(); addOption(); addOption(); addOption(); // 4 варианта по умолчанию
-  } catch (e) {
-    if (e.message.includes("403") || e.message.includes("401")) {
-      document.getElementById("access-denied").style.display = "block";
-    } else {
-      document.getElementById("admin-panel").style.display = "block";
-      await loadSubjects();
-      addOption(); addOption(); addOption(); addOption();
-    }
-  }
+  await loadSubjects();
+  addOption(); addOption(); addOption(); addOption();
 }
 
-// ── SUBJECTS ────────────────────────────────────────────────────────────
-
 async function loadSubjects() {
-  const subjects = await apiGet("/subjects");
-  const sel = document.getElementById("subject-select");
-  sel.innerHTML = '<option value="">Выберите предмет...</option>';
-  subjects.forEach(s => {
-    const opt = new Option(`${s.emoji} ${s.title}`, s.id);
-    sel.add(opt);
-  });
+  try {
+    const subjects = await apiGet("/subjects");
+    const sel = document.getElementById("subject-select");
+    sel.innerHTML = '<option value="">Выберите предмет...</option>';
+    subjects.forEach(s => sel.add(new Option(`${s.emoji} ${s.title}`, s.id)));
 
-  // Список предметов в табе
-  const list = document.getElementById("subjects-list-admin");
-  list.innerHTML = subjects.map(s =>
-    `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px">
-      <span style="font-size:24px">${s.emoji}</span>
-      <span style="font-weight:600">${s.title}</span>
-      <span style="margin-left:auto;color:var(--muted);font-size:12px">ID: ${s.id}</span>
-    </div>`
-  ).join("");
+    const list = document.getElementById("subjects-list-admin");
+    if (subjects.length === 0) {
+      list.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:12px 0">Предметов пока нет</p>';
+      return;
+    }
+    list.innerHTML = subjects.map(s =>
+      `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px">
+        <span style="font-size:24px">${s.emoji}</span>
+        <span style="font-weight:600">${s.title}</span>
+        <span style="margin-left:auto;color:var(--muted);font-size:12px">ID: ${s.id}</span>
+      </div>`
+    ).join("");
+  } catch (e) {
+    showToast("Ошибка загрузки: " + e.message, true);
+  }
 }
 
 async function createSubject() {
@@ -429,16 +305,11 @@ async function createSubject() {
   }
 }
 
-// ── OPTIONS ─────────────────────────────────────────────────────────────
-
 function addOption() {
   const letters = ["A", "Б", "В", "Г", "Д", "Е"];
-  const i = optionCount;
-  optionCount++;
-
+  const i = optionCount++;
   const row = document.createElement("div");
   row.className = "option-row";
-  row.dataset.index = i;
   row.innerHTML = `
     <div class="option-letter">${letters[i] || i}</div>
     <input type="text" placeholder="Вариант ${letters[i] || i}" />
@@ -447,13 +318,10 @@ function addOption() {
   document.getElementById("options-container").appendChild(row);
 }
 
-// ── IMAGE UPLOAD ─────────────────────────────────────────────────────────
-
 async function handleImageSelect() {
   const file = document.getElementById("img-input").files[0];
   if (!file) return;
 
-  // Показываем превью
   const reader = new FileReader();
   reader.onload = e => {
     const preview = document.getElementById("img-preview");
@@ -462,7 +330,6 @@ async function handleImageSelect() {
   };
   reader.readAsDataURL(file);
 
-  // Загружаем на сервер
   const formData = new FormData();
   formData.append("file", file);
 
@@ -479,8 +346,6 @@ async function handleImageSelect() {
     showToast("Ошибка загрузки: " + e.message, true);
   }
 }
-
-// ── SAVE QUESTION ────────────────────────────────────────────────────────
 
 async function saveQuestion() {
   const subjectId = document.getElementById("subject-select").value;
@@ -504,15 +369,12 @@ async function saveQuestion() {
   try {
     await apiPost("/admin/questions", {
       subject_id: parseInt(subjectId),
-      text,
-      options,
+      text, options,
       correct_index: correctIndex,
       image_url: uploadedImageUrl
     });
 
     showToast("Вопрос сохранён ✅");
-
-    // Сбрасываем форму
     document.getElementById("q-text").value = "";
     document.getElementById("img-preview").style.display = "none";
     document.getElementById("img-input").value = "";
@@ -525,18 +387,17 @@ async function saveQuestion() {
   }
 }
 
-// ── RESULTS ──────────────────────────────────────────────────────────────
-
 async function loadResults() {
   try {
     const results = await apiGet("/admin/results");
     const tbody = document.getElementById("results-tbody");
+    if (results.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" style="color:var(--muted);text-align:center;padding:20px">Результатов пока нет</td></tr>';
+      return;
+    }
     tbody.innerHTML = results.map(r => `
       <tr>
-        <td>
-          <div style="font-weight:600">${r.student || "—"}</div>
-          <div style="color:var(--muted);font-size:11px">${r.tg_id}</div>
-        </td>
+        <td><div style="font-weight:600">${r.student || "—"}</div><div style="color:var(--muted);font-size:11px">${r.tg_id}</div></td>
         <td>${r.subject}</td>
         <td><span class="score-badge">${r.score}/${r.total}</span></td>
       </tr>
@@ -546,14 +407,11 @@ async function loadResults() {
   }
 }
 
-// ── UI HELPERS ────────────────────────────────────────────────────────────
-
-function switchTab(id) {
+function switchTab(id, el) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  event.target.classList.add("active");
-
+  el.classList.add("active");
   if (id === "tab-results") loadResults();
 }
 
