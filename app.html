@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniQuiz</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #0d0d0d;
+      --card: #161616;
+      --card2: #1e1e1e;
+      --border: #272727;
+      --accent: #c8ff00;
+      --accent-dim: rgba(200,255,0,0.12);
+      --text: #f0f0f0;
+      --muted: #5a5a5a;
+      --muted2: #888;
+      --red: #f87171;
+      --green: #4ade80;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Onest', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 80px;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      padding: 20px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px; font-weight: 900;
+    }
+    .logo span { color: var(--accent); }
+    .user-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 12px;
+      font-size: 12px; color: var(--muted2);
+    }
+    .role-pill {
+      font-size: 10px; font-family: 'Unbounded', sans-serif;
+      font-weight: 700; letter-spacing: 0.5px;
+      border-radius: 100px; padding: 2px 8px;
+    }
+    .role-student { background: var(--accent-dim); color: var(--accent); }
+    .role-teacher { background: rgba(74,222,128,0.15); color: var(--green); }
+    .role-admin { background: rgba(248,113,113,0.15); color: var(--red); }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      display: flex; z-index: 100;
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 10px 0 14px; cursor: pointer;
+      color: var(--muted); font-size: 10px;
+      font-family: 'Unbounded', sans-serif; font-weight: 700;
+      letter-spacing: 0.3px; gap: 4px;
+      transition: color 0.2s;
+    }
+    .nav-item .icon { font-size: 20px; }
+    .nav-item.active { color: var(--accent); }
+
+    /* ── SCREENS ── */
+    .screen { display: none; padding: 20px; animation: fadeUp 0.25s ease; }
+    .screen.active { display: block; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 14px;
+    }
+
+    /* ── SUBJECT GRID ── */
+    .subjects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .subject-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 16px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .subject-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .subject-card:active { transform: scale(0.97); }
+    .subject-card .emoji { font-size: 30px; display: block; margin-bottom: 10px; }
+    .subject-card .name {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 12px; font-weight: 700; line-height: 1.4;
+    }
+
+    /* ── PAYWALL ── */
+    .paywall {
+      text-align: center; padding: 40px 20px;
+    }
+    .paywall .lock { font-size: 56px; margin-bottom: 20px; }
+    .paywall h2 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px; font-weight: 900; margin-bottom: 10px;
+    }
+    .paywall p { color: var(--muted2); font-size: 14px; line-height: 1.6; margin-bottom: 28px; }
+    .price-badge {
+      display: inline-block;
+      background: var(--accent); color: #000;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 22px; font-weight: 900;
+      border-radius: var(--radius); padding: 12px 28px;
+      margin-bottom: 28px;
+    }
+    .price-badge span { font-size: 13px; font-weight: 400; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      width: 100%; border: none; border-radius: var(--radius);
+      padding: 16px; font-family: 'Unbounded', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; display: block; text-align: center;
+    }
+    .btn-accent { background: var(--accent); color: #000; }
+    .btn-accent:hover { opacity: 0.85; }
+    .btn-outline {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--accent); }
+    .btn + .btn { margin-top: 10px; }
+
+    /* ── QUIZ ── */
+    .quiz-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .back-btn {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); width: 40px; height: 40px;
+      border-radius: var(--radius-sm); font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: border-color 0.2s;
+    }
+    .back-btn:hover { border-color: var(--accent); }
+    .progress-wrap { flex: 1; }
+    .progress-label {
+      font-size: 12px; color: var(--muted2); margin-bottom: 6px;
+      display: flex; justify-content: space-between;
+    }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+
+    .question-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px 18px; margin-bottom: 14px;
+    }
+    .question-img {
+      width: 100%; border-radius: 10px; margin-bottom: 14px;
+      display: none; max-height: 200px; object-fit: cover;
+    }
+    .question-text { font-size: 15px; line-height: 1.65; font-weight: 500; }
+
+    .options-list { display: flex; flex-direction: column; gap: 9px; }
+    .option-btn {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); border-radius: var(--radius);
+      padding: 14px 16px; text-align: left;
+      font-family: 'Onest', sans-serif; font-size: 14px;
+      cursor: pointer; display: flex; align-items: center; gap: 11px;
+      transition: all 0.18s;
+    }
+    .option-btn .letter {
+      width: 26px; height: 26px; border-radius: 7px;
+      background: var(--border); display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif; font-size: 10px; font-weight: 700; flex-shrink: 0;
+    }
+    .option-btn:hover:not(:disabled) { border-color: var(--accent); }
+    .option-btn.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .option-btn.selected .letter { background: var(--accent); color: #000; }
+    .option-btn.correct { border-color: var(--green); background: rgba(74,222,128,0.08); }
+    .option-btn.correct .letter { background: var(--green); color: #000; }
+    .option-btn.wrong { border-color: var(--red); background: rgba(248,113,113,0.08); }
+    .option-btn.wrong .letter { background: var(--red); color: #000; }
+    .option-btn:disabled { cursor: default; }
+
+    /* ── RESULT ── */
+    .result-wrap { text-align: center; padding: 20px 0 40px; }
+    .result-circle {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 3px solid var(--accent);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .result-score { font-family: 'Unbounded', sans-serif; font-size: 32px; font-weight: 900; color: var(--accent); }
+    .result-label { font-size: 11px; color: var(--muted2); }
+    .result-title { font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+    .result-sub { color: var(--muted2); font-size: 13px; margin-bottom: 28px; }
+
+    /* ── HISTORY ── */
+    .history-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 10px;
+    }
+    .history-emoji { font-size: 28px; }
+    .history-info { flex: 1; }
+    .history-subject { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+    .history-date { font-size: 11px; color: var(--muted2); }
+    .history-score {
+      font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700;
+    }
+    .score-good { color: var(--green); }
+    .score-ok { color: var(--accent); }
+    .score-bad { color: var(--red); }
+
+    /* ── ADMIN PANEL ── */
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
+    .admin-tab {
+      flex-shrink: 0; padding: 8px 16px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 100px; font-family: 'Unbounded', sans-serif;
+      font-size: 11px; font-weight: 700; color: var(--muted2);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .admin-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+    .admin-content { display: none; }
+    .admin-content.active { display: block; }
+
+    .form-label {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: block;
+    }
+    .form-input {
+      width: 100%; background: var(--card); border: 1px solid var(--border);
+      color: var(--text); border-radius: var(--radius-sm); padding: 11px 14px;
+      font-family: 'Onest', sans-serif; font-size: 14px;
+      outline: none; transition: border-color 0.2s; margin-bottom: 14px;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    textarea.form-input { resize: vertical; min-height: 75px; }
+
+    .form-group { margin-bottom: 18px; }
+
+    .option-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .option-row .form-input { margin-bottom: 0; flex: 1; }
+    .opt-letter {
+      width: 30px; height: 30px; background: var(--border);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif; font-size: 10px; font-weight: 700; flex-shrink: 0;
+    }
+    .correct-radio { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+
+    .add-opt-btn {
+      width: 100%; background: transparent;
+      border: 1px dashed var(--border); color: var(--muted);
+      border-radius: var(--radius-sm); padding: 10px;
+      font-family: 'Onest', sans-serif; font-size: 13px;
+      cursor: pointer; margin-bottom: 18px; transition: all 0.2s;
+    }
+    .add-opt-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .upload-zone {
+      border: 1px dashed var(--border); border-radius: var(--radius-sm);
+      padding: 18px; text-align: center; cursor: pointer;
+      margin-bottom: 18px; transition: border-color 0.2s;
+      color: var(--muted2); font-size: 13px;
+    }
+    .upload-zone:hover { border-color: var(--accent); }
+    .preview-img { width: 100%; border-radius: 8px; margin-top: 10px; display: none; max-height: 180px; object-fit: cover; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left; font-family: 'Unbounded', sans-serif;
+      font-size: 10px; color: var(--muted); letter-spacing: 1px;
+      text-transform: uppercase; padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    td { padding: 11px 10px; border-bottom: 1px solid var(--border); }
+    .badge {
+      display: inline-block; border-radius: 100px;
+      padding: 2px 9px; font-size: 11px; font-weight: 600;
+    }
+    .badge-green { background: rgba(74,222,128,0.15); color: var(--green); }
+    .badge-accent { background: var(--accent-dim); color: var(--accent); }
+    .badge-red { background: rgba(248,113,113,0.15); color: var(--red); }
+
+    /* ── LOADER ── */
+    .loader {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 60px 20px; gap: 14px; color: var(--muted2); font-size: 13px;
+    }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 80px; left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: var(--green); color: #000;
+      border-radius: 100px; padding: 11px 22px;
+      font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700;
+      transition: transform 0.3s ease; z-index: 999; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--red); color: #fff; }
+
+    .sub-form { display: flex; gap: 8px; }
+    .sub-form .form-input { margin-bottom: 0; flex: 1; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">UNI<span>QUIZ</span></div>
+  <div class="user-badge">
+    <span id="user-name">...</span>
+    <span class="role-pill role-student" id="role-pill">студент</span>
+  </div>
+</div>
+
+<!-- ЭКРАН: Загрузка -->
+<div id="screen-loading" class="screen active">
+  <div class="loader">
+    <div class="spinner"></div>
+    <span>Загружаем приложение...</span>
+  </div>
+</div>
+
+<!-- ЭКРАН: Главная (предметы) -->
+<div id="screen-home" class="screen">
+  <div id="paywall-block" style="display:none">
+    <div class="paywall">
+      <div class="lock">🔒</div>
+      <h2>Нужна подписка</h2>
+      <p>Для прохождения тестов оформи подписку на месяц. Доступ ко всем предметам и результатам.</p>
+      <div class="price-badge">20 000 <span>сум/мес</span></div>
+      <button class="btn btn-accent" onclick="payWithPayme()">Оплатить через Payme</button>
+    </div>
+  </div>
+
+  <div id="subjects-block" style="display:none">
+    <p class="section-title">Выбери предмет</p>
+    <div class="subjects-grid" id="subjects-grid"></div>
+  </div>
+</div>
+
+<!-- ЭКРАН: Тест -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="showScreen('home')">←</button>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="q-counter">Вопрос 1 из 10</span>
+        <span id="q-score-live">0 правильных</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+  <div class="question-card">
+    <img id="q-image" class="question-img" alt="" />
+    <p class="question-text" id="q-text"></p>
+  </div>
+  <div class="options-list" id="options-list"></div>
+  <button class="btn btn-accent" id="next-btn" onclick="nextQuestion()" style="display:none;margin-top:14px">Следующий →</button>
+</div>
+
+<!-- ЭКРАН: Результат -->
+<div id="screen-result" class="screen">
+  <div class="result-wrap">
+    <div class="result-circle">
+      <div class="result-score" id="res-score"></div>
+      <div class="result-label">из <span id="res-total"></span></div>
+    </div>
+    <div class="result-title" id="res-title"></div>
+    <div class="result-sub" id="res-sub"></div>
+    <button class="btn btn-accent" onclick="showScreen('home')">← К предметам</button>
+    <button class="btn btn-outline" onclick="showScreen('history')" style="margin-top:10px">Моя история</button>
+  </div>
+</div>
+
+<!-- ЭКРАН: История -->
+<div id="screen-history" class="screen">
+  <p class="section-title">Мои результаты</p>
+  <div id="history-list">
+    <div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>
+  </div>
+</div>
+
+<!-- ЭКРАН: Админ панель -->
+<div id="screen-admin" class="screen">
+  <div class="admin-tabs">
+    <div class="admin-tab active" onclick="switchAdminTab('at-questions', this)">Вопросы</div>
+    <div class="admin-tab" onclick="switchAdminTab('at-subjects', this)">Предметы</div>
+    <div class="admin-tab" onclick="switchAdminTab('at-results', this)">Результаты</div>
+    <div class="admin-tab" onclick="switchAdminTab('at-users', this)" id="tab-users-btn" style="display:none">Студенты</div>
+  </div>
+
+  <!-- Добавить вопрос -->
+  <div id="at-questions" class="admin-content active">
+    <div class="form-group">
+      <label class="form-label">Предмет</label>
+      <select id="q-subject" class="form-input">
+        <option value="">Выберите предмет...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Текст вопроса</label>
+      <textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Картинка (необязательно)</label>
+      <div class="upload-zone" onclick="document.getElementById('img-input').click()">
+        🖼 Нажми чтобы загрузить картинку
+        <img class="preview-img" id="img-preview" />
+      </div>
+      <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImg()" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Варианты ответов <span style="color:var(--muted);font-size:9px">(✓ = правильный)</span></label>
+      <div id="opts-container"></div>
+      <button class="add-opt-btn" onclick="addOpt()">+ Добавить вариант</button>
+    </div>
+    <button class="btn btn-accent" onclick="saveQuestion()">Сохранить вопрос</button>
+  </div>
+
+  <!-- Предметы -->
+  <div id="at-subjects" class="admin-content">
+    <div class="form-group">
+      <label class="form-label">Добавить предмет</label>
+      <div class="sub-form">
+        <input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center" />
+        <input type="text" class="form-input" id="subj-title" placeholder="Название предмета" />
+      </div>
+      <button class="btn btn-accent" onclick="createSubject()">Добавить</button>
+    </div>
+    <label class="form-label">Существующие</label>
+    <div id="subjects-admin-list"></div>
+  </div>
+
+  <!-- Результаты -->
+  <div id="at-results" class="admin-content">
+    <button class="btn btn-outline" onclick="loadAdminResults()" style="margin-bottom:16px">🔄 Обновить</button>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Студент</th><th>Предмет</th><th>Балл</th></tr></thead>
+        <tbody id="results-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Студенты (только для админа) -->
+  <div id="at-users" class="admin-content">
+    <button class="btn btn-outline" onclick="loadUsers()" style="margin-bottom:16px">🔄 Обновить</button>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Имя</th><th>Роль</th><th>Подписка</th><th></th></tr></thead>
+        <tbody id="users-table"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="nav-item active" onclick="showScreen('home')" id="nav-home">
+    <span class="icon">🏠</span>ТЕСТЫ
+  </div>
+  <div class="nav-item" onclick="showScreen('history')" id="nav-history">
+    <span class="icon">📊</span>ИСТОРИЯ
+  </div>
+  <div class="nav-item" onclick="showScreen('admin')" id="nav-admin" style="display:none">
+    <span class="icon">⚙️</span>ПАНЕЛЬ
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── КОНФИГ ────────────────────────────────────────────────────────────────
+const API_BASE = "https://bec-2805.onrender.com";
+// ─────────────────────────────────────────────────────────────────────────
+
+const tg = window.Telegram.WebApp;
+tg.expand();
+tg.setHeaderColor('#0d0d0d');
+
+const initData = tg.initData || "test";
+let currentUser = null;
+let quizState = { questions: [], index: 0, answers: {}, score: 0, subjectId: null };
+let optCount = 0;
+let uploadedImg = null;
+
+// ── API ───────────────────────────────────────────────────────────────────
+
+async function api(method, path, body) {
+  const opts = {
+    method: method || "GET",
+    headers: { "X-Init-Data": initData }
+  };
+  if (body) {
+    opts.headers["Content-Type"] = "application/json";
+    opts.body = JSON.stringify(body);
+  }
+  const res = await fetch(API_BASE + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw { status: res.status, detail: data.detail || JSON.stringify(data) };
+  return data;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+
+async function init() {
+  try {
+    currentUser = await api("GET", "/me");
+    setupUI();
+    await loadSubjects();
+    showScreen("home");
+  } catch (e) {
+    showToast("Ошибка подключения", true);
+    console.error(e);
+  }
+}
+
+function setupUI() {
+  const u = currentUser;
+
+  // Шапка
+  document.getElementById("user-name").textContent = u.name || "Пользователь";
+  const pill = document.getElementById("role-pill");
+  const roleNames = { student: "студент", teacher: "учитель", admin: "админ" };
+  const roleClasses = { student: "role-student", teacher: "role-teacher", admin: "role-admin" };
+  pill.textContent = roleNames[u.role] || u.role;
+  pill.className = "role-pill " + (roleClasses[u.role] || "role-student");
+
+  // Показываем панель для преподавателей/админов
+  if (u.role === "teacher" || u.role === "admin") {
+    document.getElementById("nav-admin").style.display = "flex";
+  }
+  if (u.role === "admin") {
+    document.getElementById("tab-users-btn").style.display = "block";
+  }
+}
+
+// ── НАВИГАЦИЯ ─────────────────────────────────────────────────────────────
+
+function showScreen(name) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  document.getElementById("screen-" + name).classList.add("active");
+
+  const navMap = { home: "nav-home", history: "nav-history", admin: "nav-admin" };
+  if (navMap[name]) document.getElementById(navMap[name])?.classList.add("active");
+
+  if (name === "history") loadHistory();
+  if (name === "admin") loadAdminSubjects();
+}
+
+// ── ГЛАВНАЯ ───────────────────────────────────────────────────────────────
+
+async function loadSubjects() {
+  const subjects = await api("GET", "/subjects");
+  const grid = document.getElementById("subjects-grid");
+  grid.innerHTML = "";
+
+  subjects.forEach(s => {
+    const card = document.createElement("div");
+    card.className = "subject-card";
+    card.innerHTML = `<span class="emoji">${s.emoji}</span><div class="name">${s.title}</div>`;
+    card.onclick = () => startQuiz(s.id);
+    grid.appendChild(card);
+  });
+
+  // Показываем paywall или предметы
+  const hasAccess = currentUser.subscription_active ||
+    currentUser.role === "teacher" || currentUser.role === "admin";
+
+  document.getElementById("paywall-block").style.display = hasAccess ? "none" : "block";
+  document.getElementById("subjects-block").style.display = hasAccess ? "block" : "none";
+}
+
+// ── ОПЛАТА ────────────────────────────────────────────────────────────────
+
+async function payWithPayme() {
+  try {
+    const data = await api("POST", "/payment/create");
+    if (data.payme_url) {
+      tg.openLink(data.payme_url);
+      showToast("Открываем Payme...");
+    } else {
+      showToast(data.message || "Ошибка", true);
+    }
+  } catch (e) {
+    showToast("Ошибка: " + e.detail, true);
+  }
+}
+
+// ── ТЕСТ ─────────────────────────────────────────────────────────────────
+
+async function startQuiz(subjectId) {
+  quizState = { questions: [], index: 0, answers: {}, score: 0, subjectId };
+  showScreen("quiz");
+
+  try {
+    quizState.questions = await api("GET", `/questions/${subjectId}`);
+    if (!quizState.questions.length) {
+      showToast("В этом предмете пока нет вопросов", true);
+      showScreen("home");
+      return;
+    }
+    renderQuestion();
+  } catch (e) {
+    if (e.status === 402) {
+      showScreen("home");
+      showToast("Нужна подписка!", true);
+    } else {
+      showToast("Ошибка: " + e.detail, true);
+      showScreen("home");
+    }
+  }
+}
+
+function renderQuestion() {
+  const q = quizState.questions[quizState.index];
+  const total = quizState.questions.length;
+
+  document.getElementById("q-counter").textContent = `Вопрос ${quizState.index + 1} из ${total}`;
+  document.getElementById("q-score-live").textContent = `${quizState.score} правильных`;
+  document.getElementById("progress-fill").style.width = `${(quizState.index / total) * 100}%`;
+  document.getElementById("q-text").textContent = q.text;
+
+  const img = document.getElementById("q-image");
+  if (q.image_url) { img.src = API_BASE + q.image_url; img.style.display = "block"; }
+  else { img.style.display = "none"; }
+
+  const letters = ["A", "Б", "В", "Г", "Д"];
+  const list = document.getElementById("options-list");
+  list.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt.text}</span>`;
+    btn.onclick = () => selectAnswer(i, btn);
+    list.appendChild(btn);
+  });
+
+  document.getElementById("next-btn").style.display = "none";
+}
+
+function selectAnswer(idx, btn) {
+  document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+  quizState.answers[quizState.questions[quizState.index].id] = idx;
+  btn.classList.add("selected");
+  const nb = document.getElementById("next-btn");
+  nb.style.display = "block";
+  nb.textContent = quizState.index < quizState.questions.length - 1 ? "Следующий →" : "Завершить ✓";
+}
+
+async function nextQuestion() {
+  quizState.index++;
+  if (quizState.index < quizState.questions.length) {
+    renderQuestion();
+  } else {
+    try {
+      const r = await api("POST", "/results", {
+        subject_id: quizState.subjectId,
+        answers: quizState.answers
+      });
+      showResult(r);
+    } catch (e) {
+      showToast("Ошибка сохранения: " + e.detail, true);
+    }
+  }
+}
+
+function showResult(r) {
+  showScreen("result");
+  document.getElementById("res-score").textContent = r.score;
+  document.getElementById("res-total").textContent = r.total;
+  const pct = r.percentage;
+  const map = [
+    [90, "Отлично! 🏆", "Ты настоящий эксперт!"],
+    [70, "Хороший результат 👍", "Почти всё правильно!"],
+    [50, "Неплохо 📚", "Есть над чем поработать"],
+    [0,  "Нужно повторить 💪", "Попробуй ещё раз!"]
+  ];
+  const [, title, sub] = map.find(([min]) => pct >= min);
+  document.getElementById("res-title").textContent = title;
+  document.getElementById("res-sub").textContent = sub;
+}
+
+// ── ИСТОРИЯ ───────────────────────────────────────────────────────────────
+
+async function loadHistory() {
+  const list = document.getElementById("history-list");
+  list.innerHTML = '<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
+  try {
+    const results = await api("GET", "/my-results");
+    if (!results.length) {
+      list.innerHTML = '<p style="color:var(--muted2);text-align:center;padding:40px 0">Ты ещё не проходил тесты</p>';
+      return;
+    }
+    list.innerHTML = results.map(r => {
+      const cls = r.percentage >= 70 ? "score-good" : r.percentage >= 50 ? "score-ok" : "score-bad";
+      const date = r.date ? new Date(r.date).toLocaleDateString("ru-RU") : "";
+      return `<div class="history-item">
+        <div class="history-emoji">${r.emoji}</div>
+        <div class="history-info">
+          <div class="history-subject">${r.subject}</div>
+          <div class="history-date">${date}</div>
+        </div>
+        <div class="history-score ${cls}">${r.score}/${r.total}</div>
+      </div>`;
+    }).join("");
+  } catch (e) {
+    list.innerHTML = '<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>';
+  }
+}
+
+// ── АДМИН: ПРЕДМЕТЫ ───────────────────────────────────────────────────────
+
+async function loadAdminSubjects() {
+  try {
+    const subjects = await api("GET", "/subjects");
+    const sel = document.getElementById("q-subject");
+    sel.innerHTML = '<option value="">Выберите предмет...</option>';
+    subjects.forEach(s => sel.add(new Option(`${s.emoji} ${s.title}`, s.id)));
+
+    const list = document.getElementById("subjects-admin-list");
+    list.innerHTML = subjects.length ? subjects.map(s =>
+      `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">
+        <span style="font-size:22px">${s.emoji}</span>
+        <span style="font-weight:600;font-size:14px">${s.title}</span>
+        <span style="margin-left:auto;color:var(--muted);font-size:11px">ID ${s.id}</span>
+      </div>`
+    ).join("") : '<p style="color:var(--muted2);font-size:13px">Предметов пока нет</p>';
+  } catch(e) {}
+}
+
+async function createSubject() {
+  const title = document.getElementById("subj-title").value.trim();
+  const emoji = document.getElementById("subj-emoji").value.trim() || "📚";
+  if (!title) { showToast("Введи название!", true); return; }
+  try {
+    await api("POST", `/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}`);
+    showToast("Предмет добавлен ✅");
+    document.getElementById("subj-title").value = "";
+    await loadAdminSubjects();
+  } catch(e) { showToast("Ошибка: " + e.detail, true); }
+}
+
+// ── АДМИН: ВОПРОСЫ ────────────────────────────────────────────────────────
+
+function addOpt() {
+  const letters = ["A", "Б", "В", "Г", "Д", "Е"];
+  const i = optCount++;
+  const row = document.createElement("div");
+  row.className = "option-row";
+  row.innerHTML = `
+    <div class="opt-letter">${letters[i] || i}</div>
+    <input type="text" class="form-input" placeholder="Вариант ${letters[i] || i}" />
+    <input type="radio" name="correct" class="correct-radio" value="${i}" ${i===0?"checked":""} />
+  `;
+  document.getElementById("opts-container").appendChild(row);
+}
+
+async function handleImg() {
+  const file = document.getElementById("img-input").files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { const p = document.getElementById("img-preview"); p.src = e.target.result; p.style.display = "block"; };
+  reader.readAsDataURL(file);
+
+  const fd = new FormData();
+  fd.append("file", file);
+  try {
+    const res = await fetch(API_BASE + "/admin/upload-image", {
+      method: "POST", headers: { "X-Init-Data": initData }, body: fd
+    });
+    const data = await res.json();
+    uploadedImg = data.image_url;
+    showToast("Картинка загружена 📸");
+  } catch(e) { showToast("Ошибка загрузки фото", true); }
+}
+
+async function saveQuestion() {
+  const subjectId = document.getElementById("q-subject").value;
+  const text = document.getElementById("q-text-admin").value.trim();
+  if (!subjectId) { showToast("Выбери предмет!", true); return; }
+  if (!text) { showToast("Введи вопрос!", true); return; }
+
+  const opts = [...document.querySelectorAll(".option-row input[type=text]")]
+    .map(i => i.value.trim()).filter(Boolean);
+  if (opts.length < 2) { showToast("Минимум 2 варианта!", true); return; }
+
+  const correct = document.querySelector('input[name="correct"]:checked');
+  try {
+    await api("POST", "/admin/questions", {
+      subject_id: parseInt(subjectId), text, options: opts,
+      correct_index: correct ? parseInt(correct.value) : 0,
+      image_url: uploadedImg
+    });
+    showToast("Вопрос сохранён ✅");
+    document.getElementById("q-text-admin").value = "";
+    document.getElementById("img-preview").style.display = "none";
+    uploadedImg = null; optCount = 0;
+    document.getElementById("opts-container").innerHTML = "";
+    addOpt(); addOpt(); addOpt(); addOpt();
+  } catch(e) { showToast("Ошибка: " + e.detail, true); }
+}
+
+// ── АДМИН: РЕЗУЛЬТАТЫ ─────────────────────────────────────────────────────
+
+async function loadAdminResults() {
+  try {
+    const results = await api("GET", "/admin/results");
+    const tbody = document.getElementById("results-table");
+    tbody.innerHTML = results.length ? results.map(r =>
+      `<tr>
+        <td><b>${r.student||"—"}</b><br><span style="color:var(--muted);font-size:11px">${r.tg_id}</span></td>
+        <td>${r.subject}</td>
+        <td><span class="badge badge-accent">${r.score}/${r.total}</span></td>
+      </tr>`
+    ).join("") : '<tr><td colspan="3" style="color:var(--muted2);text-align:center;padding:20px">Нет данных</td></tr>';
+  } catch(e) { showToast("Ошибка: " + e.detail, true); }
+}
+
+// ── АДМИН: СТУДЕНТЫ ───────────────────────────────────────────────────────
+
+async function loadUsers() {
+  try {
+    const users = await api("GET", "/admin/users");
+    const tbody = document.getElementById("users-table");
+    tbody.innerHTML = users.map(u => {
+      const subBadge = u.subscription_active
+        ? `<span class="badge badge-green">активна</span>`
+        : `<span class="badge badge-red">нет</span>`;
+      const roleBadge = u.role === "admin" ? "badge-red" : u.role === "teacher" ? "badge-green" : "badge-accent";
+      return `<tr>
+        <td><b>${u.name||"—"}</b><br><span style="color:var(--muted);font-size:11px">${u.tg_id}</span></td>
+        <td><span class="badge ${roleBadge}">${u.role}</span></td>
+        <td>${subBadge}</td>
+        <td><button onclick="activateSub(${u.tg_id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer">+30д</button></td>
+      </tr>`;
+    }).join("");
+  } catch(e) { showToast("Ошибка: " + e.detail, true); }
+}
+
+async function activateSub(tgId) {
+  try {
+    await api("POST", `/admin/activate-subscription?tg_id=${tgId}&days=30`);
+    showToast("Подписка активирована ✅");
+    await loadUsers();
+  } catch(e) { showToast("Ошибка: " + e.detail, true); }
+}
+
+// ── ХЕЛПЕРЫ ───────────────────────────────────────────────────────────────
+
+function switchAdminTab(id, el) {
+  document.querySelectorAll(".admin-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".admin-content").forEach(t => t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  el.classList.add("active");
+  if (id === "at-results") loadAdminResults();
+  if (id === "at-users") loadUsers();
+  if (id === "at-subjects") loadAdminSubjects();
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast" + (isError ? " error" : "");
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+// ── СТАРТ ─────────────────────────────────────────────────────────────────
+addOpt(); addOpt(); addOpt(); addOpt();
+init();
+</script>
+</body>
+</html>
