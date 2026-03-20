@@ -574,8 +574,13 @@ async function init() {
 function showLoginScreen() {
   document.getElementById("main-header").style.display = "none";
   document.getElementById("bottom-nav").style.display = "none";
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById("screen-login").classList.add("active");
+  document.querySelectorAll(".screen").forEach(s => {
+    s.classList.remove("active");
+    s.style.display = "none";
+  });
+  const login = document.getElementById("screen-login");
+  login.style.display = "flex";
+  login.classList.add("active");
 }
 
 async function doLogin() {
@@ -660,9 +665,14 @@ function setupUI() {
 // ── НАВИГАЦИЯ ─────────────────────────────────────────────────────────────
 
 function showScreen(name) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".screen").forEach(s => {
+    s.classList.remove("active");
+    s.style.display = "none";
+  });
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  document.getElementById("screen-" + name).classList.add("active");
+  const target = document.getElementById("screen-" + name);
+  target.style.display = "";
+  target.classList.add("active");
   const navMap = { home: "nav-home", history: "nav-history", admin: "nav-admin" };
   if (navMap[name]) document.getElementById(navMap[name])?.classList.add("active");
   if (name === "history") loadHistory();
