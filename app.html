@@ -356,7 +356,22 @@
       <h2>Нужна подписка</h2>
       <p>Для прохождения тестов оформи подписку на месяц. Доступ ко всем предметам и результатам.</p>
       <div class="price-badge">20 000 <span>сум/мес</span></div>
-      <button class="btn btn-accent" onclick="payWithPayme()">Оплатить через Payme</button>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;text-align:left">
+        <div style="font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:12px">КАК ОПЛАТИТЬ</div>
+        <div style="font-size:14px;line-height:1.8;color:var(--muted2)">
+          1. Переведи <b style="color:var(--text)">20 000 сум</b> на Payme или Click<br>
+          2. Напиши администратору что оплатил<br>
+          3. Получи доступ в течение 5 минут
+        </div>
+      </div>
+
+      <button class="btn btn-accent" onclick="tg.openTelegramLink('https://t.me/mkdir16')">
+        ✍️ Написать администратору
+      </button>
+      <button class="btn btn-outline" onclick="tg.openTelegramLink('https://t.me/+vpPlzmuE9Zc3MzRi')" style="margin-top:10px">
+        💬 Наша группа в Telegram
+      </button>
     </div>
   </div>
 
