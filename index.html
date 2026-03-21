@@ -11,49 +11,37 @@
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px;overflow-x:hidden}
     .header{padding:20px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-    .logo{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900}
-    .logo span{color:var(--accent)}
-    .user-badge{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:6px 12px;font-size:12px;color:var(--muted2);cursor:pointer;max-width:180px;overflow:hidden}
+    .logo{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900}.logo span{color:var(--accent)}
+    .user-badge{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:6px 12px;font-size:12px;color:var(--muted2);cursor:pointer;max-width:200px;overflow:hidden}
     .user-badge span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .role-pill{font-size:10px;font-family:'Unbounded',sans-serif;font-weight:700;letter-spacing:.5px;border-radius:100px;padding:2px 8px;flex-shrink:0}
-    .role-student{background:var(--accent-dim);color:var(--accent)}
-    .role-teacher{background:rgba(74,222,128,.15);color:var(--green)}
-    .role-admin{background:rgba(248,113,113,.15);color:var(--red)}
+    .role-student{background:var(--accent-dim);color:var(--accent)}.role-teacher{background:rgba(74,222,128,.15);color:var(--green)}.role-admin{background:rgba(248,113,113,.15);color:var(--red)}
     .trial-badge{background:rgba(251,146,60,.15);color:var(--orange);font-size:10px;font-family:'Unbounded',sans-serif;font-weight:700;border-radius:100px;padding:2px 8px;flex-shrink:0}
     .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);display:flex;z-index:100}
     .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 14px;cursor:pointer;color:var(--muted);font-size:10px;font-family:'Unbounded',sans-serif;font-weight:700;letter-spacing:.3px;gap:4px;transition:color .2s}
-    .nav-item .icon{font-size:20px}
-    .nav-item.active{color:var(--accent)}
-    .screen{display:none;padding:20px;animation:fadeUp .25s ease}
-    .screen.active{display:block}
+    .nav-item .icon{font-size:20px}.nav-item.active{color:var(--accent)}
+    .screen{display:none;padding:20px;animation:fadeUp .25s ease}.screen.active{display:block}
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     #screen-login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px}
     #screen-login.active{display:flex}
-    .login-logo{font-family:'Unbounded',sans-serif;font-size:32px;font-weight:900;margin-bottom:8px}
-    .login-logo span{color:var(--accent)}
+    .login-logo{font-family:'Unbounded',sans-serif;font-size:32px;font-weight:900;margin-bottom:8px}.login-logo span{color:var(--accent)}
     .login-sub{color:var(--muted2);font-size:14px;margin-bottom:40px;text-align:center}
     .login-box{width:100%;max-width:360px}
     .form-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block}
     .form-input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:14px 16px;font-family:'Onest',sans-serif;font-size:15px;outline:none;transition:border-color .2s;margin-bottom:16px}
-    .form-input:focus{border-color:var(--accent)}
-    textarea.form-input{resize:vertical;min-height:75px}
-    .form-group{margin-bottom:18px}
+    .form-input:focus{border-color:var(--accent)}textarea.form-input{resize:vertical;min-height:75px}.form-group{margin-bottom:18px}
     .btn{width:100%;border:none;border-radius:var(--radius);padding:16px;font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:block;text-align:center;text-decoration:none}
-    .btn-accent{background:var(--accent);color:#000}
-    .btn-accent:hover{opacity:.85}
-    .btn-accent:disabled{opacity:.5;cursor:not-allowed}
-    .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
-    .btn-outline:hover{border-color:var(--accent)}
+    .btn-accent{background:var(--accent);color:#000}.btn-accent:hover{opacity:.85}.btn-accent:disabled{opacity:.5;cursor:not-allowed}
+    .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--accent)}
     .btn-green{background:rgba(74,222,128,.15);color:var(--green);border:1px solid rgba(74,222,128,.3)}
-    .btn-orange{background:rgba(251,146,60,.15);color:var(--orange);border:1px solid rgba(251,146,60,.3)}
     .btn+.btn{margin-top:10px}
     .section-title{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
     .subjects-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .subject-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;cursor:pointer;transition:all .2s}
-    .subject-card:hover{border-color:var(--accent);transform:translateY(-2px)}
-    .subject-card:active{transform:scale(.97)}
+    .subject-card:hover{border-color:var(--accent);transform:translateY(-2px)}.subject-card:active{transform:scale(.97)}
     .subject-card .emoji{font-size:30px;display:block;margin-bottom:10px}
     .subject-card .name{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;line-height:1.4}
+    .subject-card .time{font-size:11px;color:var(--muted);margin-top:4px}
     .paywall{text-align:center;padding:40px 0}
     .paywall .lock{font-size:56px;margin-bottom:20px}
     .paywall h2{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900;margin-bottom:10px}
@@ -61,9 +49,7 @@
     .price-badge{display:inline-block;background:var(--accent);color:#000;font-family:'Unbounded',sans-serif;font-size:22px;font-weight:900;border-radius:var(--radius);padding:12px 28px;margin-bottom:28px}
     .price-badge span{font-size:13px;font-weight:400}
     .trial-banner{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-    .trial-banner .icon{font-size:24px;flex-shrink:0}
-    .trial-banner .text{font-size:13px;line-height:1.5;color:var(--orange)}
-    .trial-banner b{font-weight:700}
+    .trial-banner .icon{font-size:24px;flex-shrink:0}.trial-banner .text{font-size:13px;line-height:1.5;color:var(--orange)}.trial-banner b{font-weight:700}
     .quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
     .back-btn{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:var(--radius-sm);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .progress-wrap{flex:1}
@@ -80,10 +66,8 @@
     .option-btn{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:14px 16px;text-align:left;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:11px;transition:all .18s}
     .option-btn .letter{width:26px;height:26px;border-radius:7px;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;flex-shrink:0}
     .option-btn:hover:not(:disabled){border-color:var(--accent)}
-    .option-btn.correct{border-color:var(--green);background:rgba(74,222,128,.08)}
-    .option-btn.correct .letter{background:var(--green);color:#000}
-    .option-btn.wrong{border-color:var(--red);background:rgba(248,113,113,.08)}
-    .option-btn.wrong .letter{background:var(--red);color:#000}
+    .option-btn.correct{border-color:var(--green);background:rgba(74,222,128,.08)}.option-btn.correct .letter{background:var(--green);color:#000}
+    .option-btn.wrong{border-color:var(--red);background:rgba(248,113,113,.08)}.option-btn.wrong .letter{background:var(--red);color:#000}
     .option-btn:disabled{cursor:default}
     .result-wrap{text-align:center;padding:20px 0 40px}
     .result-circle{width:120px;height:120px;border-radius:50%;border:3px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 24px}
@@ -94,27 +78,20 @@
     .review-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
     .review-q{font-size:14px;font-weight:500;margin-bottom:10px;line-height:1.5}
     .review-opt{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:6px}
-    .review-opt.correct{background:rgba(74,222,128,.1);color:var(--green)}
-    .review-opt.wrong{background:rgba(248,113,113,.1);color:var(--red)}
-    .review-opt.neutral{color:var(--muted2)}
+    .review-opt.correct{background:rgba(74,222,128,.1);color:var(--green)}.review-opt.wrong{background:rgba(248,113,113,.1);color:var(--red)}.review-opt.neutral{color:var(--muted2)}
     .history-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:10px}
-    .history-emoji{font-size:28px}
-    .history-info{flex:1}
-    .history-subject{font-weight:600;font-size:14px;margin-bottom:2px}
-    .history-date{font-size:11px;color:var(--muted2)}
+    .history-emoji{font-size:28px}.history-info{flex:1}
+    .history-subject{font-weight:600;font-size:14px;margin-bottom:2px}.history-date{font-size:11px;color:var(--muted2)}
     .history-score{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700}
     .score-good{color:var(--green)}.score-ok{color:var(--accent)}.score-bad{color:var(--red)}
     .rating-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:8px}
-    .rating-pos{font-size:20px;width:32px;text-align:center;flex-shrink:0}
-    .rating-info{flex:1}
-    .rating-name{font-weight:600;font-size:14px}
-    .rating-detail{font-size:11px;color:var(--muted2);margin-top:2px}
+    .rating-pos{font-size:20px;width:32px;text-align:center;flex-shrink:0}.rating-info{flex:1}
+    .rating-name{font-weight:600;font-size:14px}.rating-detail{font-size:11px;color:var(--muted2);margin-top:2px}
     .rating-score{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--accent)}
     .admin-tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
     .admin-tab{flex-shrink:0;padding:8px 16px;background:var(--card);border:1px solid var(--border);border-radius:100px;font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;transition:all .2s}
     .admin-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
-    .admin-content{display:none}
-    .admin-content.active{display:block}
+    .admin-content{display:none}.admin-content.active{display:block}
     .option-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
     .option-row .form-input{margin-bottom:0;flex:1}
     .opt-letter{width:30px;height:30px;background:var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;flex-shrink:0}
@@ -128,23 +105,18 @@
     th{text-align:left;font-family:'Unbounded',sans-serif;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border)}
     td{padding:11px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
     .badge{display:inline-block;border-radius:100px;padding:2px 9px;font-size:11px;font-weight:600}
-    .badge-green{background:rgba(74,222,128,.15);color:var(--green)}
-    .badge-accent{background:var(--accent-dim);color:var(--accent)}
-    .badge-red{background:rgba(248,113,113,.15);color:var(--red)}
-    .badge-orange{background:rgba(251,146,60,.15);color:var(--orange)}
+    .badge-green{background:rgba(74,222,128,.15);color:var(--green)}.badge-accent{background:var(--accent-dim);color:var(--accent)}.badge-red{background:rgba(248,113,113,.15);color:var(--red)}.badge-orange{background:rgba(251,146,60,.15);color:var(--orange)}
     .loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:14px;color:var(--muted2);font-size:13px}
     .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
     .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--green);color:#000;border-radius:100px;padding:11px 22px;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;transition:transform .3s ease;z-index:999;white-space:nowrap}
-    .toast.show{transform:translateX(-50%) translateY(0)}
-    .toast.error{background:var(--red);color:#fff}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{background:var(--red);color:#fff}
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
     .modal-overlay.active{display:flex}
     .modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:100%;max-width:360px}
     .modal h3{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:20px}
     .error-box{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:var(--radius-sm);padding:12px 14px;color:var(--red);font-size:13px;margin-bottom:16px;display:none}
-    .sub-form{display:flex;gap:8px}
-    .sub-form .form-input{margin-bottom:0;flex:1}
+    .sub-form{display:flex;gap:8px}.sub-form .form-input{margin-bottom:0;flex:1}
     .tabs-row{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
     .tab-btn{flex-shrink:0;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;text-align:center;transition:all .2s}
     .tab-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
@@ -166,62 +138,31 @@
   <div class="login-logo">UNI<span>QUIZ</span></div>
   <div class="login-sub">Платформа для университетских тестов</div>
   <div class="login-box">
-
-    <!-- Вкладки -->
     <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;gap:4px">
       <button id="tab-login-btn" onclick="switchAuthTab('login')" style="flex:1;padding:10px;border:none;border-radius:8px;background:var(--accent);color:#000;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s">Войти</button>
       <button id="tab-reg-btn" onclick="switchAuthTab('register')" style="flex:1;padding:10px;border:none;border-radius:8px;background:transparent;color:var(--muted2);font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s">Регистрация</button>
     </div>
-
     <div class="error-box" id="login-error"></div>
-
-    <!-- Форма входа -->
     <div id="form-login">
-      <div class="form-group">
-        <label class="form-label">Логин</label>
-        <input type="text" class="form-input" id="login-username" placeholder="Введи логин" autocomplete="username"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Пароль</label>
-        <input type="password" class="form-input" id="login-password" placeholder="Введи пароль" autocomplete="current-password"/>
-      </div>
+      <div class="form-group"><label class="form-label">Логин</label><input type="text" class="form-input" id="login-username" placeholder="Введи логин" autocomplete="username"/></div>
+      <div class="form-group"><label class="form-label">Пароль</label><input type="password" class="form-input" id="login-password" placeholder="Введи пароль" autocomplete="current-password"/></div>
       <button class="btn btn-accent" id="login-btn" onclick="doLogin()">Войти</button>
     </div>
-
-    <!-- Форма регистрации -->
     <div id="form-register" style="display:none">
-      <div class="form-group">
-        <label class="form-label">Твоё имя</label>
-        <input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Придумай логин</label>
-        <input type="text" class="form-input" id="reg-username" placeholder="aziz2005"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Придумай пароль</label>
-        <input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/>
-      </div>
+      <div class="form-group"><label class="form-label">Твоё имя</label><input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/></div>
+      <div class="form-group"><label class="form-label">Придумай логин</label><input type="text" class="form-input" id="reg-username" placeholder="aziz2005"/></div>
+      <div class="form-group"><label class="form-label">Придумай пароль</label><input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/></div>
       <button class="btn btn-accent" id="reg-btn" onclick="doRegister()">Зарегистрироваться</button>
-      <div style="text-align:center;margin-top:14px;color:var(--muted);font-size:12px">
-        После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉
-      </div>
+      <div style="text-align:center;margin-top:14px;color:var(--muted);font-size:12px">После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉</div>
     </div>
-
   </div>
 </div>
 
 <!-- ГЛАВНАЯ -->
 <div id="screen-home" class="screen">
-  <!-- Триал баннер -->
   <div id="trial-banner" style="display:none">
-    <div class="trial-banner">
-      <div class="icon">⏰</div>
-      <div class="text">Пробный период: осталось <b id="trial-days-left">3</b> дня. После окончания нужна подписка — 20 000 сум/мес.</div>
-    </div>
+    <div class="trial-banner"><div class="icon">⏰</div><div class="text">Пробный период: осталось <b id="trial-days-left">3</b> дня. После окончания нужна подписка — 20 000 сум/мес.</div></div>
   </div>
-
-  <!-- Paywall -->
   <div id="paywall-block" style="display:none">
     <div class="paywall">
       <div class="lock" id="paywall-icon">🔒</div>
@@ -230,18 +171,12 @@
       <div class="price-badge">20 000 <span>сум/мес</span></div>
       <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;text-align:left">
         <div style="font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:12px">КАК ОПЛАТИТЬ</div>
-        <div style="font-size:14px;line-height:1.8;color:var(--muted2)">
-          1. Переведи <b style="color:var(--text)">20 000 сум</b> на Payme или Click<br>
-          2. Напиши администратору что оплатил<br>
-          3. Получи доступ в течение 5 минут
-        </div>
+        <div style="font-size:14px;line-height:1.8;color:var(--muted2)">1. Переведи <b style="color:var(--text)">20 000 сум</b> на Payme или Click<br>2. Напиши администратору что оплатил<br>3. Получи доступ в течение 5 минут</div>
       </div>
       <a href="https://t.me/mkdir16" target="_blank" class="btn btn-accent" style="text-decoration:none">✍️ Написать администратору</a>
       <a href="https://t.me/+vpPlzmuE9Zc3MzRi" target="_blank" class="btn btn-outline" style="text-decoration:none;margin-top:10px">💬 Наша группа</a>
     </div>
   </div>
-
-  <!-- Предметы -->
   <div id="subjects-block" style="display:none">
     <p class="section-title">Выбери предмет</p>
     <div class="subjects-grid" id="subjects-grid"></div>
@@ -255,7 +190,7 @@
     <div class="progress-wrap">
       <div class="progress-label">
         <span id="q-counter">1/10</span>
-        <span class="timer-badge" id="timer-badge">30с</span>
+        <span class="timer-badge" id="timer-badge">60:00</span>
         <span id="q-score-live">0 ✓</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
@@ -316,6 +251,27 @@
   </div>
 
   <div id="at-questions" class="admin-content active">
+    <!-- ИМПОРТ -->
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px">
+      <div style="font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:12px">📥 ИМПОРТ ИЗ EXCEL</div>
+      <div class="form-group">
+        <label class="form-label">Предмет для импорта</label>
+        <select id="import-subject" class="form-input"><option value="">Выберите предмет...</option></select>
+      </div>
+      <div class="upload-zone" onclick="document.getElementById('excel-input').click()">
+        📊 Выбрать Excel файл (.xlsx)
+        <div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div>
+      </div>
+      <input type="file" id="excel-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcelSelect()"/>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-green" onclick="importQuestions()" style="flex:1">⬆️ Загрузить вопросы</button>
+        <button class="btn btn-outline" onclick="downloadTemplate()" style="flex:1">⬇️ Скачать шаблон</button>
+      </div>
+      <div id="import-result" style="display:none;margin-top:12px;padding:12px;border-radius:var(--radius-sm);font-size:13px;white-space:pre-line"></div>
+    </div>
+
+    <div style="text-align:center;color:var(--muted);font-size:12px;margin-bottom:16px">— или добавь вопрос вручную —</div>
+
     <div class="form-group"><label class="form-label">Предмет</label><select id="q-subject" class="form-input"><option value="">Выберите предмет...</option></select></div>
     <div class="form-group"><label class="form-label">Текст вопроса</label><textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..."></textarea></div>
     <div class="form-group">
@@ -330,13 +286,18 @@
   <div id="at-subjects" class="admin-content">
     <div class="form-group">
       <label class="form-label">Добавить предмет</label>
-      <div class="sub-form">
-        <input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center"/>
-        <input type="text" class="form-input" id="subj-title" placeholder="Название предмета"/>
+      <div class="sub-form" style="margin-bottom:12px">
+        <input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center;margin-bottom:0"/>
+        <input type="text" class="form-input" id="subj-title" placeholder="Название предмета" style="margin-bottom:0"/>
       </div>
-      <button class="btn btn-accent" onclick="createSubject()">Добавить</button>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span style="font-size:13px;color:var(--muted2);white-space:nowrap">⏱ Время теста:</span>
+        <input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="max-width:90px;margin:0"/>
+        <span style="font-size:13px;color:var(--muted2)">мин</span>
+      </div>
+      <button class="btn btn-accent" onclick="createSubject()">Добавить предмет</button>
     </div>
-    <label class="form-label">Существующие</label>
+    <label class="form-label">Существующие предметы</label>
     <div id="subjects-admin-list"></div>
   </div>
 
@@ -386,8 +347,10 @@
 const API_BASE="https://bec-2805.onrender.com";
 let currentUser=null,token=localStorage.getItem("token")||null;
 let quizState={questions:[],index:0,answers:{},score:0,subjectId:null,reviewData:[]};
-let optCount=0,uploadedImg=null,timerInterval=null,timeLeft=30,allSubjects=[];
+let optCount=0,uploadedImg=null,timerInterval=null,testTimeLeft=0,allSubjects=[];
+let selectedExcelFile=null;
 
+// ── API ───────────────────────────────────────────────────────────────────
 async function api(method,path,body){
   const opts={method:method||"GET",headers:{}};
   if(token)opts.headers["Authorization"]="Bearer "+token;
@@ -399,6 +362,7 @@ async function api(method,path,body){
   return data;
 }
 
+// ── AUTH ──────────────────────────────────────────────────────────────────
 async function init(){
   if(!token){showLoginScreen();return;}
   try{currentUser=await api("GET","/me");setupUI();await loadSubjects();showScreen("home");}
@@ -410,6 +374,15 @@ function showLoginScreen(){
   document.getElementById("bottom-nav").style.display="none";
   document.querySelectorAll(".screen").forEach(s=>{s.classList.remove("active");s.style.display="none";});
   const l=document.getElementById("screen-login");l.style.display="flex";l.classList.add("active");
+}
+
+function switchAuthTab(tab){
+  const isLogin=tab==="login";
+  document.getElementById("form-login").style.display=isLogin?"block":"none";
+  document.getElementById("form-register").style.display=isLogin?"none":"block";
+  document.getElementById("login-error").style.display="none";
+  document.getElementById("tab-login-btn").style.cssText=`flex:1;padding:10px;border:none;border-radius:8px;background:${isLogin?"var(--accent)":"transparent"};color:${isLogin?"#000":"var(--muted2)"};font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s`;
+  document.getElementById("tab-reg-btn").style.cssText=`flex:1;padding:10px;border:none;border-radius:8px;background:${isLogin?"transparent":"var(--accent)"};color:${isLogin?"var(--muted2)":"#000"};font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s`;
 }
 
 async function doLogin(){
@@ -425,23 +398,7 @@ async function doLogin(){
     if(!res.ok){errBox.textContent=result.detail||"Неверный логин или пароль";errBox.style.display="block";btn.disabled=false;btn.textContent="Войти";return;}
     token=result.token;currentUser=result.user;localStorage.setItem("token",token);
     setupUI();await loadSubjects();showScreen("home");
-  }catch(e){errBox.textContent="Сервер недоступен, попробуй позже";errBox.style.display="block";btn.disabled=false;btn.textContent="Войти";}
-}
-
-document.getElementById("login-password").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
-document.getElementById("reg-password")?.addEventListener("keydown",e=>{if(e.key==="Enter")doRegister();});
-
-function switchAuthTab(tab){
-  const isLogin=tab==="login";
-  document.getElementById("form-login").style.display=isLogin?"block":"none";
-  document.getElementById("form-register").style.display=isLogin?"none":"block";
-  document.getElementById("login-error").style.display="none";
-  const loginBtn=document.getElementById("tab-login-btn");
-  const regBtn=document.getElementById("tab-reg-btn");
-  loginBtn.style.background=isLogin?"var(--accent)":"transparent";
-  loginBtn.style.color=isLogin?"#000":"var(--muted2)";
-  regBtn.style.background=isLogin?"transparent":"var(--accent)";
-  regBtn.style.color=isLogin?"var(--muted2)":"#000";
+  }catch(e){errBox.textContent="Сервер недоступен";errBox.style.display="block";btn.disabled=false;btn.textContent="Войти";}
 }
 
 async function doRegister(){
@@ -450,28 +407,22 @@ async function doRegister(){
   const password=document.getElementById("reg-password").value;
   const errBox=document.getElementById("login-error");
   const btn=document.getElementById("reg-btn");
-
   errBox.style.display="none";
   if(!full_name||!username||!password){errBox.textContent="Заполни все поля";errBox.style.display="block";return;}
   if(username.length<3){errBox.textContent="Логин минимум 3 символа";errBox.style.display="block";return;}
   if(password.length<4){errBox.textContent="Пароль минимум 4 символа";errBox.style.display="block";return;}
-
   btn.disabled=true;btn.textContent="Регистрируемся...";
-
   try{
-    const res=await fetch(API_BASE+"/register",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({full_name,username,password})
-    });
+    const res=await fetch(API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({full_name,username,password})});
     const result=await res.json();
     if(!res.ok){errBox.textContent=result.detail||"Ошибка регистрации";errBox.style.display="block";btn.disabled=false;btn.textContent="Зарегистрироваться";return;}
-    token=result.token;currentUser=result.user;
-    localStorage.setItem("token",token);
-    setupUI();await loadSubjects();showScreen("home");
-    showToast("Добро пожаловать! 3 дня бесплатно 🎉");
-  }catch(e){errBox.textContent="Сервер недоступен, попробуй позже";errBox.style.display="block";btn.disabled=false;btn.textContent="Зарегистрироваться";}
+    token=result.token;currentUser=result.user;localStorage.setItem("token",token);
+    setupUI();await loadSubjects();showScreen("home");showToast("Добро пожаловать! 3 дня бесплатно 🎉");
+  }catch(e){errBox.textContent="Сервер недоступен";errBox.style.display="block";btn.disabled=false;btn.textContent="Зарегистрироваться";}
 }
+
+document.getElementById("login-password").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+
 function logout(){token=null;currentUser=null;localStorage.removeItem("token");showLoginScreen();}
 
 function setupUI(){
@@ -483,23 +434,18 @@ function setupUI(){
   const rn={student:"студент",teacher:"учитель",admin:"админ"};
   const rc={student:"role-student",teacher:"role-teacher",admin:"role-admin"};
   pill.textContent=rn[u.role]||u.role;pill.className="role-pill "+(rc[u.role]||"role-student");
-
-  // Показываем триал бейдж
-  const trialBadge=document.getElementById("trial-badge");
-  if(u.is_trial&&u.subscription_active&&u.days_left>0){
-    trialBadge.style.display="block";
-    trialBadge.textContent=u.days_left+"д";
-  }else{trialBadge.style.display="none";}
-
+  const tb=document.getElementById("trial-badge");
+  if(u.is_trial&&u.subscription_active&&u.days_left>0){tb.style.display="block";tb.textContent=u.days_left+"д";}
+  else{tb.style.display="none";}
   if(u.role==="teacher"||u.role==="admin")document.getElementById("nav-admin").style.display="flex";
   if(u.role==="admin")document.getElementById("tab-users-btn").style.display="block";
 }
 
+// ── НАВИГАЦИЯ ─────────────────────────────────────────────────────────────
 function showScreen(name){
   document.querySelectorAll(".screen").forEach(s=>{s.classList.remove("active");s.style.display="none";});
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-  const target=document.getElementById("screen-"+name);
-  target.style.display="";target.classList.add("active");
+  const t=document.getElementById("screen-"+name);t.style.display="";t.classList.add("active");
   const nm={home:"nav-home",history:"nav-history",admin:"nav-admin",rating:"nav-rating"};
   if(nm[name])document.getElementById(nm[name])?.classList.add("active");
   if(name==="history")loadHistory();
@@ -507,66 +453,50 @@ function showScreen(name){
   if(name==="rating")loadRating();
 }
 
+// ── ПРЕДМЕТЫ ──────────────────────────────────────────────────────────────
 async function loadSubjects(){
   allSubjects=await api("GET","/subjects");
   const grid=document.getElementById("subjects-grid");grid.innerHTML="";
   allSubjects.forEach(s=>{
     const card=document.createElement("div");card.className="subject-card";
-    card.innerHTML=`<span class="emoji">${s.emoji}</span><div class="name">${s.title}</div>`;
+    card.innerHTML=`<span class="emoji">${s.emoji}</span><div class="name">${s.title}</div><div class="time">⏱ ${s.time_limit||60} мин</div>`;
     card.onclick=()=>startQuiz(s.id);grid.appendChild(card);
   });
-
   const u=currentUser;
   const hasAccess=u.subscription_active||(u.role==="teacher"||u.role==="admin");
-
-  // Триал баннер
-  const trialBanner=document.getElementById("trial-banner");
-  if(hasAccess&&u.is_trial&&u.days_left>0){
-    trialBanner.style.display="block";
-    document.getElementById("trial-days-left").textContent=u.days_left;
-  }else{trialBanner.style.display="none";}
-
-  // Paywall
+  const tb=document.getElementById("trial-banner");
+  if(hasAccess&&u.is_trial&&u.days_left>0){tb.style.display="block";document.getElementById("trial-days-left").textContent=u.days_left;}
+  else{tb.style.display="none";}
   document.getElementById("paywall-block").style.display=hasAccess?"none":"block";
   document.getElementById("subjects-block").style.display=hasAccess?"block":"none";
-
   if(!hasAccess){
-    if(u.is_trial){
-      // Триал истёк
-      document.getElementById("paywall-icon").textContent="⏰";
-      document.getElementById("paywall-title").textContent="Пробный период закончился";
-      document.getElementById("paywall-text").textContent="Твои 3 бесплатных дня истекли. Оформи подписку чтобы продолжить учиться.";
-    }else{
-      document.getElementById("paywall-icon").textContent="🔒";
-      document.getElementById("paywall-title").textContent="Нужна подписка";
-      document.getElementById("paywall-text").textContent="Для прохождения тестов оформи подписку на месяц.";
-    }
+    if(u.is_trial){document.getElementById("paywall-icon").textContent="⏰";document.getElementById("paywall-title").textContent="Пробный период закончился";document.getElementById("paywall-text").textContent="Твои 3 бесплатных дня истекли. Оформи подписку чтобы продолжить.";}
+    else{document.getElementById("paywall-icon").textContent="🔒";document.getElementById("paywall-title").textContent="Нужна подписка";document.getElementById("paywall-text").textContent="Для прохождения тестов оформи подписку на месяц.";}
   }
 }
 
-// ── ТАЙМЕР ────────────────────────────────────────────────────────────────
-function startTimer(){
-  clearInterval(timerInterval);timeLeft=30;updateTimer();
+// ── ТАЙМЕР НА ВЕСЬ ТЕСТ ──────────────────────────────────────────────────
+function startTestTimer(minutes){
+  clearInterval(timerInterval);
+  testTimeLeft=minutes*60;
+  updateTestTimer();
   timerInterval=setInterval(()=>{
-    timeLeft--;updateTimer();
-    if(timeLeft<=0){
-      clearInterval(timerInterval);
-      document.querySelectorAll(".option-btn").forEach(b=>b.disabled=true);
-      const q=quizState.questions[quizState.index];
-      quizState.reviewData.push({question:q,chosen:-1,correct:q.correct_option_id||0,isCorrect:false});
-      const nb=document.getElementById("next-btn");nb.style.display="block";
-      nb.textContent=quizState.index<quizState.questions.length-1?"⏰ Время вышло! →":"Завершить ✓";
-    }
+    testTimeLeft--;updateTestTimer();
+    if(testTimeLeft<=0){clearInterval(timerInterval);showToast("⏰ Время вышло!",true);finishQuiz();}
   },1000);
 }
-function updateTimer(){
+
+function updateTestTimer(){
   const el=document.getElementById("timer-badge");if(!el)return;
-  el.textContent=timeLeft+"с";
-  el.className="timer-badge"+(timeLeft<=10?" urgent":"");
+  const m=Math.floor(testTimeLeft/60),s=testTimeLeft%60;
+  el.textContent=`${m}:${s.toString().padStart(2,"0")}`;
+  el.className="timer-badge"+(testTimeLeft<=60?" urgent":"");
 }
 
 // ── ТЕСТ ─────────────────────────────────────────────────────────────────
 async function startQuiz(subjectId){
+  const subject=allSubjects.find(s=>s.id===subjectId);
+  const timeLimit=(subject&&subject.time_limit)?subject.time_limit:60;
   quizState={questions:[],index:0,answers:{},score:0,subjectId,reviewData:[]};
   showScreen("quiz");
   try{
@@ -575,6 +505,7 @@ async function startQuiz(subjectId){
     quizState.questions=q;
     if(!q.length){showToast("В этом предмете пока нет вопросов",true);showScreen("home");return;}
     renderQuestion();
+    startTestTimer(timeLimit);
   }catch(e){
     if(e.status===402){showScreen("home");showToast("Нужна подписка!",true);}
     else{showToast("Ошибка: "+e.detail,true);showScreen("home");}
@@ -603,11 +534,10 @@ function renderQuestion(){
     list.appendChild(btn);
   });
   document.getElementById("next-btn").style.display="none";
-  startTimer();
+  // НЕ запускаем отдельный таймер — таймер идёт на весь тест
 }
 
 function selectAnswer(origIndex,btn,question){
-  clearInterval(timerInterval);
   document.querySelectorAll(".option-btn").forEach(b=>b.disabled=true);
   quizState.answers[question.id]=origIndex;
   const correctIndex=question.correct_option_id;
@@ -626,11 +556,13 @@ function selectAnswer(origIndex,btn,question){
 async function nextQuestion(){
   quizState.index++;
   if(quizState.index<quizState.questions.length){renderQuestion();}
-  else{
-    clearInterval(timerInterval);
-    try{const r=await api("POST","/results",{subject_id:quizState.subjectId,answers:quizState.answers});showResult(r);}
-    catch(e){showToast("Ошибка: "+e.detail,true);}
-  }
+  else{await finishQuiz();}
+}
+
+async function finishQuiz(){
+  clearInterval(timerInterval);
+  try{const r=await api("POST","/results",{subject_id:quizState.subjectId,answers:quizState.answers});showResult(r);}
+  catch(e){showToast("Ошибка: "+e.detail,true);}
 }
 
 function showResult(r){
@@ -656,11 +588,12 @@ function showReview(){
       if(i===item.chosen&&i!==item.correct){cls="wrong";icon="✗";}
       return `<div class="review-opt ${cls}"><span>${icon}</span><span>${letters[i]}. ${opt.text}</span></div>`;
     }).join("");
-    const si=item.isCorrect?"✅":(item.chosen===-1?"⏰":"❌");
+    const si=item.isCorrect?"✅":"❌";
     return `<div class="review-item"><div class="review-q">${si} ${qi+1}. ${q.text}</div>${optsHtml}</div>`;
   }).join("");
 }
 
+// ── ИСТОРИЯ ───────────────────────────────────────────────────────────────
 async function loadHistory(){
   const list=document.getElementById("history-list");
   list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
@@ -675,6 +608,7 @@ async function loadHistory(){
   }catch(e){list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>';}
 }
 
+// ── РЕЙТИНГ ───────────────────────────────────────────────────────────────
 async function loadRating(){
   const list=document.getElementById("rating-list");
   list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
@@ -697,31 +631,19 @@ async function loadRating(){
 function renderRating(results){
   const list=document.getElementById("rating-list");
   const best={};
-  results.forEach(r=>{
-    const name=r.student||"—";
-    const pct=Math.round(r.score/r.total*100);
-    if(!best[name]||pct>best[name].pct)best[name]={name,score:r.score,total:r.total,pct};
-  });
+  results.forEach(r=>{const name=r.student||"—";const pct=Math.round(r.score/r.total*100);if(!best[name]||pct>best[name].pct)best[name]={name,score:r.score,total:r.total,pct};});
   const sorted=Object.values(best).sort((a,b)=>b.pct-a.pct);
   const medals=["🥇","🥈","🥉"];
-  list.innerHTML=sorted.map((s,i)=>`
-    <div class="rating-item">
-      <div class="rating-pos">${i<3?medals[i]:i+1}</div>
-      <div class="rating-info"><div class="rating-name">${s.name}</div><div class="rating-detail">${s.score} из ${s.total} вопросов</div></div>
-      <div class="rating-score">${s.pct}%</div>
-    </div>`).join("")||'<p style="color:var(--muted2);text-align:center;padding:20px">Нет данных</p>';
+  list.innerHTML=sorted.map((s,i)=>`<div class="rating-item"><div class="rating-pos">${i<3?medals[i]:i+1}</div><div class="rating-info"><div class="rating-name">${s.name}</div><div class="rating-detail">${s.score} из ${s.total} вопросов</div></div><div class="rating-score">${s.pct}%</div></div>`).join("")||'<p style="color:var(--muted2);text-align:center;padding:20px">Нет данных</p>';
 }
 
+// ── EXCEL ЭКСПОРТ ─────────────────────────────────────────────────────────
 async function exportExcel(){
   try{
     const results=await api("GET","/admin/results");
     if(!results.length){showToast("Нет данных",true);return;}
-    const data=[
-      ["Студент","Логин","Предмет","Правильных","Всего","Процент","Дата"],
-      ...results.map(r=>[r.student||"—",r.username||"—",r.subject,r.score,r.total,Math.round(r.score/r.total*100)+"%",r.date?new Date(r.date).toLocaleDateString("ru-RU"):"—"])
-    ];
-    const wb=XLSX.utils.book_new();
-    const ws=XLSX.utils.aoa_to_sheet(data);
+    const data=[["Студент","Логин","Предмет","Правильных","Всего","Процент","Дата"],...results.map(r=>[r.student||"—",r.username||"—",r.subject,r.score,r.total,Math.round(r.score/r.total*100)+"%",r.date?new Date(r.date).toLocaleDateString("ru-RU"):"—"])];
+    const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet(data);
     ws["!cols"]=[{wch:20},{wch:15},{wch:20},{wch:12},{wch:8},{wch:10},{wch:14}];
     XLSX.utils.book_append_sheet(wb,ws,"Результаты");
     XLSX.writeFile(wb,`UniQuiz_${new Date().toLocaleDateString("ru-RU").replace(/\./g,"-")}.xlsx`);
@@ -729,22 +651,73 @@ async function exportExcel(){
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
 
+// ── ИМПОРТ EXCEL ──────────────────────────────────────────────────────────
+function handleExcelSelect(){
+  const file=document.getElementById("excel-input").files[0];if(!file)return;
+  selectedExcelFile=file;
+  document.getElementById("import-filename").textContent="📄 "+file.name;
+}
+
+function downloadTemplate(){
+  const data=[
+    ["Вопрос *","Вариант A *","Вариант Б *","Вариант В","Вариант Г","Вариант Д","Правильный ответ * (A/Б/В/Г/Д)"],
+    ["⚠️ Обязательные поля отмечены *. Варианты В,Г,Д — необязательны. Правильный ответ: A, Б, В, Г или Д","","","","","",""],
+    ["Столица Узбекистана?","Ташкент","Самарканд","Бухара","Наманган","","A"],
+    ["Сколько будет 2+2?","3","4","5","6","","Б"],
+    ["","","","","","",""],
+    ["","","","","","",""],
+  ];
+  const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet(data);
+  ws["!cols"]=[{wch:60},{wch:25},{wch:25},{wch:25},{wch:25},{wch:25},{wch:30}];
+  XLSX.utils.book_append_sheet(wb,ws,"Вопросы");
+  XLSX.writeFile(wb,"UniQuiz_шаблон_вопросов.xlsx");
+  showToast("Шаблон скачан ✅");
+}
+
+async function importQuestions(){
+  const subjectId=document.getElementById("import-subject").value;
+  const resultDiv=document.getElementById("import-result");
+  if(!subjectId){showToast("Выбери предмет!",true);return;}
+  if(!selectedExcelFile){showToast("Выбери Excel файл!",true);return;}
+  resultDiv.style.display="block";resultDiv.style.background="var(--card2)";resultDiv.style.color="var(--muted2)";resultDiv.textContent="⏳ Загружаем вопросы...";
+  const fd=new FormData();fd.append("file",selectedExcelFile);
+  try{
+    const res=await fetch(`${API_BASE}/admin/import-questions?subject_id=${subjectId}`,{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
+    const data=await res.json();
+    if(!res.ok){resultDiv.style.background="rgba(248,113,113,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ "+data.detail;return;}
+    let msg=`✅ ${data.message}`;
+    if(data.errors&&data.errors.length){msg+="\n\nОшибки:\n"+data.errors.join("\n");resultDiv.style.background="rgba(251,146,60,.1)";resultDiv.style.color="var(--orange)";}
+    else{resultDiv.style.background="rgba(74,222,128,.1)";resultDiv.style.color="var(--green)";}
+    resultDiv.textContent=msg;
+    selectedExcelFile=null;document.getElementById("excel-input").value="";document.getElementById("import-filename").textContent="";
+    showToast(`Добавлено ${data.added} вопросов ✅`);
+  }catch(e){resultDiv.style.background="rgba(248,113,113,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ Ошибка загрузки";}
+}
+
+// ── АДМИН ─────────────────────────────────────────────────────────────────
 async function loadAdminSubjects(){
   try{
     const subjects=await api("GET","/subjects");allSubjects=subjects;
-    const sel=document.getElementById("q-subject");sel.innerHTML='<option value="">Выберите предмет...</option>';
-    subjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id)));
+    ["q-subject","import-subject"].forEach(id=>{
+      const sel=document.getElementById(id);if(!sel)return;
+      sel.innerHTML='<option value="">Выберите предмет...</option>';
+      subjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id)));
+    });
     const list=document.getElementById("subjects-admin-list");
-    list.innerHTML=subjects.length?subjects.map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px"><span style="font-size:22px">${s.emoji}</span><span style="font-weight:600;font-size:14px">${s.title}</span><span style="margin-left:auto;color:var(--muted);font-size:11px">ID ${s.id}</span></div>`).join(""):'<p style="color:var(--muted2);font-size:13px">Предметов пока нет</p>';
+    list.innerHTML=subjects.length?subjects.map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px"><span style="font-size:22px">${s.emoji}</span><div style="flex:1"><div style="font-weight:600;font-size:14px">${s.title}</div><div style="color:var(--muted);font-size:11px">⏱ ${s.time_limit||60} мин · ID ${s.id}</div></div></div>`).join(""):'<p style="color:var(--muted2);font-size:13px">Предметов пока нет</p>';
   }catch(e){}
 }
 
 async function createSubject(){
   const title=document.getElementById("subj-title").value.trim();
   const emoji=document.getElementById("subj-emoji").value.trim()||"📚";
+  const time_limit=parseInt(document.getElementById("subj-time").value)||60;
   if(!title){showToast("Введи название!",true);return;}
-  try{await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}`);showToast("Предмет добавлен ✅");document.getElementById("subj-title").value="";await loadAdminSubjects();}
-  catch(e){showToast("Ошибка: "+e.detail,true);}
+  try{
+    await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}`);
+    showToast("Предмет добавлен ✅");document.getElementById("subj-title").value="";document.getElementById("subj-time").value="60";
+    await loadAdminSubjects();
+  }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
 
 function addOpt(){
@@ -756,9 +729,7 @@ function addOpt(){
 
 async function handleImg(){
   const file=document.getElementById("img-input").files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{const p=document.getElementById("img-preview");p.src=e.target.result;p.style.display="block";};
-  reader.readAsDataURL(file);
+  const reader=new FileReader();reader.onload=e=>{const p=document.getElementById("img-preview");p.src=e.target.result;p.style.display="block";};reader.readAsDataURL(file);
   const fd=new FormData();fd.append("file",file);
   try{const res=await fetch(API_BASE+"/admin/upload-image",{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});const data=await res.json();uploadedImg=data.image_url;showToast("Картинка загружена 📸");}
   catch(e){showToast("Ошибка загрузки фото",true);}
@@ -775,8 +746,7 @@ async function saveQuestion(){
   try{
     await api("POST","/admin/questions",{subject_id:parseInt(subjectId),text,options:opts,correct_index:correct?parseInt(correct.value):0,image_url:uploadedImg});
     showToast("Вопрос сохранён ✅");document.getElementById("q-text-admin").value="";document.getElementById("img-preview").style.display="none";
-    uploadedImg=null;optCount=0;document.getElementById("opts-container").innerHTML="";
-    addOpt();addOpt();addOpt();addOpt();
+    uploadedImg=null;optCount=0;document.getElementById("opts-container").innerHTML="";addOpt();addOpt();addOpt();addOpt();
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
 
@@ -786,8 +756,7 @@ async function loadAdminResults(){
     const tbody=document.getElementById("results-table");
     tbody.innerHTML=results.length?results.map(r=>{
       const date=r.date?new Date(r.date).toLocaleDateString("ru-RU"):"—";
-      const pct=Math.round(r.score/r.total*100);
-      const cls=pct>=70?"badge-green":pct>=50?"badge-accent":"badge-red";
+      const pct=Math.round(r.score/r.total*100);const cls=pct>=70?"badge-green":pct>=50?"badge-accent":"badge-red";
       return `<tr><td><b>${r.student||"—"}</b><br><span style="color:var(--muted);font-size:11px">${r.username}</span></td><td>${r.subject}</td><td><span class="badge ${cls}">${r.score}/${r.total}</span></td><td style="color:var(--muted2);font-size:11px">${date}</td></tr>`;
     }).join(""):'<tr><td colspan="4" style="color:var(--muted2);text-align:center;padding:20px">Нет данных</td></tr>';
   }catch(e){showToast("Ошибка: "+e.detail,true);}
@@ -799,29 +768,12 @@ async function loadUsers(){
     const tbody=document.getElementById("users-table");
     tbody.innerHTML=users.map(u=>{
       const rb=u.role==="admin"?"badge-red":u.role==="teacher"?"badge-green":"badge-accent";
-      let accessBadge,accessInfo="";
-      if(u.role!=="student"){
-        accessBadge='<span class="badge badge-green">безлимит</span>';
-      }else if(u.subscription_active&&u.is_trial){
-        const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";
-        accessBadge='<span class="badge badge-orange">пробный</span>';
-        accessInfo=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";
-      }else if(u.subscription_active){
-        const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";
-        accessBadge='<span class="badge badge-green">активна</span>';
-        accessInfo=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";
-      }else{
-        accessBadge='<span class="badge badge-red">нет доступа</span>';
-      }
-      return `<tr>
-        <td><b>${u.full_name||u.username}</b><br><span style="color:var(--muted);font-size:11px">${u.username}</span></td>
-        <td><span class="badge ${rb}">${u.role}</span></td>
-        <td>${accessBadge}${accessInfo}</td>
-        <td style="white-space:nowrap">
-          ${(!u.subscription_active||u.is_trial)?`<button onclick="activateSub(${u.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-right:4px">+30д</button>`:""}
-          <button onclick="deleteUser(${u.id},'${u.username}')" style="background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer">🗑</button>
-        </td>
-      </tr>`;
+      let accessBadge="",accessInfo="";
+      if(u.role!=="student"){accessBadge='<span class="badge badge-green">безлимит</span>';}
+      else if(u.subscription_active&&u.is_trial){const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";accessBadge='<span class="badge badge-orange">пробный</span>';accessInfo=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";}
+      else if(u.subscription_active){const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";accessBadge='<span class="badge badge-green">активна</span>';accessInfo=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";}
+      else{accessBadge='<span class="badge badge-red">нет доступа</span>';}
+      return `<tr><td><b>${u.full_name||u.username}</b><br><span style="color:var(--muted);font-size:11px">${u.username}</span></td><td><span class="badge ${rb}">${u.role}</span></td><td>${accessBadge}${accessInfo}</td><td style="white-space:nowrap">${(!u.subscription_active||u.is_trial)?`<button onclick="activateSub(${u.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-right:4px">+30д</button>`:""}<button onclick="deleteUser(${u.id},'${u.username}')" style="background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer">🗑</button></td></tr>`;
     }).join("");
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
@@ -854,15 +806,11 @@ function switchAdminTab(id,el){
   document.querySelectorAll(".admin-tab").forEach(t=>t.classList.remove("active"));
   document.querySelectorAll(".admin-content").forEach(t=>t.classList.remove("active"));
   document.getElementById(id).classList.add("active");el.classList.add("active");
-  if(id==="at-results")loadAdminResults();
-  if(id==="at-users")loadUsers();
-  if(id==="at-subjects")loadAdminSubjects();
+  if(id==="at-results")loadAdminResults();if(id==="at-users")loadUsers();if(id==="at-subjects")loadAdminSubjects();
 }
 
 function showToast(msg,isError=false){
-  const t=document.getElementById("toast");t.textContent=msg;
-  t.className="toast"+(isError?" error":"");t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),3000);
+  const t=document.getElementById("toast");t.textContent=msg;t.className="toast"+(isError?" error":"");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);
 }
 
 addOpt();addOpt();addOpt();addOpt();
