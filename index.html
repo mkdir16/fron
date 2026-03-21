@@ -166,17 +166,48 @@
   <div class="login-logo">UNI<span>QUIZ</span></div>
   <div class="login-sub">Платформа для университетских тестов</div>
   <div class="login-box">
+
+    <!-- Вкладки -->
+    <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;gap:4px">
+      <button id="tab-login-btn" onclick="switchAuthTab('login')" style="flex:1;padding:10px;border:none;border-radius:8px;background:var(--accent);color:#000;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s">Войти</button>
+      <button id="tab-reg-btn" onclick="switchAuthTab('register')" style="flex:1;padding:10px;border:none;border-radius:8px;background:transparent;color:var(--muted2);font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s">Регистрация</button>
+    </div>
+
     <div class="error-box" id="login-error"></div>
-    <div class="form-group">
-      <label class="form-label">Логин</label>
-      <input type="text" class="form-input" id="login-username" placeholder="Введи логин" autocomplete="username"/>
+
+    <!-- Форма входа -->
+    <div id="form-login">
+      <div class="form-group">
+        <label class="form-label">Логин</label>
+        <input type="text" class="form-input" id="login-username" placeholder="Введи логин" autocomplete="username"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input type="password" class="form-input" id="login-password" placeholder="Введи пароль" autocomplete="current-password"/>
+      </div>
+      <button class="btn btn-accent" id="login-btn" onclick="doLogin()">Войти</button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Пароль</label>
-      <input type="password" class="form-input" id="login-password" placeholder="Введи пароль" autocomplete="current-password"/>
+
+    <!-- Форма регистрации -->
+    <div id="form-register" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Твоё имя</label>
+        <input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Придумай логин</label>
+        <input type="text" class="form-input" id="reg-username" placeholder="aziz2005"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Придумай пароль</label>
+        <input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/>
+      </div>
+      <button class="btn btn-accent" id="reg-btn" onclick="doRegister()">Зарегистрироваться</button>
+      <div style="text-align:center;margin-top:14px;color:var(--muted);font-size:12px">
+        После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉
+      </div>
     </div>
-    <button class="btn btn-accent" id="login-btn" onclick="doLogin()">Войти</button>
-    <div style="text-align:center;margin-top:20px;color:var(--muted);font-size:12px">Нет доступа? <a href="https://t.me/mkdir16" style="color:var(--accent)">@mkdir16</a></div>
+
   </div>
 </div>
 
@@ -398,6 +429,49 @@ async function doLogin(){
 }
 
 document.getElementById("login-password").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+document.getElementById("reg-password")?.addEventListener("keydown",e=>{if(e.key==="Enter")doRegister();});
+
+function switchAuthTab(tab){
+  const isLogin=tab==="login";
+  document.getElementById("form-login").style.display=isLogin?"block":"none";
+  document.getElementById("form-register").style.display=isLogin?"none":"block";
+  document.getElementById("login-error").style.display="none";
+  const loginBtn=document.getElementById("tab-login-btn");
+  const regBtn=document.getElementById("tab-reg-btn");
+  loginBtn.style.background=isLogin?"var(--accent)":"transparent";
+  loginBtn.style.color=isLogin?"#000":"var(--muted2)";
+  regBtn.style.background=isLogin?"transparent":"var(--accent)";
+  regBtn.style.color=isLogin?"var(--muted2)":"#000";
+}
+
+async function doRegister(){
+  const full_name=document.getElementById("reg-fullname").value.trim();
+  const username=document.getElementById("reg-username").value.trim();
+  const password=document.getElementById("reg-password").value;
+  const errBox=document.getElementById("login-error");
+  const btn=document.getElementById("reg-btn");
+
+  errBox.style.display="none";
+  if(!full_name||!username||!password){errBox.textContent="Заполни все поля";errBox.style.display="block";return;}
+  if(username.length<3){errBox.textContent="Логин минимум 3 символа";errBox.style.display="block";return;}
+  if(password.length<4){errBox.textContent="Пароль минимум 4 символа";errBox.style.display="block";return;}
+
+  btn.disabled=true;btn.textContent="Регистрируемся...";
+
+  try{
+    const res=await fetch(API_BASE+"/register",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({full_name,username,password})
+    });
+    const result=await res.json();
+    if(!res.ok){errBox.textContent=result.detail||"Ошибка регистрации";errBox.style.display="block";btn.disabled=false;btn.textContent="Зарегистрироваться";return;}
+    token=result.token;currentUser=result.user;
+    localStorage.setItem("token",token);
+    setupUI();await loadSubjects();showScreen("home");
+    showToast("Добро пожаловать! 3 дня бесплатно 🎉");
+  }catch(e){errBox.textContent="Сервер недоступен, попробуй позже";errBox.style.display="block";btn.disabled=false;btn.textContent="Зарегистрироваться";}
+}
 function logout(){token=null;currentUser=null;localStorage.removeItem("token");showLoginScreen();}
 
 function setupUI(){
