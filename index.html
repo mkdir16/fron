@@ -1153,7 +1153,7 @@ async function loadKnowledgeSubject(){
   }
   content.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка вопросов...</span></div>';
   try{
-    const questions=await api("GET",`/admin/questions/${subjectId}`);
+    const questions=await api("GET",`/questions-all/${subjectId}`);
     const letters=["A","Б","В","Г","Д"];
     if(!questions.length){content.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">В этом предмете пока нет вопросов</p>';return;}
     content.innerHTML=`
