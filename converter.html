@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UniQuiz — Конвертер вопросов</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@400;500;600&display=swap');
+    :root{--bg:#0d0d0d;--card:#161616;--card2:#1e1e1e;--border:#272727;--accent:#c8ff00;--accent-dim:rgba(200,255,0,0.12);--text:#f0f0f0;--muted:#5a5a5a;--muted2:#888;--red:#f87171;--green:#4ade80;--orange:#fb923c;--radius:16px;--radius-sm:10px}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+    .header{text-align:center;padding:40px 20px 32px}
+    .logo{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;margin-bottom:8px}
+    .logo span{color:var(--accent)}
+    .subtitle{color:var(--muted2);font-size:14px}
+    .container{max-width:700px;margin:0 auto}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+    .card-title{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+    .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+    .upload-zone:hover{border-color:var(--accent);background:var(--accent-dim)}
+    .upload-zone.dragover{border-color:var(--accent);background:var(--accent-dim)}
+    .upload-icon{font-size:48px;margin-bottom:12px}
+    .upload-text{font-size:15px;font-weight:500;margin-bottom:6px}
+    .upload-hint{font-size:12px;color:var(--muted2)}
+    .upload-file{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .btn{width:100%;border:none;border-radius:var(--radius);padding:16px;font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+    .btn-accent{background:var(--accent);color:#000}.btn-accent:hover{opacity:.85}.btn-accent:disabled{opacity:.4;cursor:not-allowed}
+    .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--accent)}
+    .btn-green{background:rgba(74,222,128,.15);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+    .btn+.btn{margin-top:10px}
+    .format-info{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px}
+    .format-title{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:10px}
+    .format-example{font-family:monospace;font-size:13px;line-height:1.8;color:var(--muted2);white-space:pre}
+    .format-example b{color:var(--accent)}
+    .status{display:none;padding:14px 16px;border-radius:var(--radius-sm);font-size:14px;margin-bottom:16px}
+    .status.loading{background:var(--card2);color:var(--muted2);display:flex;align-items:center;gap:10px}
+    .status.success{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--green);display:block}
+    .status.error{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--red);display:block}
+    .status.warning{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);color:var(--orange);display:block}
+    .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .preview-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px}
+    .preview-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);font-family:'Unbounded',sans-serif;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+    .preview-table td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top}
+    .preview-table td:first-child{font-weight:500;max-width:200px}
+    .badge{display:inline-block;background:var(--accent-dim);color:var(--accent);border-radius:100px;padding:2px 8px;font-size:11px;font-weight:600}
+    .badge-green{background:rgba(74,222,128,.15);color:var(--green)}
+    .badge-red{background:rgba(248,113,113,.15);color:var(--red)}
+    .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+    .stat{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;text-align:center}
+    .stat-num{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:900;color:var(--accent)}
+    .stat-label{font-size:11px;color:var(--muted2);margin-top:4px}
+    .file-info{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:16px}
+    .file-icon{font-size:28px;flex-shrink:0}
+    .file-name{font-weight:600;font-size:14px}
+    .file-size{font-size:11px;color:var(--muted2)}
+    .tabs{display:flex;gap:8px;margin-bottom:16px}
+    .tab{flex:1;padding:10px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;text-align:center;transition:all .2s}
+    .tab.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+    .tab-content{display:none}.tab-content.active{display:block}
+    .format-option{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;cursor:pointer;transition:border-color .2s}
+    .format-option:hover{border-color:var(--accent)}
+    .format-option.selected{border-color:var(--accent);background:var(--accent-dim)}
+    .format-option input{margin-top:2px;accent-color:var(--accent)}
+    .format-option-title{font-weight:600;font-size:14px;margin-bottom:4px}
+    .format-option-desc{font-size:12px;color:var(--muted2);line-height:1.5}
+    code{background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:12px;color:var(--accent)}
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">UNI<span>QUIZ</span></div>
+    <div class="subtitle">Конвертер вопросов из Word → Excel</div>
+  </div>
+
+  <!-- Шаг 1: Выбор формата -->
+  <div class="card" id="step1">
+    <div class="card-title">Шаг 1 — Выбери формат твоего Word файла</div>
+
+    <div class="format-option selected" onclick="selectFormat('numbered')">
+      <input type="radio" name="format" value="numbered" checked/>
+      <div>
+        <div class="format-option-title">📝 Нумерованный список (самый популярный)</div>
+        <div class="format-option-desc">
+          Вопросы пронумерованы, варианты с буквами A, B, C или А, Б, В<br>
+          <code>1. Вопрос?</code> <code>A) Вариант</code> <code>Ответ: A</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="format-option" onclick="selectFormat('lines')">
+      <input type="radio" name="format" value="lines"/>
+      <div>
+        <div class="format-option-title">📄 Построчный формат</div>
+        <div class="format-option-desc">
+          Каждый вопрос и вариант на отдельной строке, правильный отмечен *<br>
+          <code>Вопрос?</code> <code>Вариант A</code> <code>*Правильный вариант</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="format-option" onclick="selectFormat('any')">
+      <input type="radio" name="format" value="any"/>
+      <div>
+        <div class="format-option-title">🤖 Любой формат (умный парсер)</div>
+        <div class="format-option-desc">
+          Попробует распознать формат автоматически. Работает с большинством файлов из интернета и учебников.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Шаг 2: Примеры форматов -->
+  <div class="card">
+    <div class="card-title">Примеры поддерживаемых форматов</div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('t1',this)">Формат 1</div>
+      <div class="tab" onclick="switchTab('t2',this)">Формат 2</div>
+      <div class="tab" onclick="switchTab('t3',this)">Формат 3</div>
+    </div>
+    <div id="t1" class="tab-content active">
+      <div class="format-info">
+        <div class="format-title">Нумерованный с буквами</div>
+        <div class="format-example"><b>1.</b> Столица Узбекистана?
+<b>A)</b> Самарканд
+<b>B)</b> Ташкент
+<b>C)</b> Бухара
+<b>D)</b> Наманган
+<b>Ответ:</b> B
+
+<b>2.</b> Сколько будет 2+2?
+<b>А)</b> 3    <b>Б)</b> 4    <b>В)</b> 5    <b>Г)</b> 6
+<b>Правильный ответ:</b> Б</div>
+      </div>
+    </div>
+    <div id="t2" class="tab-content">
+      <div class="format-info">
+        <div class="format-title">Со звёздочкой на правильном</div>
+        <div class="format-example">Столица Узбекистана?
+Самарканд
+<b>*Ташкент</b>
+Бухара
+Наманган
+
+Сколько будет 2+2?
+3
+<b>*4</b>
+5
+6</div>
+      </div>
+    </div>
+    <div id="t3" class="tab-content">
+      <div class="format-info">
+        <div class="format-title">Таблица в Word</div>
+        <div class="format-example">| Вопрос              | A        | B       | C      | D        | Ответ |
+| Столица Узбекистана?| Самарканд| Ташкент | Бухара | Наманган | B     |
+| Сколько 2+2?        | 3        | 4       | 5      | 6        | B     |</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Шаг 3: Загрузка файла -->
+  <div class="card">
+    <div class="card-title">Шаг 2 — Загрузи Word файл</div>
+    <div class="upload-zone" id="dropzone">
+      <input type="file" class="upload-file" id="file-input" accept=".docx,.doc,.txt" onchange="handleFile(this.files[0])"/>
+      <div class="upload-icon">📄</div>
+      <div class="upload-text">Перетащи файл сюда или нажми</div>
+      <div class="upload-hint">Поддерживается: .docx, .doc, .txt (до 10 МБ)</div>
+    </div>
+  </div>
+
+  <!-- Статус -->
+  <div class="status loading" id="status-loading">
+    <div class="spinner"></div>
+    <span id="loading-text">Читаем файл...</span>
+  </div>
+  <div class="status success" id="status-success"></div>
+  <div class="status error" id="status-error"></div>
+  <div class="status warning" id="status-warning"></div>
+
+  <!-- Результат -->
+  <div class="card" id="result-card" style="display:none">
+    <div class="card-title">Результат парсинга</div>
+
+    <div class="stats" id="stats-block">
+      <div class="stat"><div class="stat-num" id="stat-found">0</div><div class="stat-label">Найдено вопросов</div></div>
+      <div class="stat"><div class="stat-num" id="stat-ok" style="color:var(--green)">0</div><div class="stat-label">Готовы к экспорту</div></div>
+      <div class="stat"><div class="stat-num" id="stat-err" style="color:var(--red)">0</div><div class="stat-label">С ошибками</div></div>
+    </div>
+
+    <div style="overflow-x:auto;margin-bottom:16px">
+      <table class="preview-table" id="preview-table">
+        <thead><tr><th>#</th><th>Вопрос</th><th>Варианты</th><th>Правильный</th><th>Статус</th></tr></thead>
+        <tbody id="preview-body"></tbody>
+      </table>
+    </div>
+
+    <button class="btn btn-accent" onclick="downloadExcel()" id="download-btn">📥 Скачать Excel для UniQuiz</button>
+    <button class="btn btn-outline" onclick="resetAll()" style="margin-top:10px">🔄 Загрузить другой файл</button>
+  </div>
+
+  <!-- Инструкция -->
+  <div class="card">
+    <div class="card-title">Как использовать</div>
+    <div style="font-size:14px;line-height:2;color:var(--muted2)">
+      <b style="color:var(--text)">1.</b> Выбери формат твоего файла<br>
+      <b style="color:var(--text)">2.</b> Загрузи Word (.docx) или текстовый (.txt) файл с вопросами<br>
+      <b style="color:var(--text)">3.</b> Конвертер распознает вопросы и варианты ответов<br>
+      <b style="color:var(--text)">4.</b> Скачай готовый Excel файл<br>
+      <b style="color:var(--text)">5.</b> Загрузи Excel в UniQuiz через Панель → Вопросы → Импорт из Excel
+    </div>
+  </div>
+</div>
+
+<script>
+let parsedQuestions = [];
+let selectedFormat = 'numbered';
+
+// ── ФОРМАТ ────────────────────────────────────────────────────────────────
+function selectFormat(f) {
+  selectedFormat = f;
+  document.querySelectorAll('.format-option').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('input[name="format"]').forEach(r => { if(r.value === f) { r.checked = true; r.closest('.format-option').classList.add('selected'); } });
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── DRAG & DROP ───────────────────────────────────────────────────────────
+const dropzone = document.getElementById('dropzone');
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); const f = e.dataTransfer.files[0]; if(f) handleFile(f); });
+
+// ── ОБРАБОТКА ФАЙЛА ───────────────────────────────────────────────────────
+async function handleFile(file) {
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showError('Файл слишком большой. Максимум 10 МБ'); return; }
+
+  hideAll();
+  showLoading('Читаем файл...');
+
+  try {
+    let text = '';
+
+    if (file.name.endsWith('.docx')) {
+      showLoading('Извлекаем текст из Word...');
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      text = result.value;
+    } else if (file.name.endsWith('.txt')) {
+      text = await file.text();
+    } else {
+      // Пробуем как txt
+      text = await file.text();
+    }
+
+    if (!text.trim()) { showError('Файл пустой или не удалось прочитать'); return; }
+
+    showLoading('Распознаём вопросы...');
+    await new Promise(r => setTimeout(r, 100)); // дать браузеру обновить UI
+
+    parsedQuestions = parseQuestions(text, selectedFormat);
+
+    if (parsedQuestions.length === 0) {
+      showWarning('Вопросы не найдены. Попробуй другой формат или проверь структуру файла.');
+      return;
+    }
+
+    hideAll();
+    showResult();
+  } catch(e) {
+    showError('Ошибка чтения файла: ' + e.message);
+  }
+}
+
+// ── ПАРСЕР ВОПРОСОВ ───────────────────────────────────────────────────────
+function parseQuestions(text, format) {
+  // Нормализуем текст
+  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  if (format === 'numbered') return parseNumbered(text);
+  if (format === 'lines') return parseLines(text);
+  if (format === 'any') return parseAny(text);
+  return parseAny(text);
+}
+
+function parseNumbered(text) {
+  const questions = [];
+  // Разбиваем по нумерации: 1. 2. 3. или 1) 2) 3)
+  const blocks = text.split(/\n(?=\d+[\.\)]\s)/);
+
+  for (const block of blocks) {
+    if (!block.trim()) continue;
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    if (!lines.length) continue;
+
+    // Первая строка — вопрос
+    const qLine = lines[0].replace(/^\d+[\.\)]\s*/, '').trim();
+    if (!qLine) continue;
+
+    const options = [];
+    let correctIndex = -1;
+    let correctLetter = '';
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Ищем ответ
+      const answerMatch = line.match(/^(ответ|правильный\s*ответ|answer|ans)[\s:\.\)]+([A-DА-ГABCDabcdабвгАБВГ])/i);
+      if (answerMatch) { correctLetter = answerMatch[2].toUpperCase(); continue; }
+
+      // Ищем варианты: A) B) C) или А) Б) В) или A. B. C.
+      const optMatch = line.match(/^([A-DА-ДABCDEabcdeабвгдАБВГД])[\.\)\s]\s*(.+)/);
+      if (optMatch) {
+        options.push(optMatch[2].trim());
+        continue;
+      }
+
+      // Варианты в одну строку: A) вар1  B) вар2
+      const inlineOpts = line.match(/([A-DА-ДABCDabcdАБВГД])[\)\.\s]+([^A-DА-ДABCDabcdАБВГД\n]{2,20})/g);
+      if (inlineOpts && inlineOpts.length > 1) {
+        for (const opt of inlineOpts) {
+          const m = opt.match(/^([A-DА-ДABCDabcdАБВГД])[\)\.\s]+(.+)/);
+          if (m) options.push(m[2].trim());
+        }
+      }
+    }
+
+    // Определяем индекс правильного ответа
+    if (correctLetter) {
+      const letterMap = {'A':0,'B':1,'C':2,'D':3,'E':4,'А':0,'Б':1,'В':2,'Г':3,'Д':4};
+      correctIndex = letterMap[correctLetter.toUpperCase()] ?? -1;
+    }
+
+    if (options.length >= 2) {
+      questions.push({ question: qLine, options, correctIndex, valid: correctIndex >= 0 && correctIndex < options.length });
+    }
+  }
+
+  return questions;
+}
+
+function parseLines(text) {
+  const questions = [];
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+  let i = 0;
+  while (i < lines.length) {
+    // Ищем строку которая не похожа на вариант
+    const qLine = lines[i];
+    if (!qLine || qLine.match(/^[*\-\d]/)) { i++; continue; }
+
+    const options = [];
+    let correctIndex = -1;
+    i++;
+
+    // Следующие строки до пустой — варианты
+    while (i < lines.length && lines[i]) {
+      const line = lines[i];
+      const isCorrect = line.startsWith('*');
+      const optText = line.replace(/^\*/, '').replace(/^[A-DА-ДABCDabcdАБВГД][\.\)\s]+/, '').trim();
+      if (isCorrect) correctIndex = options.length;
+      if (optText) options.push(optText);
+      i++;
+    }
+    i++; // пропускаем пустую строку
+
+    if (options.length >= 2) {
+      questions.push({ question: qLine, options, correctIndex, valid: correctIndex >= 0 });
+    }
+  }
+
+  return questions;
+}
+
+function parseAny(text) {
+  // Попробуем все форматы и выберем лучший
+  const r1 = parseNumbered(text);
+  const r2 = parseLines(text);
+  const r3 = parseTable(text);
+
+  // Выбираем результат с наибольшим количеством валидных вопросов
+  const results = [r1, r2, r3].sort((a, b) => {
+    const scoreA = a.filter(q => q.valid).length;
+    const scoreB = b.filter(q => q.valid).length;
+    return scoreB - scoreA;
+  });
+
+  return results[0].length > 0 ? results[0] : (results[1].length > 0 ? results[1] : results[2]);
+}
+
+function parseTable(text) {
+  const questions = [];
+  const lines = text.split('\n').filter(l => l.includes('|'));
+
+  for (const line of lines) {
+    const cells = line.split('|').map(c => c.trim()).filter(Boolean);
+    if (cells.length < 3) continue;
+
+    // Пропускаем заголовок
+    if (cells[0].toLowerCase().includes('вопрос') || cells[0].toLowerCase().includes('question')) continue;
+    if (cells[0].match(/^[-\s]+$/)) continue;
+
+    const question = cells[0];
+    const options = cells.slice(1, -1).filter(Boolean);
+    const answerCell = cells[cells.length - 1];
+    const letterMap = {'A':0,'B':1,'C':2,'D':3,'А':0,'Б':1,'В':2,'Г':3};
+    const correctIndex = letterMap[answerCell.toUpperCase()] ?? -1;
+
+    if (question && options.length >= 2) {
+      questions.push({ question, options, correctIndex, valid: correctIndex >= 0 && correctIndex < options.length });
+    }
+  }
+
+  return questions;
+}
+
+// ── ПОКАЗ РЕЗУЛЬТАТА ──────────────────────────────────────────────────────
+function showResult() {
+  const valid = parsedQuestions.filter(q => q.valid);
+  const invalid = parsedQuestions.filter(q => !q.valid);
+
+  document.getElementById('stat-found').textContent = parsedQuestions.length;
+  document.getElementById('stat-ok').textContent = valid.length;
+  document.getElementById('stat-err').textContent = invalid.length;
+
+  const tbody = document.getElementById('preview-body');
+  tbody.innerHTML = parsedQuestions.slice(0, 20).map((q, i) => `
+    <tr>
+      <td style="color:var(--muted);font-size:12px">${i+1}</td>
+      <td style="font-size:13px;max-width:200px">${q.question.substring(0,80)}${q.question.length>80?'...':''}</td>
+      <td style="font-size:12px;color:var(--muted2)">${q.options.slice(0,3).join(' / ')}${q.options.length>3?'...':''}</td>
+      <td>${q.valid ? `<span class="badge badge-green">${['A','Б','В','Г','Д'][q.correctIndex]||'?'}</span>` : '<span style="color:var(--muted2);font-size:11px">не найден</span>'}</td>
+      <td>${q.valid ? '<span class="badge">✓ ОК</span>' : '<span class="badge badge-red">⚠ Нет ответа</span>'}</td>
+    </tr>
+  `).join('');
+
+  if (parsedQuestions.length > 20) {
+    tbody.innerHTML += `<tr><td colspan="5" style="text-align:center;color:var(--muted2);padding:12px;font-size:13px">... и ещё ${parsedQuestions.length - 20} вопросов</td></tr>`;
+  }
+
+  document.getElementById('result-card').style.display = 'block';
+
+  if (invalid.length > 0 && valid.length > 0) {
+    showWarning(`${invalid.length} вопросов не имеют правильного ответа — они будут добавлены с ответом "A" по умолчанию. Проверь их после импорта.`);
+  } else if (valid.length === parsedQuestions.length) {
+    showSuccess(`✅ Отлично! Все ${valid.length} вопросов распознаны правильно. Скачай Excel и загрузи в UniQuiz.`);
+  }
+}
+
+// ── СКАЧАТЬ EXCEL ─────────────────────────────────────────────────────────
+function downloadExcel() {
+  const letterMap = ['A','Б','В','Г','Д'];
+
+  const data = [
+    ['Вопрос *', 'Вариант A *', 'Вариант Б *', 'Вариант В', 'Вариант Г', 'Вариант Д', 'Правильный ответ * (A/Б/В/Г/Д)'],
+  ];
+
+  for (const q of parsedQuestions) {
+    const correctLetter = q.correctIndex >= 0 ? letterMap[q.correctIndex] : 'A';
+    const row = [
+      q.question,
+      q.options[0] || '',
+      q.options[1] || '',
+      q.options[2] || '',
+      q.options[3] || '',
+      q.options[4] || '',
+      correctLetter
+    ];
+    data.push(row);
+  }
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{wch:60},{wch:25},{wch:25},{wch:25},{wch:25},{wch:25},{wch:30}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Вопросы');
+
+  const date = new Date().toLocaleDateString('ru-RU').replace(/\./g, '-');
+  XLSX.writeFile(wb, `UniQuiz_вопросы_${date}.xlsx`);
+}
+
+// ── ХЕЛПЕРЫ ───────────────────────────────────────────────────────────────
+function hideAll() {
+  ['status-loading','status-success','status-error','status-warning'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById('result-card').style.display = 'none';
+}
+
+function showLoading(text) {
+  document.getElementById('loading-text').textContent = text;
+  document.getElementById('status-loading').style.display = 'flex';
+}
+
+function showSuccess(msg) {
+  const el = document.getElementById('status-success');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('status-loading').style.display = 'none';
+}
+
+function showError(msg) {
+  const el = document.getElementById('status-error');
+  el.textContent = '❌ ' + msg; el.style.display = 'block';
+  document.getElementById('status-loading').style.display = 'none';
+}
+
+function showWarning(msg) {
+  const el = document.getElementById('status-warning');
+  el.textContent = '⚠️ ' + msg; el.style.display = 'block';
+  document.getElementById('status-loading').style.display = 'none';
+}
+
+function resetAll() {
+  hideAll();
+  parsedQuestions = [];
+  document.getElementById('file-input').value = '';
+}
+</script>
+</body>
+</html>
