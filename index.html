@@ -6,189 +6,271 @@
   <title>UniQuiz</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@400;500;600&display=swap');
-    :root{--bg:#0d0d0d;--card:#161616;--card2:#1e1e1e;--border:#272727;--accent:#c8ff00;--accent-dim:rgba(200,255,0,0.12);--text:#f0f0f0;--muted:#5a5a5a;--muted2:#888;--red:#f87171;--green:#4ade80;--orange:#fb923c;--radius:16px;--radius-sm:12px}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    :root{
+      --bg:#13141a;--card:#1c1d26;--card2:#22232f;--border:#2a2b38;
+      --accent:#7fff00;--accent2:#5ecc00;--accent-dim:rgba(127,255,0,0.12);
+      --text:#ffffff;--muted:#6b7280;--muted2:#9ca3af;
+      --red:#ef4444;--green:#22c55e;--orange:#f97316;--blue:#3b82f6;
+      --radius:14px;--radius-sm:10px;--radius-xs:8px;
+    }
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html{font-size:16px}
-    body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:90px;overflow-x:hidden;-webkit-text-size-adjust:100%}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-    /* ШАПКА */
-    .header{padding:20px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-    .logo{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900}.logo span{color:var(--accent)}
-    .user-badge{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:8px 12px;font-size:13px;color:var(--muted2);cursor:pointer;max-width:180px;overflow:hidden;min-height:40px}
-    .user-badge span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .role-pill{font-size:9px;font-family:'Unbounded',sans-serif;font-weight:700;letter-spacing:.5px;border-radius:100px;padding:3px 8px;flex-shrink:0}
-    .role-student{background:var(--accent-dim);color:var(--accent)}.role-teacher{background:rgba(74,222,128,.15);color:var(--green)}.role-admin{background:rgba(248,113,113,.15);color:var(--red)}
-    .trial-badge{background:rgba(251,146,60,.15);color:var(--orange);font-size:9px;font-family:'Unbounded',sans-serif;font-weight:700;border-radius:100px;padding:3px 8px;flex-shrink:0}
+    /* ── HEADER ── */
+    .header{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;background:var(--bg);z-index:100}
+    .logo{font-size:18px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
+    .logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+    .logo span{color:var(--accent)}
+    .user-badge{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border-radius:100px;background:var(--card2);border:1px solid var(--border);transition:border-color .2s}
+    .user-badge:active{border-color:var(--accent)}
+    .user-name{font-size:13px;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .role-pill{font-size:9px;font-weight:700;border-radius:100px;padding:2px 7px;letter-spacing:.3px}
+    .role-student{background:var(--accent-dim);color:var(--accent)}
+    .role-teacher{background:rgba(34,197,94,.15);color:var(--green)}
+    .role-admin{background:rgba(239,68,68,.15);color:var(--red)}
+    .trial-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0}
 
-    /* НИЖНЯЯ НАВИГАЦИЯ */
-    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-    .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 0 14px;cursor:pointer;color:var(--muted);font-size:9px;font-family:'Unbounded',sans-serif;font-weight:700;letter-spacing:.3px;gap:5px;transition:color .2s;min-height:60px}
-    .nav-item .icon{font-size:22px}.nav-item.active{color:var(--accent)}
+    /* ── NAV ── */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
+    .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 12px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:700;gap:4px;transition:color .15s;letter-spacing:.5px}
+    .nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .nav-item.active{color:var(--accent)}
+    body{padding-bottom:70px}
 
-    /* ЭКРАНЫ */
-    .screen{display:none;padding:16px;animation:fadeUp .2s ease}.screen.active{display:block}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    /* ── SCREENS ── */
+    .screen{display:none;animation:fadeIn .2s ease}
+    .screen.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .page{padding:16px}
 
-    /* ЛОГИН */
+    /* ── LOGIN ── */
     #screen-login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px}
     #screen-login.active{display:flex}
-    .login-logo{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:900;margin-bottom:8px}.login-logo span{color:var(--accent)}
-    .login-sub{color:var(--muted2);font-size:13px;margin-bottom:36px;text-align:center}
-    .login-box{width:100%;max-width:400px}
+    .login-logo{font-size:26px;font-weight:900;margin-bottom:6px;letter-spacing:-.5px}
+    .login-logo span{color:var(--accent)}
+    .login-sub{color:var(--muted2);font-size:13px;margin-bottom:36px}
+    .login-box{width:100%;max-width:380px}
+    .auth-tabs{display:flex;background:var(--card2);border-radius:var(--radius-sm);padding:4px;margin-bottom:20px;gap:4px}
+    .auth-tab{flex:1;padding:10px;border:none;border-radius:8px;background:transparent;color:var(--muted2);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+    .auth-tab.active{background:var(--accent);color:#000}
 
-    /* ФОРМЫ */
-    .form-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:block}
-    .form-input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:16px 16px;font-family:'Onest',sans-serif;font-size:16px;outline:none;transition:border-color .2s;margin-bottom:14px;-webkit-appearance:none}
+    /* ── FORMS ── */
+    .form-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block}
+    .form-input{width:100%;background:var(--card2);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:14px 16px;font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .2s;margin-bottom:12px}
     .form-input:focus{border-color:var(--accent)}
-    textarea.form-input{resize:vertical;min-height:80px;font-size:15px}
-    select.form-input{cursor:pointer}
-    .form-group{margin-bottom:16px}
+    textarea.form-input{resize:vertical;min-height:80px}
+    select.form-input option{background:var(--card2)}
+    .form-group{margin-bottom:14px}
+    .error-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:var(--radius-xs);padding:12px 14px;color:var(--red);font-size:13px;margin-bottom:14px;display:none;line-height:1.5}
 
-    /* КНОПКИ — крупные для пальцев */
-    .btn{width:100%;border:none;border-radius:var(--radius);padding:18px;font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:block;text-align:center;text-decoration:none;min-height:56px;-webkit-appearance:none}
-    .btn-accent{background:var(--accent);color:#000}.btn-accent:active{opacity:.8}.btn-accent:disabled{opacity:.5;cursor:not-allowed}
+    /* ── BUTTONS ── */
+    .btn{width:100%;border:none;border-radius:var(--radius);padding:16px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;display:block;text-align:center;text-decoration:none;letter-spacing:.2px}
+    .btn-accent{background:var(--accent);color:#000}.btn-accent:active{background:var(--accent2)}
+    .btn-accent:disabled{opacity:.5;cursor:not-allowed}
     .btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border)}.btn-outline:active{border-color:var(--accent)}
-    .btn-green{background:rgba(74,222,128,.15);color:var(--green);border:1.5px solid rgba(74,222,128,.3)}
-    .btn+.btn{margin-top:10px}
-    .section-title{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+    .btn-green{background:rgba(34,197,94,.15);color:var(--green);border:1.5px solid rgba(34,197,94,.3)}
+    .btn-red{background:rgba(239,68,68,.1);color:var(--red);border:1.5px solid rgba(239,68,68,.2)}
+    .btn-sm{padding:10px 16px;font-size:12px;width:auto;display:inline-block}
+    .btn+.btn{margin-top:8px}
 
-    /* ПРЕДМЕТЫ */
-    .subjects-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .subject-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 14px;cursor:pointer;transition:border-color .2s;active:scale(.97)}
-    .subject-card:active{transform:scale(.97);border-color:var(--accent)}
-    .subject-card .emoji{font-size:34px;display:block;margin-bottom:10px}
-    .subject-card .name{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;line-height:1.5}
-    .subject-card .time{font-size:11px;color:var(--muted);margin-top:5px}
-    .subject-btns{display:flex;gap:6px;margin-top:12px}
-    .subject-btn{flex:1;padding:10px 4px;border:none;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;cursor:pointer;transition:all .2s;min-height:40px}
-    .subject-btn-test{background:var(--accent);color:#000}
-    .subject-btn-test:active{opacity:.8}
-    .subject-btn-kb{background:var(--card2);color:var(--muted2);border:1px solid var(--border)}
-    .subject-btn-kb:active{border-color:var(--accent);color:var(--accent)}
+    /* ── HOME ── */
+    .progress-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:16px 16px 0}
+    .progress-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .progress-card-label{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .progress-card-pct{font-size:22px;font-weight:800;color:var(--accent)}
+    .progress-bar-wrap{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+    .progress-bar-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .5s ease}
+    .progress-stats{display:flex;gap:12px;margin-top:10px}
+    .progress-stat{font-size:12px;font-weight:600}
+    .stat-green{color:var(--green)}.stat-red{color:var(--red)}.stat-muted{color:var(--muted2)}
+
+    .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px}
+    .home-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+    .home-card:active{transform:scale(.97);border-color:var(--accent)}
+    .home-card.accent-card{background:var(--accent);border-color:var(--accent)}
+    .home-card.full-width{grid-column:1/-1}
+    .home-card-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+    .home-card.accent-card .home-card-icon{background:rgba(0,0,0,.15)}
+    .home-card-title{font-size:14px;font-weight:700;margin-bottom:3px}
+    .home-card.accent-card .home-card-title{color:#000}
+    .home-card-sub{font-size:11px;color:var(--muted2);line-height:1.4}
+    .home-card.accent-card .home-card-sub{color:rgba(0,0,0,.6)}
+    .home-card-arr{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:16px;color:#000}
+
+    .section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:0 16px;margin-top:4px;margin-bottom:8px}
 
     /* PAYWALL */
-    .paywall{text-align:center;padding:32px 0}
-    .paywall .lock{font-size:52px;margin-bottom:16px}
-    .paywall h2{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:900;margin-bottom:10px;line-height:1.3}
+    .paywall{padding:40px 20px;text-align:center}
+    .paywall-icon{font-size:52px;margin-bottom:16px}
+    .paywall h2{font-size:20px;font-weight:800;margin-bottom:8px}
     .paywall p{color:var(--muted2);font-size:14px;line-height:1.7;margin-bottom:24px}
-    .price-badge{display:inline-block;background:var(--accent);color:#000;font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;border-radius:var(--radius);padding:12px 24px;margin-bottom:24px}
-    .price-badge span{font-size:12px;font-weight:400}
-    .trial-banner{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
-    .trial-banner .icon{font-size:22px;flex-shrink:0}.trial-banner .text{font-size:13px;line-height:1.6;color:var(--orange)}.trial-banner b{font-weight:700}
+    .price-tag{display:inline-block;background:var(--accent);color:#000;font-size:20px;font-weight:800;border-radius:var(--radius);padding:12px 28px;margin-bottom:24px}
+    .pay-steps{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;text-align:left}
+    .pay-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+    .pay-step:last-child{margin-bottom:0}
+    .pay-step-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#000;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+    .pay-step-text{font-size:13px;line-height:1.5;color:var(--muted2)}
+    .trial-banner{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);border-radius:var(--radius);padding:14px 16px;margin:0 16px 12px;display:flex;align-items:center;gap:12px}
+    .trial-text{font-size:13px;color:var(--orange);line-height:1.5}
 
-    /* ТЕСТ */
-    .quiz-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-    .back-btn{background:var(--card);border:1px solid var(--border);color:var(--text);width:44px;height:44px;border-radius:var(--radius-sm);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;min-width:44px}
-    .progress-wrap{flex:1}
-    .progress-label{font-size:12px;color:var(--muted2);margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
-    .timer-badge{font-family:'Unbounded',sans-serif;font-weight:700;font-size:13px;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:4px 12px;transition:all .3s}
-    .timer-badge.urgent{color:var(--red);border-color:var(--red);background:rgba(248,113,113,.1);animation:pulse .5s ease infinite alternate}
+    /* ── QUIZ ── */
+    .quiz-topbar{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:var(--bg)}
+    .quiz-btn-icon{width:36px;height:36px;border-radius:var(--radius-xs);border:1px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:border-color .2s}
+    .quiz-btn-icon:active{border-color:var(--accent)}
+    .quiz-timer{font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:6px 14px}
+    .quiz-timer.urgent{color:var(--red);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08);animation:pulse .5s ease infinite alternate}
     @keyframes pulse{from{opacity:1}to{opacity:.6}}
-    .progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
-    .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+    .quiz-timer-icon{font-size:14px}
 
-    /* ТОЧКИ НАВИГАЦИИ — крупнее */
-    .q-dot{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted2);transition:all .15s;flex-shrink:0}
+    /* Навигация по вопросам — как в OsonPrava */
+    .q-nav-wrap{padding:10px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;gap:6px;border-bottom:1px solid var(--border)}
+    .q-dot{width:36px;height:36px;border-radius:50%;border:2px solid var(--border);background:var(--card2);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted2);transition:all .15s;flex-shrink:0}
     .q-dot:active{transform:scale(.9)}
-    .q-dot.current{border-color:var(--accent);background:var(--accent);color:#000}
-    .q-dot.answered-correct{border-color:var(--green);background:rgba(74,222,128,.2);color:var(--green)}
-    .q-dot.answered-wrong{border-color:var(--red);background:rgba(248,113,113,.2);color:var(--red)}
-    .q-dot.answered-skip{border-color:var(--muted);background:var(--card2);color:var(--muted)}
+    .q-dot.current{border-color:var(--accent);background:transparent;color:var(--accent)}
+    .q-dot.answered-correct{border-color:var(--green);background:var(--green);color:#000}
+    .q-dot.answered-wrong{border-color:var(--red);background:var(--red);color:#fff}
 
-    /* ВОПРОС */
-    .question-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;margin-bottom:12px}
-    .question-img{width:100%;border-radius:10px;margin-bottom:14px;display:none;max-height:220px;object-fit:cover}
-    .question-text{font-size:16px;line-height:1.7;font-weight:500}
+    /* Вопрос */
+    .quiz-body{padding:16px}
+    .question-text{font-size:17px;font-weight:600;line-height:1.6;margin-bottom:16px}
+    .question-img{width:100%;border-radius:var(--radius-sm);margin-bottom:14px;display:none;max-height:220px;object-fit:cover}
 
-    /* ВАРИАНТЫ — крупные для пальцев */
-    .options-list{display:flex;flex-direction:column;gap:10px}
-    .option-btn{background:var(--card);border:1.5px solid var(--border);color:var(--text);border-radius:var(--radius);padding:16px 16px;text-align:left;font-family:'Onest',sans-serif;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;min-height:54px;-webkit-appearance:none}
-    .option-btn .letter{width:30px;height:30px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;flex-shrink:0}
-    .option-btn:active:not(:disabled){transform:scale(.98);border-color:var(--accent)}
-    .option-btn.correct{border-color:var(--green);background:rgba(74,222,128,.08)}.option-btn.correct .letter{background:var(--green);color:#000}
-    .option-btn.wrong{border-color:var(--red);background:rgba(248,113,113,.08)}.option-btn.wrong .letter{background:var(--red);color:#000}
+    .options-list{display:flex;flex-direction:column;gap:8px}
+    .option-btn{background:var(--card);border:2px solid var(--border);color:var(--text);border-radius:var(--radius);padding:14px 16px;text-align:left;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;width:100%}
+    .option-btn:active:not(:disabled){border-color:var(--accent);background:var(--accent-dim)}
+    .option-letter{width:28px;height:28px;border-radius:8px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:'Inter',sans-serif}
+    .option-btn.correct{border-color:var(--green);background:rgba(34,197,94,.08)}
+    .option-btn.correct .option-letter{background:var(--green);border-color:var(--green);color:#000}
+    .option-btn.wrong{border-color:var(--red);background:rgba(239,68,68,.08)}
+    .option-btn.wrong .option-letter{background:var(--red);border-color:var(--red);color:#fff}
     .option-btn:disabled{cursor:default}
 
-    /* РЕЗУЛЬТАТ */
-    .result-wrap{text-align:center;padding:20px 0 40px}
-    .result-circle{width:130px;height:130px;border-radius:50%;border:3px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 24px}
-    .result-score{font-family:'Unbounded',sans-serif;font-size:36px;font-weight:900;color:var(--accent)}
-    .result-label{font-size:12px;color:var(--muted2)}
-    .result-title{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900;margin-bottom:8px;line-height:1.3}
-    .result-sub{color:var(--muted2);font-size:14px;margin-bottom:28px}
+    .quiz-actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);position:sticky;bottom:70px;background:var(--bg)}
+    .quiz-actions .btn{margin:0}
 
-    /* РАЗБОР */
-    .review-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-    .review-q{font-size:14px;font-weight:500;margin-bottom:12px;line-height:1.6}
-    .review-opt{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:6px}
-    .review-opt.correct{background:rgba(74,222,128,.1);color:var(--green)}.review-opt.wrong{background:rgba(248,113,113,.1);color:var(--red)}.review-opt.neutral{color:var(--muted2)}
+    /* ── RESULT ── */
+    .result-page{padding:24px 16px;text-align:center}
+    .result-ring{width:140px;height:140px;border-radius:50%;border:4px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;position:relative}
+    .result-num{font-size:40px;font-weight:900;color:var(--accent);line-height:1}
+    .result-of{font-size:12px;color:var(--muted2);margin-top:2px}
+    .result-emoji{font-size:36px;margin-bottom:10px}
+    .result-title{font-size:20px;font-weight:800;margin-bottom:6px}
+    .result-sub{color:var(--muted2);font-size:14px;margin-bottom:28px;line-height:1.5}
+    .result-actions{display:flex;flex-direction:column;gap:8px}
 
-    /* ИСТОРИЯ */
-    .history-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:10px}
-    .history-emoji{font-size:30px}.history-info{flex:1}
-    .history-subject{font-weight:600;font-size:14px;margin-bottom:3px;line-height:1.3}.history-date{font-size:12px;color:var(--muted2)}
-    .history-score{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;text-align:right;flex-shrink:0}
+    /* ── REVIEW ── */
+    .review-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
+    .review-status{font-size:11px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .review-q{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.55;color:var(--text)}
+    .review-opt{font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);margin-bottom:5px;line-height:1.4}
+    .review-opt.correct{background:rgba(34,197,94,.1);color:var(--green);font-weight:600}
+    .review-opt.wrong{background:rgba(239,68,68,.08);color:var(--red)}
+    .review-opt.neutral{color:var(--muted2)}
+
+    /* ── HISTORY ── */
+    .history-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:8px}
+    .history-icon{width:44px;height:44px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+    .history-info{flex:1;min-width:0}
+    .history-subject{font-weight:600;font-size:14px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .history-date{font-size:11px;color:var(--muted)}
+    .history-score{font-size:14px;font-weight:700;flex-shrink:0}
     .score-good{color:var(--green)}.score-ok{color:var(--accent)}.score-bad{color:var(--red)}
 
-    /* РЕЙТИНГ */
-    .rating-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:8px}
-    .rating-pos{font-size:22px;width:34px;text-align:center;flex-shrink:0}.rating-info{flex:1}
-    .rating-name{font-weight:600;font-size:15px}.rating-detail{font-size:12px;color:var(--muted2);margin-top:2px}
-    .rating-score{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--accent)}
+    /* ── RATING ── */
+    .rating-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+    .rating-pos{font-size:20px;width:36px;text-align:center;flex-shrink:0}
+    .rating-info{flex:1}
+    .rating-name{font-weight:600;font-size:14px}
+    .rating-detail{font-size:11px;color:var(--muted);margin-top:2px}
+    .rating-pct{font-size:15px;font-weight:800;color:var(--accent)}
 
-    /* АДМИН ТАБЫ */
-    .admin-tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-    .admin-tab{flex-shrink:0;padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:100px;font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;transition:all .2s;min-height:40px}
+    /* ── ADMIN ── */
+    .admin-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch}
+    .admin-tab{flex-shrink:0;padding:8px 16px;background:var(--card2);border:1.5px solid var(--border);border-radius:100px;font-size:12px;font-weight:700;color:var(--muted2);cursor:pointer;transition:all .2s;white-space:nowrap}
     .admin-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
-    .admin-content{display:none}.admin-content.active{display:block}
+    .admin-content{display:none;padding:16px}.admin-content.active{display:block}
 
-    /* ВАРИАНТЫ В ФОРМЕ */
-    .option-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-    .option-row .form-input{margin-bottom:0;flex:1}
-    .opt-letter{width:32px;height:32px;background:var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:10px;font-weight:700;flex-shrink:0}
-    .correct-radio{width:22px;height:22px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
-    .add-opt-btn{width:100%;background:transparent;border:1.5px dashed var(--border);color:var(--muted);border-radius:var(--radius-sm);padding:14px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;margin-bottom:16px;transition:all .2s;min-height:50px}
-    .add-opt-btn:active{border-color:var(--accent);color:var(--accent)}
-    .upload-zone{border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:22px 16px;text-align:center;cursor:pointer;margin-bottom:16px;transition:border-color .2s;color:var(--muted2);font-size:14px;min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+    .import-box{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+    .import-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+    .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;color:var(--muted2);font-size:13px;margin-bottom:10px}
     .upload-zone:active{border-color:var(--accent)}
-    .preview-img{width:100%;border-radius:10px;margin-top:12px;display:none;max-height:200px;object-fit:cover}
+    .preview-img{width:100%;border-radius:10px;margin-top:10px;display:none;max-height:180px;object-fit:cover}
+    .divider{text-align:center;color:var(--muted);font-size:11px;margin:14px 0;position:relative}
+    .divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
+    .divider span{position:relative;background:var(--bg);padding:0 10px}
+
+    .option-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .option-row .form-input{margin-bottom:0;flex:1}
+    .opt-letter{width:30px;height:30px;background:var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+    .correct-radio{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+    .add-opt-btn{width:100%;background:transparent;border:1.5px dashed var(--border);color:var(--muted2);border-radius:var(--radius-sm);padding:12px;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;margin-bottom:14px;transition:border-color .2s}
+    .add-opt-btn:active{border-color:var(--accent)}
+
     table{width:100%;border-collapse:collapse;font-size:13px}
-    th{text-align:left;font-family:'Unbounded',sans-serif;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:10px 10px;border-bottom:1px solid var(--border)}
-    td{padding:13px 10px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
-    .badge{display:inline-block;border-radius:100px;padding:3px 10px;font-size:11px;font-weight:600}
-    .badge-green{background:rgba(74,222,128,.15);color:var(--green)}.badge-accent{background:var(--accent-dim);color:var(--accent)}.badge-red{background:rgba(248,113,113,.15);color:var(--red)}.badge-orange{background:rgba(251,146,60,.15);color:var(--orange)}
-    .loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:14px;color:var(--muted2);font-size:14px}
-    .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#000;border-radius:100px;padding:12px 22px;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;transition:transform .3s ease;z-index:999;white-space:nowrap;pointer-events:none}
-    .toast.show{transform:translateX(-50%) translateY(0)}.toast.error{background:var(--red);color:#fff}
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+    th{text-align:left;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:10px 10px;border-bottom:1px solid var(--border)}
+    td{padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+    .badge{display:inline-block;border-radius:100px;padding:3px 9px;font-size:11px;font-weight:600}
+    .badge-green{background:rgba(34,197,94,.15);color:var(--green)}
+    .badge-accent{background:var(--accent-dim);color:var(--accent)}
+    .badge-red{background:rgba(239,68,68,.15);color:var(--red)}
+    .badge-orange{background:rgba(249,115,22,.15);color:var(--orange)}
+
+    /* ── QBANK ── */
+    .qbank-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
+    .qbank-num{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.5px}
+    .qbank-q{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.55}
+    .qbank-opts{display:flex;flex-direction:column;gap:5px}
+    .qbank-opt{font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);color:var(--muted2);line-height:1.4}
+    .qbank-opt.correct{background:rgba(34,197,94,.1);color:var(--green);font-weight:600}
+
+    /* ── SUBJECT CARDS ── */
+    .subjects-list{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+    .subject-row{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .15s}
+    .subject-row:active{border-color:var(--accent)}
+    .subject-emoji{width:48px;height:48px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+    .subject-info{flex:1;min-width:0}
+    .subject-name{font-size:15px;font-weight:700;margin-bottom:3px}
+    .subject-meta{font-size:12px;color:var(--muted2)}
+    .subject-start{width:40px;height:40px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+
+    /* ── MODAL (bottom sheet) ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:200}
     .modal-overlay.active{display:flex}
-    .modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;width:100%;max-width:360px;max-height:85vh;overflow-y:auto}
-    .modal h3{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:20px}
-    .error-box{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:var(--radius-sm);padding:14px;color:var(--red);font-size:14px;margin-bottom:16px;display:none;line-height:1.5}
-    .sub-form{display:flex;gap:8px}.sub-form .form-input{margin-bottom:0;flex:1}
-    .tabs-row{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-    .tab-btn{flex-shrink:0;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;text-align:center;transition:all .2s;min-height:42px}
+    .modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:20px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto}
+    .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px}
+    .modal h3{font-size:15px;font-weight:700;margin-bottom:18px}
+
+    /* ── LOADER ── */
+    .loader{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:14px;color:var(--muted2);font-size:13px}
+    .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--green);color:#000;border-radius:100px;padding:12px 22px;font-size:13px;font-weight:700;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:999;pointer-events:none;white-space:nowrap}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .toast.error{background:var(--red);color:#fff}
+
+    /* ── TABS ── */
+    .tabs-row{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .tab-btn{flex-shrink:0;padding:8px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:100px;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;transition:all .2s}
     .tab-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
-    .qbank-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-    .qbank-search{position:sticky;top:60px;z-index:40;background:var(--bg);padding-bottom:10px}
-    .qbank-q{font-size:15px;font-weight:500;margin-bottom:12px;line-height:1.6}
-    .qbank-opts{display:flex;flex-direction:column;gap:6px}
-    .qbank-opt{font-size:13px;padding:9px 12px;border-radius:10px;color:var(--muted2);line-height:1.4}
-    .qbank-opt.correct{background:rgba(74,222,128,.1);color:var(--green);font-weight:600}
-    .qbank-num{font-family:'Unbounded',sans-serif;font-size:10px;color:var(--muted);margin-bottom:6px}
+
+    .sub-form{display:flex;gap:8px}.sub-form .form-input{margin-bottom:0;flex:1}
   </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header" id="main-header" style="display:none">
-  <div class="logo">UNI<span>QUIZ</span></div>
+  <div class="logo">
+    <div class="logo-icon">🎓</div>
+    UNI<span>QUIZ</span>
+  </div>
   <div class="user-badge" onclick="logout()">
-    <span id="user-name">...</span>
+    <span class="user-name" id="user-name">...</span>
     <span class="role-pill role-student" id="role-pill">студент</span>
-    <span class="trial-badge" id="trial-badge" style="display:none">пробный</span>
+    <div class="trial-dot" id="trial-dot" style="display:none"></div>
   </div>
 </div>
 
@@ -197,9 +279,9 @@
   <div class="login-logo">UNI<span>QUIZ</span></div>
   <div class="login-sub">Платформа для университетских тестов</div>
   <div class="login-box">
-    <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;gap:4px">
-      <button id="tab-login-btn" onclick="switchAuthTab('login')" style="flex:1;padding:10px;border:none;border-radius:8px;background:var(--accent);color:#000;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s">Войти</button>
-      <button id="tab-reg-btn" onclick="switchAuthTab('register')" style="flex:1;padding:10px;border:none;border-radius:8px;background:transparent;color:var(--muted2);font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s">Регистрация</button>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">Войти</button>
+      <button class="auth-tab" id="tab-reg-btn" onclick="switchAuthTab('register')">Регистрация</button>
     </div>
     <div class="error-box" id="login-error"></div>
     <div id="form-login">
@@ -208,152 +290,149 @@
       <button class="btn btn-accent" id="login-btn" onclick="doLogin()">Войти</button>
     </div>
     <div id="form-register" style="display:none">
-      <div class="form-group"><label class="form-label">Твоё имя</label><input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/></div>
-      <div class="form-group"><label class="form-label">Придумай логин</label><input type="text" class="form-input" id="reg-username" placeholder="aziz2005"/></div>
-      <div class="form-group"><label class="form-label">Придумай пароль</label><input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/></div>
+      <div class="form-group"><label class="form-label">Имя</label><input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/></div>
+      <div class="form-group"><label class="form-label">Логин</label><input type="text" class="form-input" id="reg-username" placeholder="aziz2005"/></div>
+      <div class="form-group"><label class="form-label">Пароль</label><input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/></div>
       <button class="btn btn-accent" id="reg-btn" onclick="doRegister()">Зарегистрироваться</button>
-      <div style="text-align:center;margin-top:14px;color:var(--muted);font-size:12px">После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉</div>
+      <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--muted2)">После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉</p>
     </div>
   </div>
 </div>
 
 <!-- ГЛАВНАЯ -->
 <div id="screen-home" class="screen">
+  <!-- Триал баннер -->
   <div id="trial-banner" style="display:none">
-    <div class="trial-banner"><div class="icon">⏰</div><div class="text">Пробный период: осталось <b id="trial-days-left">3</b> дня. После окончания нужна подписка — 20 000 сум/мес.</div></div>
-  </div>
-  <div id="paywall-block" style="display:none">
-    <div class="paywall">
-      <div class="lock" id="paywall-icon">🔒</div>
-      <h2 id="paywall-title">Нужна подписка</h2>
-      <p id="paywall-text">Для прохождения тестов оформи подписку на месяц.</p>
-      <div class="price-badge">20 000 <span>сум/мес</span></div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;text-align:left">
-        <div style="font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:12px">КАК ОПЛАТИТЬ</div>
-        <div style="font-size:14px;line-height:1.8;color:var(--muted2)">1. Переведи <b style="color:var(--text)">20 000 сум</b> на Payme или Click<br>2. Напиши администратору что оплатил<br>3. Получи доступ в течение 5 минут</div>
-      </div>
-      <a href="https://t.me/mkdir16" target="_blank" class="btn btn-accent" style="text-decoration:none">✍️ Написать администратору</a>
-      <a href="https://t.me/+vpPlzmuE9Zc3MzRi" target="_blank" class="btn btn-outline" style="text-decoration:none;margin-top:10px">💬 Наша группа</a>
+    <div class="trial-banner">
+      <span style="font-size:20px">⏰</span>
+      <div class="trial-text">Пробный период: осталось <b id="trial-days-left">3</b> дня. После — 20 000 сум/мес.</div>
     </div>
   </div>
+  <!-- Прогресс -->
+  <div id="progress-card-wrap" style="display:none">
+    <div class="progress-card">
+      <div class="progress-card-top">
+        <div class="progress-card-label">📊 Прогресс по базе</div>
+        <div class="progress-card-pct" id="home-pct">0%</div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="home-bar" style="width:0%"></div></div>
+      <div class="progress-stats">
+        <span class="progress-stat stat-green" id="home-correct">✓ 0</span>
+        <span class="progress-stat stat-red" id="home-wrong">✗ 0</span>
+        <span class="progress-stat stat-muted" id="home-total">из 0</span>
+      </div>
+    </div>
+  </div>
+  <!-- Paywall -->
+  <div id="paywall-block" style="display:none">
+    <div class="paywall">
+      <div class="paywall-icon" id="paywall-icon">🔒</div>
+      <h2 id="paywall-title">Нужна подписка</h2>
+      <p id="paywall-text">Для прохождения тестов оформи подписку на месяц.</p>
+      <div class="price-tag">20 000 <span style="font-size:13px;font-weight:500">сум/мес</span></div>
+      <div class="pay-steps">
+        <div class="pay-step"><div class="pay-step-num">1</div><div class="pay-step-text">Переведи <b style="color:var(--text)">20 000 сум</b> на Payme или Click</div></div>
+        <div class="pay-step"><div class="pay-step-num">2</div><div class="pay-step-text">Напиши администратору что оплатил</div></div>
+        <div class="pay-step"><div class="pay-step-num">3</div><div class="pay-step-text">Получи доступ в течение 5 минут</div></div>
+      </div>
+      <a href="https://t.me/mkdir16" target="_blank" class="btn btn-accent" style="text-decoration:none">✍️ Написать администратору</a>
+      <a href="https://t.me/+vpPlzmuE9Zc3MzRi" target="_blank" class="btn btn-outline" style="text-decoration:none;margin-top:8px">💬 Наша группа</a>
+    </div>
+  </div>
+  <!-- Предметы -->
   <div id="subjects-block" style="display:none">
-    <p class="section-title">Выбери предмет</p>
-    <div class="subjects-grid" id="subjects-grid"></div>
+    <div class="section-label" style="margin-top:14px">ПРЕДМЕТЫ</div>
+    <div class="subjects-list" id="subjects-grid"></div>
   </div>
 </div>
 
 <!-- ТЕСТ -->
 <div id="screen-quiz" class="screen">
-  <div class="quiz-header">
-    <button class="back-btn" onclick="pauseQuiz()" title="Пауза">⏸</button>
-    <div class="progress-wrap">
-      <div class="progress-label">
-        <span id="q-counter">1/10</span>
-        <span class="timer-badge" id="timer-badge">60:00</span>
-        <span id="q-score-live">0 ✓</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="quiz-topbar">
+    <div class="quiz-btn-icon" onclick="pauseQuiz()">⏸</div>
+    <div class="quiz-timer" id="timer-badge">
+      <span class="quiz-timer-icon">⏱</span>
+      <span id="timer-text">60:00</span>
     </div>
+    <div style="font-size:12px;font-weight:700;color:var(--muted2)" id="q-score-live">0 ✓</div>
   </div>
-
-  <!-- Навигация по вопросам -->
-  <div id="q-nav" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;max-height:90px;overflow-y:auto;padding:4px 0;-webkit-overflow-scrolling:touch"></div>
-
-  <div class="question-card">
+  <div class="q-nav-wrap" id="q-nav"></div>
+  <div class="quiz-body">
+    <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px" id="q-counter">Вопрос 1 из 30</div>
     <img id="q-image" class="question-img" alt=""/>
     <p class="question-text" id="q-text"></p>
+    <div class="options-list" id="options-list"></div>
   </div>
-  <div class="options-list" id="options-list"></div>
-
-  <div style="display:flex;gap:8px;margin-top:14px">
-    <button class="btn btn-outline" id="prev-btn" onclick="goToQuestion(quizState.index-1)" style="flex:1;display:none">← Назад</button>
-    <button class="btn btn-accent" id="next-btn" onclick="nextQuestion()" style="flex:1;display:none">Следующий →</button>
-  </div>
-
-  <button class="btn btn-outline" onclick="finishQuiz()" id="finish-btn" style="margin-top:10px;display:none">Завершить тест ✓</button>
-</div>
-
-<!-- ПАУЗА -->
-<div class="modal-overlay" id="modal-pause">
-  <div class="modal">
-    <h3>⏸ Тест на паузе</h3>
-    <div style="color:var(--muted2);font-size:13px;margin-bottom:20px;line-height:1.6">
-      Прогресс сохранён. Ты можешь продолжить в любое время.<br>
-      Осталось вопросов: <b id="pause-left" style="color:var(--accent)">0</b><br>
-      Отвечено: <b id="pause-answered" style="color:var(--green)">0</b>
-    </div>
-    <button class="btn btn-accent" onclick="resumeQuiz()">▶ Продолжить</button>
-    <button class="btn btn-outline" onclick="exitQuiz()" style="margin-top:10px">← Выйти (прогресс сохранится)</button>
+  <div class="quiz-actions">
+    <button class="btn btn-outline" id="prev-btn" onclick="goToQuestion(quizState.index-1)" style="display:none;flex:1">← Назад</button>
+    <button class="btn btn-accent" id="next-btn" onclick="nextQuestion()" style="display:none;flex:1">Следующий →</button>
+    <button class="btn btn-green" id="finish-btn" onclick="finishQuiz()" style="display:none;flex:1">Завершить ✓</button>
   </div>
 </div>
 
 <!-- РЕЗУЛЬТАТ -->
 <div id="screen-result" class="screen">
-  <div class="result-wrap">
-    <div class="result-circle">
-      <div class="result-score" id="res-score"></div>
-      <div class="result-label">из <span id="res-total"></span></div>
+  <div class="result-page">
+    <div class="result-ring">
+      <div class="result-num" id="res-score"></div>
+      <div class="result-of">из <span id="res-total"></span></div>
     </div>
+    <div class="result-emoji" id="res-emoji">🏆</div>
     <div class="result-title" id="res-title"></div>
     <div class="result-sub" id="res-sub"></div>
-    <button class="btn btn-accent" onclick="showScreen('home')">← К предметам</button>
-    <button class="btn btn-outline" onclick="showReview()" style="margin-top:10px">📋 Разбор ошибок</button>
-    <button class="btn btn-outline" onclick="showScreen('history')" style="margin-top:10px">📊 История</button>
+    <div class="result-actions">
+      <button class="btn btn-accent" onclick="showScreen('home')">← К предметам</button>
+      <button class="btn btn-outline" onclick="showReview()">📋 Разбор ошибок</button>
+      <button class="btn btn-outline" onclick="showScreen('history')">📊 История</button>
+    </div>
   </div>
 </div>
 
 <!-- РАЗБОР -->
 <div id="screen-review" class="screen">
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-    <button class="back-btn" onclick="showScreen('result')">←</button>
-    <p class="section-title" style="margin:0">Разбор ошибок</p>
+  <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:60px;background:var(--bg)">
+    <div class="quiz-btn-icon" onclick="showScreen('result')">←</div>
+    <div style="font-size:14px;font-weight:700">Разбор ошибок</div>
   </div>
-  <div id="review-list"></div>
-</div>
-
-<!-- БАЗА ВОПРОСОВ -->
-<div id="screen-qbank" class="screen">
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-    <button class="back-btn" onclick="showScreen('admin')">←</button>
-    <div style="flex:1">
-      <p class="section-title" style="margin:0" id="qbank-title">База вопросов</p>
-      <div style="font-size:12px;color:var(--muted2);margin-top:2px" id="qbank-count"></div>
-    </div>
-  </div>
-  <div id="qbank-search-wrap" style="margin-bottom:14px">
-    <input type="text" class="form-input" id="qbank-search" placeholder="🔍 Поиск по вопросам..." oninput="filterQBank()" style="margin:0"/>
-  </div>
-  <div id="qbank-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
+  <div class="page" id="review-list"></div>
 </div>
 
 <!-- ИСТОРИЯ -->
 <div id="screen-history" class="screen">
-  <p class="section-title">Мои результаты</p>
-  <div id="history-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
-</div>
-
-<!-- БАЗА ЗНАНИЙ -->
-<div id="screen-knowledge" class="screen">
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-    <button class="back-btn" onclick="showScreen('home')">←</button>
-    <div style="flex:1">
-      <p class="section-title" style="margin:0" id="knowledge-title">База знаний</p>
-      <div style="font-size:12px;color:var(--muted2);margin-top:2px" id="knowledge-count"></div>
-    </div>
+  <div style="padding:16px;border-bottom:1px solid var(--border)">
+    <div style="font-size:16px;font-weight:800">История тестов</div>
   </div>
-  <div id="knowledge-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
-  <div id="knowledge-pagination" style="display:flex;gap:8px;margin-top:16px"></div>
+  <div class="page" id="history-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
 </div>
 
 <!-- РЕЙТИНГ -->
 <div id="screen-rating" class="screen">
-  <p class="section-title">Рейтинг студентов</p>
-  <div id="rating-subject-tabs" class="tabs-row"></div>
-  <div id="rating-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
+  <div style="padding:16px;border-bottom:1px solid var(--border)">
+    <div style="font-size:16px;font-weight:800">Рейтинг студентов</div>
+  </div>
+  <div class="page">
+    <div id="rating-subject-tabs" class="tabs-row"></div>
+    <div id="rating-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
+  </div>
 </div>
 
-<!-- АДМИН -->
+<!-- БАЗА ВОПРОСОВ -->
+<div id="screen-qbank" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:60px;background:var(--bg)">
+    <div class="quiz-btn-icon" onclick="showScreen('admin')">←</div>
+    <div style="flex:1"><div style="font-size:14px;font-weight:700" id="qbank-title">База вопросов</div><div style="font-size:11px;color:var(--muted)" id="qbank-count"></div></div>
+  </div>
+  <div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+    <input type="text" class="form-input" id="qbank-search" placeholder="🔍 Поиск..." oninput="filterQBank()" style="margin:0"/>
+  </div>
+  <div class="page" id="qbank-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
+</div>
+
+<!-- ПАНЕЛЬ -->
 <div id="screen-admin" class="screen">
+  <div style="padding:16px;border-bottom:1px solid var(--border)">
+    <div style="font-size:16px;font-weight:800">Панель управления</div>
+  </div>
   <div class="admin-tabs">
     <div class="admin-tab active" onclick="switchAdminTab('at-questions',this)">Вопросы</div>
     <div class="admin-tab" onclick="switchAdminTab('at-subjects',this)">Предметы</div>
@@ -362,63 +441,44 @@
   </div>
 
   <div id="at-questions" class="admin-content active">
-    <!-- ИМПОРТ -->
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px">
-      <div style="font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:12px">📥 ИМПОРТ ИЗ EXCEL</div>
-      <div class="form-group">
-        <label class="form-label">Предмет для импорта</label>
-        <select id="import-subject" class="form-input"><option value="">Выберите предмет...</option></select>
-      </div>
-      <div class="upload-zone" onclick="document.getElementById('excel-input').click()">
-        📊 Выбрать Excel файл (.xlsx)
-        <div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div>
-      </div>
+    <div class="import-box">
+      <div class="import-title">📥 Импорт из Excel</div>
+      <div class="form-group"><label class="form-label">Предмет</label><select id="import-subject" class="form-input"><option value="">Выберите предмет...</option></select></div>
+      <div class="upload-zone" onclick="document.getElementById('excel-input').click()">📊 Выбрать Excel файл<div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div></div>
       <input type="file" id="excel-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcelSelect()"/>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-green" onclick="importQuestions()" style="flex:1">⬆️ Загрузить вопросы</button>
-        <button class="btn btn-outline" onclick="downloadTemplate()" style="flex:1">⬇️ Скачать шаблон</button>
+        <button class="btn btn-green" onclick="importQuestions()" style="flex:1">⬆️ Загрузить</button>
+        <button class="btn btn-outline" onclick="downloadTemplate()" style="flex:1">⬇️ Шаблон</button>
       </div>
-      <div id="import-result" style="display:none;margin-top:12px;padding:12px;border-radius:var(--radius-sm);font-size:13px;white-space:pre-line"></div>
+      <div id="import-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div>
     </div>
-
-    <div style="text-align:center;color:var(--muted);font-size:12px;margin-bottom:16px">— или добавь вопрос вручную —</div>
-
+    <div class="divider"><span>или добавь вручную</span></div>
     <div class="form-group"><label class="form-label">Предмет</label><select id="q-subject" class="form-input"><option value="">Выберите предмет...</option></select></div>
-    <div class="form-group"><label class="form-label">Текст вопроса</label><textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..."></textarea></div>
+    <div class="form-group"><label class="form-label">Вопрос</label><textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..."></textarea></div>
     <div class="form-group">
       <label class="form-label">Картинка (необязательно)</label>
-      <div class="upload-zone" onclick="document.getElementById('img-input').click()">🖼 Нажми чтобы загрузить<img class="preview-img" id="img-preview"/></div>
+      <div class="upload-zone" onclick="document.getElementById('img-input').click()">🖼 Загрузить картинку<img class="preview-img" id="img-preview"/></div>
       <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImg()"/>
     </div>
-    <div class="form-group"><label class="form-label">Варианты <span style="color:var(--muted);font-size:9px">(✓=правильный)</span></label><div id="opts-container"></div><button class="add-opt-btn" onclick="addOpt()">+ Добавить вариант</button></div>
+    <div class="form-group"><label class="form-label">Варианты <span style="color:var(--muted);font-size:10px">(✓ = правильный)</span></label><div id="opts-container"></div><button class="add-opt-btn" onclick="addOpt()">+ Добавить вариант</button></div>
     <button class="btn btn-accent" onclick="saveQuestion()">Сохранить вопрос</button>
   </div>
 
   <div id="at-subjects" class="admin-content">
-    <div class="form-group">
-      <label class="form-label">Добавить предмет</label>
-      <div class="sub-form" style="margin-bottom:12px">
-        <input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center;margin-bottom:0"/>
-        <input type="text" class="form-input" id="subj-title" placeholder="Название предмета" style="margin-bottom:0"/>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <span style="font-size:13px;color:var(--muted2);white-space:nowrap">⏱ Время теста:</span>
-        <input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="max-width:90px;margin:0"/>
-        <span style="font-size:13px;color:var(--muted2)">мин</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <span style="font-size:13px;color:var(--muted2);white-space:nowrap">📝 Вопросов в тесте:</span>
-        <input type="number" class="form-input" id="subj-qcount" value="30" min="5" max="500" style="max-width:90px;margin:0"/>
-        <span style="font-size:12px;color:var(--muted2)">(из всей базы)</span>
-      </div>
-      <button class="btn btn-accent" onclick="createSubject()">Добавить предмет</button>
+    <div class="form-group"><label class="form-label">Название</label>
+      <div class="sub-form"><input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center;margin-bottom:0"/><input type="text" class="form-input" id="subj-title" placeholder="Название предмета" style="margin-bottom:0"/></div>
     </div>
-    <label class="form-label">Существующие предметы</label>
+    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:center">
+      <div style="flex:1"><label class="form-label">⏱ Время (мин)</label><input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="margin:0"/></div>
+      <div style="flex:1"><label class="form-label">📝 Вопросов</label><input type="number" class="form-input" id="subj-qcount" value="30" min="5" max="500" style="margin:0"/></div>
+    </div>
+    <button class="btn btn-accent" onclick="createSubject()" style="margin-bottom:20px">Добавить предмет</button>
+    <label class="form-label">Существующие</label>
     <div id="subjects-admin-list"></div>
   </div>
 
   <div id="at-results" class="admin-content">
-    <div style="display:flex;gap:8px;margin-bottom:16px">
+    <div style="display:flex;gap:8px;margin-bottom:14px">
       <button class="btn btn-outline" onclick="loadAdminResults()" style="flex:1">🔄 Обновить</button>
       <button class="btn btn-green" onclick="exportExcel()" style="flex:1">📥 Excel</button>
     </div>
@@ -426,19 +486,34 @@
   </div>
 
   <div id="at-users" class="admin-content">
-    <button class="btn btn-accent" onclick="openCreateUser()" style="margin-bottom:10px">+ Добавить студента</button>
-    <button class="btn btn-outline" onclick="loadUsers()" style="margin-bottom:16px">🔄 Обновить</button>
+    <button class="btn btn-accent" onclick="openCreateUser()" style="margin-bottom:8px">+ Добавить студента</button>
+    <button class="btn btn-outline" onclick="loadUsers()" style="margin-bottom:14px">🔄 Обновить</button>
     <div style="overflow-x:auto"><table><thead><tr><th>Имя/Логин</th><th>Роль</th><th>Доступ</th><th></th></tr></thead><tbody id="users-table"></tbody></table></div>
   </div>
 </div>
 
-<!-- MODAL -->
+<!-- ПАУЗА -->
+<div class="modal-overlay" id="modal-pause">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>⏸ Тест на паузе</h3>
+    <div style="background:var(--card2);border-radius:var(--radius-sm);padding:14px;margin-bottom:18px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:var(--muted2)">Отвечено</span><span style="font-weight:700;color:var(--green)" id="pause-answered">0</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted2)">Осталось</span><span style="font-weight:700;color:var(--accent)" id="pause-left">0</span></div>
+    </div>
+    <button class="btn btn-accent" onclick="resumeQuiz()">▶ Продолжить</button>
+    <button class="btn btn-outline" onclick="exitQuiz()" style="margin-top:8px">← Выйти (прогресс сохранится)</button>
+  </div>
+</div>
+
+<!-- MODAL: Создать пользователя -->
 <div class="modal-overlay" id="modal-create-user">
   <div class="modal">
+    <div class="modal-handle"></div>
     <h3>Новый пользователь</h3>
     <label class="form-label">Логин</label><input type="text" class="form-input" id="new-username" placeholder="student01"/>
     <label class="form-label">Пароль</label><input type="password" class="form-input" id="new-password" placeholder="Минимум 4 символа"/>
-    <label class="form-label">Имя (необязательно)</label><input type="text" class="form-input" id="new-fullname" placeholder="Азиз Каримов"/>
+    <label class="form-label">Имя</label><input type="text" class="form-input" id="new-fullname" placeholder="Азиз Каримов"/>
     <label class="form-label">Роль</label>
     <select class="form-input" id="new-role">
       <option value="student">Студент (3 дня бесплатно)</option>
@@ -446,15 +521,28 @@
       <option value="admin">Админ</option>
     </select>
     <button class="btn btn-accent" onclick="createUser()">Создать</button>
-    <button class="btn btn-outline" onclick="closeModal()" style="margin-top:10px">Отмена</button>
+    <button class="btn btn-outline" onclick="closeModal()" style="margin-top:8px">Отмена</button>
   </div>
 </div>
 
+<!-- НАВИГАЦИЯ -->
 <nav class="bottom-nav" id="bottom-nav" style="display:none">
-  <div class="nav-item active" onclick="showScreen('home')" id="nav-home"><span class="icon">🏠</span>ТЕСТЫ</div>
-  <div class="nav-item" onclick="showScreen('rating')" id="nav-rating"><span class="icon">🏆</span>РЕЙТИНГ</div>
-  <div class="nav-item" onclick="showScreen('history')" id="nav-history"><span class="icon">📊</span>ИСТОРИЯ</div>
-  <div class="nav-item" onclick="showScreen('admin')" id="nav-admin" style="display:none"><span class="icon">⚙️</span>ПАНЕЛЬ</div>
+  <div class="nav-item active" onclick="showScreen('home')" id="nav-home">
+    <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+    ТЕСТЫ
+  </div>
+  <div class="nav-item" onclick="showScreen('rating')" id="nav-rating">
+    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    РЕЙТИНГ
+  </div>
+  <div class="nav-item" onclick="showScreen('history')" id="nav-history">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    ИСТОРИЯ
+  </div>
+  <div class="nav-item" onclick="showScreen('admin')" id="nav-admin" style="display:none">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+    ПАНЕЛЬ
+  </div>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -465,6 +553,7 @@ let currentUser=null,token=localStorage.getItem("token")||null;
 let quizState={questions:[],index:0,answers:{},score:0,subjectId:null,reviewData:[]};
 let optCount=0,uploadedImg=null,timerInterval=null,testTimeLeft=0,allSubjects=[];
 let selectedExcelFile=null;
+let qbankAll=[],qbankSubjectId=null;
 
 // ── API ───────────────────────────────────────────────────────────────────
 async function api(method,path,body){
@@ -497,8 +586,8 @@ function switchAuthTab(tab){
   document.getElementById("form-login").style.display=isLogin?"block":"none";
   document.getElementById("form-register").style.display=isLogin?"none":"block";
   document.getElementById("login-error").style.display="none";
-  document.getElementById("tab-login-btn").style.cssText=`flex:1;padding:10px;border:none;border-radius:8px;background:${isLogin?"var(--accent)":"transparent"};color:${isLogin?"#000":"var(--muted2)"};font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s`;
-  document.getElementById("tab-reg-btn").style.cssText=`flex:1;padding:10px;border:none;border-radius:8px;background:${isLogin?"transparent":"var(--accent)"};color:${isLogin?"var(--muted2)":"#000"};font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s`;
+  document.getElementById("tab-login-btn").className="auth-tab"+(isLogin?" active":"");
+  document.getElementById("tab-reg-btn").className="auth-tab"+(!isLogin?" active":"");
 }
 
 async function doLogin(){
@@ -538,7 +627,6 @@ async function doRegister(){
 }
 
 document.getElementById("login-password").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
-
 function logout(){token=null;currentUser=null;localStorage.removeItem("token");showLoginScreen();}
 
 function setupUI(){
@@ -550,9 +638,8 @@ function setupUI(){
   const rn={student:"студент",teacher:"учитель",admin:"админ"};
   const rc={student:"role-student",teacher:"role-teacher",admin:"role-admin"};
   pill.textContent=rn[u.role]||u.role;pill.className="role-pill "+(rc[u.role]||"role-student");
-  const tb=document.getElementById("trial-badge");
-  if(u.is_trial&&u.subscription_active&&u.days_left>0){tb.style.display="block";tb.textContent=u.days_left+"д";}
-  else{tb.style.display="none";}
+  const td=document.getElementById("trial-dot");
+  td.style.display=(u.is_trial&&u.subscription_active&&u.days_left>0)?"block":"none";
   if(u.role==="teacher"||u.role==="admin")document.getElementById("nav-admin").style.display="flex";
   if(u.role==="admin")document.getElementById("tab-users-btn").style.display="block";
 }
@@ -567,7 +654,6 @@ function showScreen(name){
   if(name==="history")loadHistory();
   if(name==="admin")loadAdminSubjects();
   if(name==="rating")loadRating();
-  if(name==="qbank"){}// загружается через openQBank
 }
 
 // ── ПРЕДМЕТЫ ──────────────────────────────────────────────────────────────
@@ -575,101 +661,95 @@ async function loadSubjects(){
   allSubjects=await api("GET","/subjects");
   const grid=document.getElementById("subjects-grid");grid.innerHTML="";
   allSubjects.forEach(s=>{
-    const card=document.createElement("div");card.className="subject-card";
-    card.innerHTML=`
-      <span class="emoji">${s.emoji}</span>
-      <div class="name">${s.title}</div>
-      <div class="time">⏱ ${s.time_limit||60} мин · 30 случайных вопросов</div>
-      <div class="subject-btns">
-        <button class="subject-btn subject-btn-test" onclick="event.stopPropagation();startQuiz(${s.id})">▶ ТЕСТ</button>
-        <button class="subject-btn subject-btn-kb" onclick="event.stopPropagation();openKnowledge(${s.id},'${s.emoji} ${s.title}')">📖 БАЗА</button>
-      </div>`;
-    grid.appendChild(card);
+    const row=document.createElement("div");row.className="subject-row";
+    row.innerHTML=`<div class="subject-emoji">${s.emoji}</div><div class="subject-info"><div class="subject-name">${s.title}</div><div class="subject-meta">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} вопросов</div></div><div class="subject-start">▶</div>`;
+    row.onclick=()=>startQuiz(s.id);grid.appendChild(row);
   });
   const u=currentUser;
   const hasAccess=u.subscription_active||(u.role==="teacher"||u.role==="admin");
+  // Триал баннер
   const tb=document.getElementById("trial-banner");
   if(hasAccess&&u.is_trial&&u.days_left>0){tb.style.display="block";document.getElementById("trial-days-left").textContent=u.days_left;}
-  else{tb.style.display="none";}
+  else tb.style.display="none";
   document.getElementById("paywall-block").style.display=hasAccess?"none":"block";
   document.getElementById("subjects-block").style.display=hasAccess?"block":"none";
   if(!hasAccess){
     if(u.is_trial){document.getElementById("paywall-icon").textContent="⏰";document.getElementById("paywall-title").textContent="Пробный период закончился";document.getElementById("paywall-text").textContent="Твои 3 бесплатных дня истекли. Оформи подписку чтобы продолжить.";}
     else{document.getElementById("paywall-icon").textContent="🔒";document.getElementById("paywall-title").textContent="Нужна подписка";document.getElementById("paywall-text").textContent="Для прохождения тестов оформи подписку на месяц.";}
   }
+  // Прогресс из истории
+  loadHomeProgress();
 }
 
-// ── ТАЙМЕР НА ВЕСЬ ТЕСТ ──────────────────────────────────────────────────
+async function loadHomeProgress(){
+  try{
+    const pw=document.getElementById("progress-card-wrap");
+    const results=await api("GET","/my-results");
+    if(!results.length){pw.style.display="none";return;}
+    const correct=results.reduce((s,r)=>s+r.score,0);
+    const total=results.reduce((s,r)=>s+r.total,0);
+    const wrong=total-correct;
+    const pct=total?Math.round(correct/total*100):0;
+    document.getElementById("home-pct").textContent=pct+"%";
+    document.getElementById("home-bar").style.width=pct+"%";
+    document.getElementById("home-correct").textContent="✓ "+correct;
+    document.getElementById("home-wrong").textContent="✗ "+wrong;
+    document.getElementById("home-total").textContent="из "+total;
+    pw.style.display="block";
+  }catch(e){}
+}
+
+// ── ТАЙМЕР ────────────────────────────────────────────────────────────────
 function startTestTimer(minutes){
-  clearInterval(timerInterval);
-  testTimeLeft=minutes*60;
-  updateTestTimer();
-  timerInterval=setInterval(()=>{
-    testTimeLeft--;updateTestTimer();
-    if(testTimeLeft<=0){clearInterval(timerInterval);showToast("⏰ Время вышло!",true);finishQuiz();}
-  },1000);
+  clearInterval(timerInterval);testTimeLeft=minutes*60;updateTestTimer();
+  timerInterval=setInterval(()=>{testTimeLeft--;updateTestTimer();if(testTimeLeft<=0){clearInterval(timerInterval);showToast("⏰ Время вышло!",true);finishQuiz();}},1000);
 }
-
 function updateTestTimer(){
-  const el=document.getElementById("timer-badge");if(!el)return;
+  const el=document.getElementById("timer-badge");
+  const txt=document.getElementById("timer-text");
+  if(!el||!txt)return;
   const m=Math.floor(testTimeLeft/60),s=testTimeLeft%60;
-  el.textContent=`${m}:${s.toString().padStart(2,"0")}`;
-  el.className="timer-badge"+(testTimeLeft<=60?" urgent":"");
+  txt.textContent=`${m}:${s.toString().padStart(2,"0")}`;
+  el.className="quiz-timer"+(testTimeLeft<=60?" urgent":"");
 }
 
 // ── ТЕСТ ─────────────────────────────────────────────────────────────────
 async function startQuiz(subjectId){
   const subject=allSubjects.find(s=>s.id===subjectId);
   const timeLimit=(subject&&subject.time_limit)?subject.time_limit:60;
-  // Проверяем сохранённый прогресс
   const saved=loadProgress(subjectId);
   if(saved&&saved.questions&&saved.questions.length>0){
-    if(confirm(`У тебя есть незавершённый тест (${Object.keys(saved.answers).length} ответов из ${saved.questions.length}). Продолжить?`)){
-      quizState=saved;
-      showScreen("quiz");
-      renderQuestion();
-      renderNavDots();
-      overrideTimer(saved.timeLeft||timeLimit*60);
-      return;
+    if(confirm(`У тебя есть незавершённый тест (${Object.keys(saved.answers).length} из ${saved.questions.length}). Продолжить?`)){
+      quizState=saved;showScreen("quiz");renderQuestion();renderNavDots();overrideTimer(saved.timeLeft||timeLimit*60);return;
     }
   }
   quizState={questions:[],index:0,answers:{},score:0,subjectId,reviewData:[],timeLeft:timeLimit*60};
   showScreen("quiz");
   try{
-    let q=await api("GET",`/questions/${subjectId}`);
+    const q=await api("GET",`/questions/${subjectId}`);
     quizState.questions=q;
     if(!q.length){showToast("В этом предмете пока нет вопросов",true);showScreen("home");return;}
-    renderQuestion();
-    renderNavDots();
-    startTestTimer(timeLimit);
-    saveProgress();
+    renderQuestion();renderNavDots();startTestTimer(timeLimit);saveProgress();
   }catch(e){
     if(e.status===402){showScreen("home");showToast("Нужна подписка!",true);}
     else{showToast("Ошибка: "+e.detail,true);showScreen("home");}
   }
 }
 
-// ── НАВИГАЦИЯ ─────────────────────────────────────────────────────────────
 function renderNavDots(){
-  const nav=document.getElementById("q-nav");
-  nav.innerHTML="";
+  const nav=document.getElementById("q-nav");nav.innerHTML="";
   quizState.questions.forEach((_,i)=>{
-    const dot=document.createElement("button");
-    dot.className="q-dot";dot.textContent=i+1;dot.id=`dot-${i}`;
-    dot.onclick=()=>goToQuestion(i);
-    nav.appendChild(dot);
+    const d=document.createElement("button");d.className="q-dot";d.textContent=i+1;d.id=`dot-${i}`;d.onclick=()=>goToQuestion(i);nav.appendChild(d);
   });
   updateNavDots();
 }
 
 function updateNavDots(){
   quizState.questions.forEach((q,i)=>{
-    const dot=document.getElementById(`dot-${i}`);if(!dot)return;
-    dot.className="q-dot";
-    if(i===quizState.index){dot.classList.add("current");}
-    else if(quizState.answers[q.id]!==undefined){
-      dot.classList.add(quizState.answers[q.id]===q.correct_option_id?"answered-correct":"answered-wrong");
-    }
+    const d=document.getElementById(`dot-${i}`);if(!d)return;
+    d.className="q-dot";
+    if(i===quizState.index)d.classList.add("current");
+    else if(quizState.answers[q.id]!==undefined)d.classList.add(quizState.answers[q.id]===q.correct_option_id?"answered-correct":"answered-wrong");
   });
   const cur=document.getElementById(`dot-${quizState.index}`);
   if(cur)cur.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"});
@@ -683,9 +763,8 @@ function goToQuestion(idx){
 function renderQuestion(){
   const q=quizState.questions[quizState.index];
   const total=quizState.questions.length;
-  document.getElementById("q-counter").textContent=`${quizState.index+1}/${total}`;
+  document.getElementById("q-counter").textContent=`Вопрос ${quizState.index+1} из ${total}`;
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
-  document.getElementById("progress-fill").style.width=`${(Object.keys(quizState.answers).length/total)*100}%`;
   document.getElementById("q-text").textContent=q.text;
   const img=document.getElementById("q-image");
   if(q.image_url){img.src=API_BASE+q.image_url;img.style.display="block";}else{img.style.display="none";}
@@ -695,12 +774,12 @@ function renderQuestion(){
   q.options.forEach((opt,i)=>{
     const btn=document.createElement("button");btn.className="option-btn";
     btn.dataset.origIndex=i;
-    btn.innerHTML=`<span class="letter">${letters[i]}</span><span>${opt.text}</span>`;
+    btn.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt.text}</span>`;
     if(alreadyAnswered){
       btn.disabled=true;
       if(i===q.correct_option_id)btn.classList.add("correct");
       else if(i===quizState.answers[q.id])btn.classList.add("wrong");
-    }else{btn.onclick=()=>selectAnswer(i,btn,q);}
+    }else btn.onclick=()=>selectAnswer(i,btn,q);
     list.appendChild(btn);
   });
   const isLast=quizState.index===total-1;
@@ -713,12 +792,12 @@ function renderQuestion(){
 function selectAnswer(origIndex,btn,question){
   document.querySelectorAll(".option-btn").forEach(b=>b.disabled=true);
   quizState.answers[question.id]=origIndex;
-  const correctIndex=question.correct_option_id;
-  const isCorrect=origIndex===correctIndex;
+  const ci=question.correct_option_id;
+  const isCorrect=origIndex===ci;
   if(isCorrect)quizState.score++;
   btn.classList.add(isCorrect?"correct":"wrong");
-  if(!isCorrect)document.querySelectorAll(".option-btn").forEach(b=>{if(parseInt(b.dataset.origIndex)===correctIndex)b.classList.add("correct");});
-  quizState.reviewData.push({question,chosen:origIndex,correct:correctIndex,isCorrect});
+  if(!isCorrect)document.querySelectorAll(".option-btn").forEach(b=>{if(parseInt(b.dataset.origIndex)===ci)b.classList.add("correct");});
+  quizState.reviewData.push({question,chosen:origIndex,correct:ci,isCorrect});
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
   const total=quizState.questions.length;
   const isLast=quizState.index===total-1;
@@ -730,53 +809,23 @@ function selectAnswer(origIndex,btn,question){
 
 async function nextQuestion(){goToQuestion(quizState.index+1);}
 
-// ── ПАУЗА ─────────────────────────────────────────────────────────────────
 function pauseQuiz(){
-  clearInterval(timerInterval);
-  quizState.timeLeft=testTimeLeft;saveProgress();
-  const total=quizState.questions.length;
-  const answered=Object.keys(quizState.answers).length;
-  document.getElementById("pause-left").textContent=total-answered;
+  clearInterval(timerInterval);quizState.timeLeft=testTimeLeft;saveProgress();
+  const total=quizState.questions.length,answered=Object.keys(quizState.answers).length;
   document.getElementById("pause-answered").textContent=answered;
+  document.getElementById("pause-left").textContent=total-answered;
   document.getElementById("modal-pause").classList.add("active");
 }
-
-function resumeQuiz(){
-  document.getElementById("modal-pause").classList.remove("active");
-  overrideTimer(quizState.timeLeft||3600);
-}
-
-function exitQuiz(){
-  document.getElementById("modal-pause").classList.remove("active");
-  showScreen("home");
-}
-
+function resumeQuiz(){document.getElementById("modal-pause").classList.remove("active");overrideTimer(quizState.timeLeft||3600);}
+function exitQuiz(){document.getElementById("modal-pause").classList.remove("active");showScreen("home");}
 function stopQuiz(){pauseQuiz();}
-
 function overrideTimer(seconds){
   clearInterval(timerInterval);testTimeLeft=seconds;updateTestTimer();
-  timerInterval=setInterval(()=>{
-    testTimeLeft--;updateTestTimer();
-    if(testTimeLeft<=0){clearInterval(timerInterval);showToast("⏰ Время вышло!",true);finishQuiz();}
-  },1000);
+  timerInterval=setInterval(()=>{testTimeLeft--;updateTestTimer();if(testTimeLeft<=0){clearInterval(timerInterval);showToast("⏰ Время вышло!",true);finishQuiz();}},1000);
 }
-
-// ── ПРОГРЕСС ──────────────────────────────────────────────────────────────
-function saveProgress(){
-  try{localStorage.setItem(`quiz_${quizState.subjectId}`,JSON.stringify({...quizState,timeLeft:testTimeLeft,savedAt:Date.now()}));}catch(e){}
-}
-
-function loadProgress(subjectId){
-  try{
-    const raw=localStorage.getItem(`quiz_${subjectId}`);if(!raw)return null;
-    const d=JSON.parse(raw);
-    if(Date.now()-d.savedAt>24*60*60*1000){localStorage.removeItem(`quiz_${subjectId}`);return null;}
-    if(Object.keys(d.answers).length===d.questions.length)return null;
-    return d;
-  }catch(e){return null;}
-}
-
-function clearProgress(subjectId){try{localStorage.removeItem(`quiz_${subjectId}`);}catch(e){}}
+function saveProgress(){try{localStorage.setItem(`quiz_${quizState.subjectId}`,JSON.stringify({...quizState,timeLeft:testTimeLeft,savedAt:Date.now()}));}catch(e){}}
+function loadProgress(id){try{const d=JSON.parse(localStorage.getItem(`quiz_${id}`));if(!d)return null;if(Date.now()-d.savedAt>86400000){localStorage.removeItem(`quiz_${id}`);return null;}if(Object.keys(d.answers).length===d.questions.length)return null;return d;}catch(e){return null;}}
+function clearProgress(id){try{localStorage.removeItem(`quiz_${id}`);}catch(e){}}
 
 async function finishQuiz(){
   clearInterval(timerInterval);clearProgress(quizState.subjectId);
@@ -790,87 +839,30 @@ function showResult(r){
   document.getElementById("res-score").textContent=r.score;
   document.getElementById("res-total").textContent=r.total;
   const pct=r.percentage;
-  const map=[[90,"Отлично! 🏆","Ты настоящий эксперт!"],[70,"Хороший результат 👍","Почти всё правильно!"],[50,"Неплохо 📚","Есть над чем поработать"],[0,"Нужно повторить 💪","Попробуй ещё раз!"]];
-  const[,title,sub]=map.find(([min])=>pct>=min);
+  const map=[[90,"🏆","Отлично!","Ты настоящий эксперт!"],[70,"👍","Хороший результат","Почти всё правильно!"],[50,"📚","Неплохо","Есть над чем поработать"],[0,"💪","Нужно повторить","Попробуй ещё раз!"]];
+  const[,emoji,title,sub]=map.find(([min])=>pct>=min);
+  document.getElementById("res-emoji").textContent=emoji;
   document.getElementById("res-title").textContent=title;
   document.getElementById("res-sub").textContent=sub;
 }
 
 function showReview(){
   showScreen("review");
-  const list=document.getElementById("review-list");
   const letters=["A","Б","В","Г","Д"];
-  list.innerHTML=quizState.reviewData.map((item,qi)=>{
+  document.getElementById("review-list").innerHTML=quizState.reviewData.map((item,qi)=>{
     const q=item.question;
-    const optsHtml=q.options.map((opt,i)=>{
-      let cls="neutral",icon="○";
-      if(i===item.correct){cls="correct";icon="✓";}
-      if(i===item.chosen&&i!==item.correct){cls="wrong";icon="✗";}
-      return `<div class="review-opt ${cls}"><span>${icon}</span><span>${letters[i]}. ${opt.text}</span></div>`;
-    }).join("");
     const si=item.isCorrect?"✅":"❌";
-    return `<div class="review-item"><div class="review-q">${si} ${qi+1}. ${q.text}</div>${optsHtml}</div>`;
+    const optsHtml=q.options.map((opt,i)=>{
+      let cls="neutral";
+      if(i===item.correct)cls="correct";
+      else if(i===item.chosen&&!item.isCorrect)cls="wrong";
+      return `<div class="review-opt ${cls}">${letters[i]}. ${opt.text}${i===item.correct?" ✓":""}</div>`;
+    }).join("");
+    return `<div class="review-item"><div class="review-status">${si} Вопрос ${qi+1}</div><div class="review-q">${q.text}</div>${optsHtml}</div>`;
   }).join("");
 }
 
-// ── БАЗА ЗНАНИЙ ───────────────────────────────────────────────────────────
-let knowledgeSubjectId = null;
-let knowledgePage = 1;
-const LETTERS = ['A','Б','В','Г','Д'];
-
-async function openKnowledge(subjectId, title) {
-  knowledgeSubjectId = subjectId;
-  knowledgePage = 1;
-  document.getElementById('knowledge-title').textContent = title;
-  showScreen('knowledge');
-  await loadKnowledge();
-}
-
-async function loadKnowledge() {
-  const list = document.getElementById('knowledge-list');
-  list.innerHTML = '<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
-
-  try {
-    const data = await api("GET", `/knowledge/${knowledgeSubjectId}?page=${knowledgePage}&per_page=30`);
-    const total = data.total;
-    const totalPages = Math.ceil(total / data.per_page);
-
-    document.getElementById('knowledge-count').textContent =
-      `Всего ${total} вопросов · Страница ${knowledgePage} из ${totalPages}`;
-
-    list.innerHTML = data.questions.map((q, i) => {
-      const opts = q.options.map((o, idx) => {
-        const isCorrect = idx === q.correct_option_id;
-        return `<div class="kb-opt ${isCorrect?'correct':'wrong'}">
-          <span class="kb-letter">${LETTERS[idx]||idx}</span>
-          <span>${o.text}</span>
-          ${isCorrect ? '<span style="margin-left:auto;font-size:11px">✓</span>' : ''}
-        </div>`;
-      }).join('');
-
-      const num = (knowledgePage - 1) * data.per_page + i + 1;
-      return `<div class="kb-item">
-        <div class="kb-q">${num}. ${q.text}</div>
-        ${opts}
-      </div>`;
-    }).join('');
-
-    // Пагинация
-    const pag = document.getElementById('knowledge-pagination');
-    pag.innerHTML = '';
-    if (totalPages > 1) {
-      for (let p = 1; p <= totalPages; p++) {
-        const btn = document.createElement('button');
-        btn.className = 'page-btn' + (p === knowledgePage ? ' active' : '');
-        btn.textContent = p;
-        btn.onclick = () => { knowledgePage = p; loadKnowledge(); window.scrollTo(0,0); };
-        pag.appendChild(btn);
-      }
-    }
-  } catch(e) {
-    list.innerHTML = `<p style="color:var(--red);text-align:center;padding:20px">Ошибка: ${e.detail||e}</p>`;
-  }
-}
+// ── ИСТОРИЯ ───────────────────────────────────────────────────────────────
 async function loadHistory(){
   const list=document.getElementById("history-list");
   list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
@@ -880,7 +872,7 @@ async function loadHistory(){
     list.innerHTML=results.map(r=>{
       const cls=r.percentage>=70?"score-good":r.percentage>=50?"score-ok":"score-bad";
       const date=r.date?new Date(r.date).toLocaleDateString("ru-RU"):"";
-      return `<div class="history-item"><div class="history-emoji">${r.emoji}</div><div class="history-info"><div class="history-subject">${r.subject}</div><div class="history-date">${date}</div></div><div class="history-score ${cls}">${r.score}/${r.total} (${r.percentage}%)</div></div>`;
+      return `<div class="history-item"><div class="history-icon">${r.emoji}</div><div class="history-info"><div class="history-subject">${r.subject}</div><div class="history-date">${date}</div></div><div class="history-score ${cls}">${r.score}/${r.total}<br><span style="font-size:10px;opacity:.7">${r.percentage}%</span></div></div>`;
     }).join("");
   }catch(e){list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>';}
 }
@@ -892,29 +884,28 @@ async function loadRating(){
   try{
     const results=await api("GET","/admin/results");
     const tabsRow=document.getElementById("rating-subject-tabs");tabsRow.innerHTML="";
-    const bySubject={};
-    results.forEach(r=>{if(!bySubject[r.subject])bySubject[r.subject]=[];bySubject[r.subject].push(r);});
-    const names=Object.keys(bySubject);
+    const by={};results.forEach(r=>{if(!by[r.subject])by[r.subject]=[];by[r.subject].push(r);});
+    const names=Object.keys(by);
     if(!names.length){list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">Пока нет результатов</p>';return;}
     names.forEach((name,i)=>{
       const btn=document.createElement("div");btn.className="tab-btn"+(i===0?" active":"");btn.textContent=name;
-      btn.onclick=()=>{document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderRating(bySubject[name]);};
+      btn.onclick=()=>{document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active");renderRating(by[name]);};
       tabsRow.appendChild(btn);
     });
-    renderRating(bySubject[names[0]]);
+    renderRating(by[names[0]]);
   }catch(e){list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:20px">Загружаем...</p>';}
 }
 
 function renderRating(results){
   const list=document.getElementById("rating-list");
   const best={};
-  results.forEach(r=>{const name=r.student||"—";const pct=Math.round(r.score/r.total*100);if(!best[name]||pct>best[name].pct)best[name]={name,score:r.score,total:r.total,pct};});
+  results.forEach(r=>{const n=r.student||"—";const p=Math.round(r.score/r.total*100);if(!best[n]||p>best[n].pct)best[n]={name:n,score:r.score,total:r.total,pct:p};});
   const sorted=Object.values(best).sort((a,b)=>b.pct-a.pct);
   const medals=["🥇","🥈","🥉"];
-  list.innerHTML=sorted.map((s,i)=>`<div class="rating-item"><div class="rating-pos">${i<3?medals[i]:i+1}</div><div class="rating-info"><div class="rating-name">${s.name}</div><div class="rating-detail">${s.score} из ${s.total} вопросов</div></div><div class="rating-score">${s.pct}%</div></div>`).join("")||'<p style="color:var(--muted2);text-align:center;padding:20px">Нет данных</p>';
+  list.innerHTML=sorted.map((s,i)=>`<div class="rating-item"><div class="rating-pos">${i<3?medals[i]:i+1}</div><div class="rating-info"><div class="rating-name">${s.name}</div><div class="rating-detail">${s.score} из ${s.total}</div></div><div class="rating-pct">${s.pct}%</div></div>`).join("")||'<p style="color:var(--muted2);text-align:center;padding:20px">Нет данных</p>';
 }
 
-// ── EXCEL ЭКСПОРТ ─────────────────────────────────────────────────────────
+// ── EXCEL ─────────────────────────────────────────────────────────────────
 async function exportExcel(){
   try{
     const results=await api("GET","/admin/results");
@@ -928,27 +919,13 @@ async function exportExcel(){
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
 
-// ── ИМПОРТ EXCEL ──────────────────────────────────────────────────────────
-function handleExcelSelect(){
-  const file=document.getElementById("excel-input").files[0];if(!file)return;
-  selectedExcelFile=file;
-  document.getElementById("import-filename").textContent="📄 "+file.name;
-}
+function handleExcelSelect(){const f=document.getElementById("excel-input").files[0];if(!f)return;selectedExcelFile=f;document.getElementById("import-filename").textContent="📄 "+f.name;}
 
 function downloadTemplate(){
-  const data=[
-    ["Вопрос *","Вариант A *","Вариант Б *","Вариант В","Вариант Г","Вариант Д","Правильный ответ * (A/Б/В/Г/Д)"],
-    ["⚠️ Обязательные поля отмечены *. Варианты В,Г,Д — необязательны. Правильный ответ: A, Б, В, Г или Д","","","","","",""],
-    ["Столица Узбекистана?","Ташкент","Самарканд","Бухара","Наманган","","A"],
-    ["Сколько будет 2+2?","3","4","5","6","","Б"],
-    ["","","","","","",""],
-    ["","","","","","",""],
-  ];
+  const data=[["Вопрос *","Вариант A *","Вариант Б *","Вариант В","Вариант Г","Вариант Д","Правильный ответ * (A/Б/В/Г/Д)"],["⚠️ Обязательные поля отмечены *","","","","","",""],["Столица Узбекистана?","Ташкент","Самарканд","Бухара","Наманган","","A"],["Сколько будет 2+2?","3","4","5","6","","Б"],["","","","","","",""]];
   const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet(data);
   ws["!cols"]=[{wch:60},{wch:25},{wch:25},{wch:25},{wch:25},{wch:25},{wch:30}];
-  XLSX.utils.book_append_sheet(wb,ws,"Вопросы");
-  XLSX.writeFile(wb,"UniQuiz_шаблон_вопросов.xlsx");
-  showToast("Шаблон скачан ✅");
+  XLSX.utils.book_append_sheet(wb,ws,"Вопросы");XLSX.writeFile(wb,"UniQuiz_шаблон_вопросов.xlsx");showToast("Шаблон скачан ✅");
 }
 
 async function importQuestions(){
@@ -961,17 +938,17 @@ async function importQuestions(){
   try{
     const res=await fetch(`${API_BASE}/admin/import-questions?subject_id=${subjectId}`,{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
     const data=await res.json();
-    if(!res.ok){resultDiv.style.background="rgba(248,113,113,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ "+data.detail;return;}
+    if(!res.ok){resultDiv.style.background="rgba(239,68,68,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ "+data.detail;return;}
     let msg=`✅ ${data.message}`;
-    if(data.errors&&data.errors.length){msg+="\n\nОшибки:\n"+data.errors.join("\n");resultDiv.style.background="rgba(251,146,60,.1)";resultDiv.style.color="var(--orange)";}
-    else{resultDiv.style.background="rgba(74,222,128,.1)";resultDiv.style.color="var(--green)";}
+    if(data.errors&&data.errors.length){msg+="\n\nОшибки:\n"+data.errors.join("\n");resultDiv.style.background="rgba(249,115,22,.1)";resultDiv.style.color="var(--orange)";}
+    else{resultDiv.style.background="rgba(34,197,94,.1)";resultDiv.style.color="var(--green)";}
     resultDiv.textContent=msg;
     selectedExcelFile=null;document.getElementById("excel-input").value="";document.getElementById("import-filename").textContent="";
     showToast(`Добавлено ${data.added} вопросов ✅`);
-  }catch(e){resultDiv.style.background="rgba(248,113,113,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ Ошибка загрузки";}
+  }catch(e){resultDiv.style.background="rgba(239,68,68,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ Ошибка загрузки";}
 }
 
-// ── АДМИН ─────────────────────────────────────────────────────────────────
+// ── ADMIN SUBJECTS ────────────────────────────────────────────────────────
 async function loadAdminSubjects(){
   try{
     const subjects=await api("GET","/subjects");allSubjects=subjects;
@@ -981,7 +958,12 @@ async function loadAdminSubjects(){
       subjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id)));
     });
     const list=document.getElementById("subjects-admin-list");
-    list.innerHTML=subjects.length?subjects.map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px"><span style="font-size:22px">${s.emoji}</span><div style="flex:1"><div style="font-weight:600;font-size:14px">${s.title}</div><div style="color:var(--muted);font-size:11px">⏱ ${s.time_limit||60} мин · ID ${s.id}</div></div></div>`).join(""):'<p style="color:var(--muted2);font-size:13px">Предметов пока нет</p>';
+    list.innerHTML=subjects.length?subjects.map(s=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px">
+        <span style="font-size:24px">${s.emoji}</span>
+        <div style="flex:1"><div style="font-weight:600;font-size:14px">${s.title}</div><div style="color:var(--muted);font-size:11px;margin-top:2px">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} из ${s.total_questions||0}</div></div>
+        <button onclick="openQBank(${s.id},'${s.title}')" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer">📋 База</button>
+      </div>`).join(""):'<p style="color:var(--muted2);font-size:13px">Предметов пока нет</p>';
   }catch(e){}
 }
 
@@ -993,7 +975,7 @@ async function createSubject(){
   if(!title){showToast("Введи название!",true);return;}
   try{
     await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}&question_count=${question_count}`);
-    showToast("Предмет добавлен ✅");document.getElementById("subj-title").value="";document.getElementById("subj-time").value="60";
+    showToast("Предмет добавлен ✅");document.getElementById("subj-title").value="";
     await loadAdminSubjects();
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
@@ -1034,8 +1016,9 @@ async function loadAdminResults(){
     const tbody=document.getElementById("results-table");
     tbody.innerHTML=results.length?results.map(r=>{
       const date=r.date?new Date(r.date).toLocaleDateString("ru-RU"):"—";
-      const pct=Math.round(r.score/r.total*100);const cls=pct>=70?"badge-green":pct>=50?"badge-accent":"badge-red";
-      return `<tr><td><b>${r.student||"—"}</b><br><span style="color:var(--muted);font-size:11px">${r.username}</span></td><td>${r.subject}</td><td><span class="badge ${cls}">${r.score}/${r.total}</span></td><td style="color:var(--muted2);font-size:11px">${date}</td></tr>`;
+      const pct=Math.round(r.score/r.total*100);
+      const cls=pct>=70?"badge-green":pct>=50?"badge-accent":"badge-red";
+      return `<tr><td><b>${r.student||"—"}</b><br><span style="color:var(--muted);font-size:11px">${r.username}</span></td><td>${r.subject}</td><td><span class="badge ${cls}">${r.score}/${r.total}</span></td><td style="color:var(--muted);font-size:11px">${date}</td></tr>`;
     }).join(""):'<tr><td colspan="4" style="color:var(--muted2);text-align:center;padding:20px">Нет данных</td></tr>';
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
@@ -1046,12 +1029,12 @@ async function loadUsers(){
     const tbody=document.getElementById("users-table");
     tbody.innerHTML=users.map(u=>{
       const rb=u.role==="admin"?"badge-red":u.role==="teacher"?"badge-green":"badge-accent";
-      let accessBadge="",accessInfo="";
-      if(u.role!=="student"){accessBadge='<span class="badge badge-green">безлимит</span>';}
-      else if(u.subscription_active&&u.is_trial){const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";accessBadge='<span class="badge badge-orange">пробный</span>';accessInfo=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";}
-      else if(u.subscription_active){const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";accessBadge='<span class="badge badge-green">активна</span>';accessInfo=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";}
-      else{accessBadge='<span class="badge badge-red">нет доступа</span>';}
-      return `<tr><td><b>${u.full_name||u.username}</b><br><span style="color:var(--muted);font-size:11px">${u.username}</span></td><td><span class="badge ${rb}">${u.role}</span></td><td>${accessBadge}${accessInfo}</td><td style="white-space:nowrap">${(!u.subscription_active||u.is_trial)?`<button onclick="activateSub(${u.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-right:4px">+30д</button>`:""}<button onclick="deleteUser(${u.id},'${u.username}')" style="background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer">🗑</button></td></tr>`;
+      let ab="",ai="";
+      if(u.role!=="student")ab='<span class="badge badge-green">∞</span>';
+      else if(u.subscription_active&&u.is_trial){const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";ab='<span class="badge badge-orange">пробный</span>';ai=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";}
+      else if(u.subscription_active){const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";ab='<span class="badge badge-green">активна</span>';ai=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";}
+      else ab='<span class="badge badge-red">нет</span>';
+      return `<tr><td><b>${u.full_name||u.username}</b><br><span style="color:var(--muted);font-size:11px">${u.username}</span></td><td><span class="badge ${rb}">${u.role}</span></td><td>${ab}${ai}</td><td style="white-space:nowrap">${(!u.subscription_active||u.is_trial)?`<button onclick="activateSub(${u.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px">+30д</button>`:""}<button onclick="deleteUser(${u.id},'${u.username}')" style="background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer">🗑</button></td></tr>`;
     }).join("");
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
@@ -1087,71 +1070,57 @@ function switchAdminTab(id,el){
   if(id==="at-results")loadAdminResults();if(id==="at-users")loadUsers();if(id==="at-subjects")loadAdminSubjects();
 }
 
-
-// ── БАЗА ВОПРОСОВ ─────────────────────────────────────────────────────────
-let qbankAll = [];
-let qbankSubjectId = null;
-
-async function openQBank(subjectId, title){
-  qbankSubjectId = subjectId;
-  document.getElementById("qbank-title").textContent = title;
-  document.getElementById("qbank-count").textContent = "Загрузка...";
-  document.getElementById("qbank-search").value = "";
+// ── QBANK ─────────────────────────────────────────────────────────────────
+async function openQBank(subjectId,title){
+  qbankSubjectId=subjectId;
+  document.getElementById("qbank-title").textContent=title;
+  document.getElementById("qbank-count").textContent="Загрузка...";
+  document.getElementById("qbank-search").value="";
   showScreen("qbank");
-  const list = document.getElementById("qbank-list");
-  list.innerHTML = '<div class="loader"><div class="spinner"></div><span>Загрузка вопросов...</span></div>';
+  const list=document.getElementById("qbank-list");
+  list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
   try{
-    qbankAll = await api("GET", `/admin/questions/${subjectId}`);
-    document.getElementById("qbank-count").textContent = `${qbankAll.length} вопросов в базе`;
+    qbankAll=await api("GET",`/admin/questions/${subjectId}`);
+    document.getElementById("qbank-count").textContent=`${qbankAll.length} вопросов`;
     renderQBank(qbankAll);
-  }catch(e){
-    list.innerHTML = '<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>';
-  }
+  }catch(e){list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>';}
 }
 
 function filterQBank(){
-  const q = document.getElementById("qbank-search").value.toLowerCase();
-  const filtered = q ? qbankAll.filter(item => item.text.toLowerCase().includes(q) || item.options.some(o=>o.text.toLowerCase().includes(q))) : qbankAll;
-  document.getElementById("qbank-count").textContent = `${filtered.length} из ${qbankAll.length} вопросов`;
+  const q=document.getElementById("qbank-search").value.toLowerCase();
+  const filtered=q?qbankAll.filter(item=>item.text.toLowerCase().includes(q)||item.options.some(o=>o.text.toLowerCase().includes(q))):qbankAll;
+  document.getElementById("qbank-count").textContent=`${filtered.length} из ${qbankAll.length}`;
   renderQBank(filtered);
 }
 
 function renderQBank(questions){
-  const letters = ["A","Б","В","Г","Д"];
-  const list = document.getElementById("qbank-list");
+  const letters=["A","Б","В","Г","Д"];
+  const list=document.getElementById("qbank-list");
   if(!questions.length){list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">Ничего не найдено</p>';return;}
-  list.innerHTML = questions.map((q,i) => `
+  list.innerHTML=questions.map((q,i)=>`
     <div class="qbank-item">
       <div class="qbank-num">#${i+1} · ID ${q.id}</div>
       <div class="qbank-q">${q.text}</div>
-      <div class="qbank-opts">
-        ${q.options.map((o,j)=>`<div class="qbank-opt ${j===q.correct_option_id?'correct':''}">${letters[j]}. ${o.text}${j===q.correct_option_id?' ✓':''}</div>`).join("")}
-      </div>
-      <button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer">🗑 Удалить</button>
-    </div>
-  `).join("");
+      <div class="qbank-opts">${q.options.map((o,j)=>`<div class="qbank-opt ${j===q.correct_option_id?"correct":""}">${letters[j]}. ${o.text}${j===q.correct_option_id?" ✓":""}</div>`).join("")}</div>
+      <button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer">🗑 Удалить</button>
+    </div>`).join("");
 }
 
 async function deleteQuestion(qId){
   if(!confirm("Удалить этот вопрос?"))return;
   try{
-    await api("DELETE", `/admin/questions/${qId}`);
-    showToast("Вопрос удалён ✅");
-    qbankAll = qbankAll.filter(q=>q.id!==qId);
-    filterQBank();
-    document.getElementById("qbank-count").textContent = `${qbankAll.length} вопросов в базе`;
+    await api("DELETE",`/admin/questions/${qId}`);showToast("Вопрос удалён ✅");
+    qbankAll=qbankAll.filter(q=>q.id!==qId);filterQBank();
+    document.getElementById("qbank-count").textContent=`${qbankAll.length} вопросов`;
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
 
+// ── TOAST ─────────────────────────────────────────────────────────────────
 function showToast(msg,isError=false){
   const t=document.getElementById("toast");
-  t.textContent=msg;
-  t.className="toast"+(isError?" error":"");
-  t.classList.remove("show");
-  void t.offsetHeight; // reflow
-  t.classList.add("show");
-  clearTimeout(t._timer);
-  t._timer=setTimeout(()=>t.classList.remove("show"),3000);
+  t.textContent=msg;t.className="toast"+(isError?" error":"");
+  t.classList.remove("show");void t.offsetHeight;t.classList.add("show");
+  clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove("show"),3000);
 }
 
 addOpt();addOpt();addOpt();addOpt();
