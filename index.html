@@ -42,6 +42,22 @@
     .subject-card .emoji{font-size:30px;display:block;margin-bottom:10px}
     .subject-card .name{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;line-height:1.4}
     .subject-card .time{font-size:11px;color:var(--muted);margin-top:4px}
+    .subject-btns{display:flex;gap:6px;margin-top:12px}
+    .subject-btn{flex:1;padding:8px 4px;border:none;border-radius:8px;font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;cursor:pointer;transition:all .2s}
+    .subject-btn-test{background:var(--accent);color:#000}
+    .subject-btn-test:hover{opacity:.85}
+    .subject-btn-kb{background:var(--card2);color:var(--muted2);border:1px solid var(--border)}
+    .subject-btn-kb:hover{border-color:var(--accent);color:var(--accent)}
+    .kb-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
+    .kb-q{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5}
+    .kb-opt{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:5px}
+    .kb-opt.correct{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);color:var(--green)}
+    .kb-opt.wrong{color:var(--muted2)}
+    .kb-opt .kb-letter{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;flex-shrink:0}
+    .kb-opt.correct .kb-letter{background:var(--green);color:#000}
+    .kb-opt.wrong .kb-letter{background:var(--border)}
+    .page-btn{padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;transition:all .2s}
+    .page-btn:hover,.page-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
     .paywall{text-align:center;padding:40px 0}
     .paywall .lock{font-size:56px;margin-bottom:20px}
     .paywall h2{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900;margin-bottom:10px}
@@ -69,6 +85,12 @@
     .option-btn.correct{border-color:var(--green);background:rgba(74,222,128,.08)}.option-btn.correct .letter{background:var(--green);color:#000}
     .option-btn.wrong{border-color:var(--red);background:rgba(248,113,113,.08)}.option-btn.wrong .letter{background:var(--red);color:#000}
     .option-btn:disabled{cursor:default}
+    .q-dot{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--card);font-family:'Unbounded',sans-serif;font-size:9px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted2);transition:all .15s;flex-shrink:0}
+    .q-dot:hover{border-color:var(--accent);color:var(--accent)}
+    .q-dot.current{border-color:var(--accent);background:var(--accent);color:#000}
+    .q-dot.answered-correct{border-color:var(--green);background:rgba(74,222,128,.2);color:var(--green)}
+    .q-dot.answered-wrong{border-color:var(--red);background:rgba(248,113,113,.2);color:var(--red)}
+    .q-dot.answered-skip{border-color:var(--muted);background:var(--card2);color:var(--muted)}
     .result-wrap{text-align:center;padding:20px 0 40px}
     .result-circle{width:120px;height:120px;border-radius:50%;border:3px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 24px}
     .result-score{font-family:'Unbounded',sans-serif;font-size:32px;font-weight:900;color:var(--accent)}
@@ -120,6 +142,12 @@
     .tabs-row{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}
     .tab-btn{flex-shrink:0;padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;text-align:center;transition:all .2s}
     .tab-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+    .qbank-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+    .qbank-q{font-size:14px;font-weight:500;margin-bottom:10px;line-height:1.5}
+    .qbank-opts{display:flex;flex-direction:column;gap:6px}
+    .qbank-opt{font-size:13px;padding:6px 10px;border-radius:8px;color:var(--muted2)}
+    .qbank-opt.correct{background:rgba(74,222,128,.1);color:var(--green);font-weight:600}
+    .qbank-num{font-family:'Unbounded',sans-serif;font-size:10px;color:var(--muted);margin-bottom:6px}
   </style>
 </head>
 <body>
@@ -186,7 +214,7 @@
 <!-- ТЕСТ -->
 <div id="screen-quiz" class="screen">
   <div class="quiz-header">
-    <button class="back-btn" onclick="stopQuiz()">←</button>
+    <button class="back-btn" onclick="pauseQuiz()" title="Пауза">⏸</button>
     <div class="progress-wrap">
       <div class="progress-label">
         <span id="q-counter">1/10</span>
@@ -196,12 +224,36 @@
       <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     </div>
   </div>
+
+  <!-- Навигация по вопросам -->
+  <div id="q-nav" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;max-height:80px;overflow-y:auto;padding:2px"></div>
+
   <div class="question-card">
     <img id="q-image" class="question-img" alt=""/>
     <p class="question-text" id="q-text"></p>
   </div>
   <div class="options-list" id="options-list"></div>
-  <button class="btn btn-accent" id="next-btn" onclick="nextQuestion()" style="display:none;margin-top:14px">Следующий →</button>
+
+  <div style="display:flex;gap:8px;margin-top:14px">
+    <button class="btn btn-outline" id="prev-btn" onclick="goToQuestion(quizState.index-1)" style="flex:1;display:none">← Назад</button>
+    <button class="btn btn-accent" id="next-btn" onclick="nextQuestion()" style="flex:1;display:none">Следующий →</button>
+  </div>
+
+  <button class="btn btn-outline" onclick="finishQuiz()" id="finish-btn" style="margin-top:10px;display:none">Завершить тест ✓</button>
+</div>
+
+<!-- ПАУЗА -->
+<div class="modal-overlay" id="modal-pause">
+  <div class="modal">
+    <h3>⏸ Тест на паузе</h3>
+    <div style="color:var(--muted2);font-size:13px;margin-bottom:20px;line-height:1.6">
+      Прогресс сохранён. Ты можешь продолжить в любое время.<br>
+      Осталось вопросов: <b id="pause-left" style="color:var(--accent)">0</b><br>
+      Отвечено: <b id="pause-answered" style="color:var(--green)">0</b>
+    </div>
+    <button class="btn btn-accent" onclick="resumeQuiz()">▶ Продолжить</button>
+    <button class="btn btn-outline" onclick="exitQuiz()" style="margin-top:10px">← Выйти (прогресс сохранится)</button>
+  </div>
 </div>
 
 <!-- РЕЗУЛЬТАТ -->
@@ -228,10 +280,38 @@
   <div id="review-list"></div>
 </div>
 
+<!-- БАЗА ВОПРОСОВ -->
+<div id="screen-qbank" class="screen">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <button class="back-btn" onclick="showScreen('admin')">←</button>
+    <div style="flex:1">
+      <p class="section-title" style="margin:0" id="qbank-title">База вопросов</p>
+      <div style="font-size:12px;color:var(--muted2);margin-top:2px" id="qbank-count"></div>
+    </div>
+  </div>
+  <div id="qbank-search-wrap" style="margin-bottom:14px">
+    <input type="text" class="form-input" id="qbank-search" placeholder="🔍 Поиск по вопросам..." oninput="filterQBank()" style="margin:0"/>
+  </div>
+  <div id="qbank-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
+</div>
+
 <!-- ИСТОРИЯ -->
 <div id="screen-history" class="screen">
   <p class="section-title">Мои результаты</p>
   <div id="history-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
+</div>
+
+<!-- БАЗА ЗНАНИЙ -->
+<div id="screen-knowledge" class="screen">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+    <button class="back-btn" onclick="showScreen('home')">←</button>
+    <div style="flex:1">
+      <p class="section-title" style="margin:0" id="knowledge-title">База знаний</p>
+      <div style="font-size:12px;color:var(--muted2);margin-top:2px" id="knowledge-count"></div>
+    </div>
+  </div>
+  <div id="knowledge-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div>
+  <div id="knowledge-pagination" style="display:flex;gap:8px;margin-top:16px"></div>
 </div>
 
 <!-- РЕЙТИНГ -->
@@ -294,6 +374,11 @@
         <span style="font-size:13px;color:var(--muted2);white-space:nowrap">⏱ Время теста:</span>
         <input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="max-width:90px;margin:0"/>
         <span style="font-size:13px;color:var(--muted2)">мин</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span style="font-size:13px;color:var(--muted2);white-space:nowrap">📝 Вопросов в тесте:</span>
+        <input type="number" class="form-input" id="subj-qcount" value="30" min="5" max="500" style="max-width:90px;margin:0"/>
+        <span style="font-size:12px;color:var(--muted2)">(из всей базы)</span>
       </div>
       <button class="btn btn-accent" onclick="createSubject()">Добавить предмет</button>
     </div>
@@ -451,6 +536,7 @@ function showScreen(name){
   if(name==="history")loadHistory();
   if(name==="admin")loadAdminSubjects();
   if(name==="rating")loadRating();
+  if(name==="qbank"){}// загружается через openQBank
 }
 
 // ── ПРЕДМЕТЫ ──────────────────────────────────────────────────────────────
@@ -459,8 +545,15 @@ async function loadSubjects(){
   const grid=document.getElementById("subjects-grid");grid.innerHTML="";
   allSubjects.forEach(s=>{
     const card=document.createElement("div");card.className="subject-card";
-    card.innerHTML=`<span class="emoji">${s.emoji}</span><div class="name">${s.title}</div><div class="time">⏱ ${s.time_limit||60} мин</div>`;
-    card.onclick=()=>startQuiz(s.id);grid.appendChild(card);
+    card.innerHTML=`
+      <span class="emoji">${s.emoji}</span>
+      <div class="name">${s.title}</div>
+      <div class="time">⏱ ${s.time_limit||60} мин · 30 случайных вопросов</div>
+      <div class="subject-btns">
+        <button class="subject-btn subject-btn-test" onclick="event.stopPropagation();startQuiz(${s.id})">▶ ТЕСТ</button>
+        <button class="subject-btn subject-btn-kb" onclick="event.stopPropagation();openKnowledge(${s.id},'${s.emoji} ${s.title}')">📖 БАЗА</button>
+      </div>`;
+    grid.appendChild(card);
   });
   const u=currentUser;
   const hasAccess=u.subscription_active||(u.role==="teacher"||u.role==="admin");
@@ -497,44 +590,93 @@ function updateTestTimer(){
 async function startQuiz(subjectId){
   const subject=allSubjects.find(s=>s.id===subjectId);
   const timeLimit=(subject&&subject.time_limit)?subject.time_limit:60;
-  quizState={questions:[],index:0,answers:{},score:0,subjectId,reviewData:[]};
+  // Проверяем сохранённый прогресс
+  const saved=loadProgress(subjectId);
+  if(saved&&saved.questions&&saved.questions.length>0){
+    if(confirm(`У тебя есть незавершённый тест (${Object.keys(saved.answers).length} ответов из ${saved.questions.length}). Продолжить?`)){
+      quizState=saved;
+      showScreen("quiz");
+      renderQuestion();
+      renderNavDots();
+      overrideTimer(saved.timeLeft||timeLimit*60);
+      return;
+    }
+  }
+  quizState={questions:[],index:0,answers:{},score:0,subjectId,reviewData:[],timeLeft:timeLimit*60};
   showScreen("quiz");
   try{
     let q=await api("GET",`/questions/${subjectId}`);
-    q=q.sort(()=>Math.random()-.5);
     quizState.questions=q;
     if(!q.length){showToast("В этом предмете пока нет вопросов",true);showScreen("home");return;}
     renderQuestion();
+    renderNavDots();
     startTestTimer(timeLimit);
+    saveProgress();
   }catch(e){
     if(e.status===402){showScreen("home");showToast("Нужна подписка!",true);}
     else{showToast("Ошибка: "+e.detail,true);showScreen("home");}
   }
 }
 
-function stopQuiz(){clearInterval(timerInterval);showScreen("home");}
+// ── НАВИГАЦИЯ ─────────────────────────────────────────────────────────────
+function renderNavDots(){
+  const nav=document.getElementById("q-nav");
+  nav.innerHTML="";
+  quizState.questions.forEach((_,i)=>{
+    const dot=document.createElement("button");
+    dot.className="q-dot";dot.textContent=i+1;dot.id=`dot-${i}`;
+    dot.onclick=()=>goToQuestion(i);
+    nav.appendChild(dot);
+  });
+  updateNavDots();
+}
+
+function updateNavDots(){
+  quizState.questions.forEach((q,i)=>{
+    const dot=document.getElementById(`dot-${i}`);if(!dot)return;
+    dot.className="q-dot";
+    if(i===quizState.index){dot.classList.add("current");}
+    else if(quizState.answers[q.id]!==undefined){
+      dot.classList.add(quizState.answers[q.id]===q.correct_option_id?"answered-correct":"answered-wrong");
+    }
+  });
+  const cur=document.getElementById(`dot-${quizState.index}`);
+  if(cur)cur.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"});
+}
+
+function goToQuestion(idx){
+  if(idx<0||idx>=quizState.questions.length)return;
+  quizState.index=idx;renderQuestion();updateNavDots();
+}
 
 function renderQuestion(){
   const q=quizState.questions[quizState.index];
   const total=quizState.questions.length;
   document.getElementById("q-counter").textContent=`${quizState.index+1}/${total}`;
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
-  document.getElementById("progress-fill").style.width=`${(quizState.index/total)*100}%`;
+  document.getElementById("progress-fill").style.width=`${(Object.keys(quizState.answers).length/total)*100}%`;
   document.getElementById("q-text").textContent=q.text;
   const img=document.getElementById("q-image");
   if(q.image_url){img.src=API_BASE+q.image_url;img.style.display="block";}else{img.style.display="none";}
   const letters=["A","Б","В","Г","Д"];
   const list=document.getElementById("options-list");list.innerHTML="";
-  const shuffled=q.options.map((o,i)=>({...o,origIndex:i})).sort(()=>Math.random()-.5);
-  shuffled.forEach((opt,i)=>{
+  const alreadyAnswered=quizState.answers[q.id]!==undefined;
+  q.options.forEach((opt,i)=>{
     const btn=document.createElement("button");btn.className="option-btn";
-    btn.dataset.origIndex=opt.origIndex;
+    btn.dataset.origIndex=i;
     btn.innerHTML=`<span class="letter">${letters[i]}</span><span>${opt.text}</span>`;
-    btn.onclick=()=>selectAnswer(opt.origIndex,btn,q);
+    if(alreadyAnswered){
+      btn.disabled=true;
+      if(i===q.correct_option_id)btn.classList.add("correct");
+      else if(i===quizState.answers[q.id])btn.classList.add("wrong");
+    }else{btn.onclick=()=>selectAnswer(i,btn,q);}
     list.appendChild(btn);
   });
-  document.getElementById("next-btn").style.display="none";
-  // НЕ запускаем отдельный таймер — таймер идёт на весь тест
+  const isLast=quizState.index===total-1;
+  const allAnswered=Object.keys(quizState.answers).length===total;
+  document.getElementById("prev-btn").style.display=quizState.index>0?"block":"none";
+  document.getElementById("next-btn").style.display=(alreadyAnswered&&!isLast)?"block":"none";
+  document.getElementById("finish-btn").style.display=allAnswered?"block":"none";
 }
 
 function selectAnswer(origIndex,btn,question){
@@ -542,25 +684,72 @@ function selectAnswer(origIndex,btn,question){
   quizState.answers[question.id]=origIndex;
   const correctIndex=question.correct_option_id;
   const isCorrect=origIndex===correctIndex;
-  if(isCorrect){quizState.score++;btn.classList.add("correct");}
-  else{
-    btn.classList.add("wrong");
-    document.querySelectorAll(".option-btn").forEach(b=>{if(parseInt(b.dataset.origIndex)===correctIndex)b.classList.add("correct");});
-  }
+  if(isCorrect)quizState.score++;
+  btn.classList.add(isCorrect?"correct":"wrong");
+  if(!isCorrect)document.querySelectorAll(".option-btn").forEach(b=>{if(parseInt(b.dataset.origIndex)===correctIndex)b.classList.add("correct");});
   quizState.reviewData.push({question,chosen:origIndex,correct:correctIndex,isCorrect});
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
-  const nb=document.getElementById("next-btn");nb.style.display="block";
-  nb.textContent=quizState.index<quizState.questions.length-1?"Следующий →":"Завершить ✓";
+  const total=quizState.questions.length;
+  const isLast=quizState.index===total-1;
+  const allAnswered=Object.keys(quizState.answers).length===total;
+  document.getElementById("next-btn").style.display=isLast?"none":"block";
+  document.getElementById("finish-btn").style.display=allAnswered?"block":"none";
+  updateNavDots();saveProgress();
 }
 
-async function nextQuestion(){
-  quizState.index++;
-  if(quizState.index<quizState.questions.length){renderQuestion();}
-  else{await finishQuiz();}
+async function nextQuestion(){goToQuestion(quizState.index+1);}
+
+// ── ПАУЗА ─────────────────────────────────────────────────────────────────
+function pauseQuiz(){
+  clearInterval(timerInterval);
+  quizState.timeLeft=testTimeLeft;saveProgress();
+  const total=quizState.questions.length;
+  const answered=Object.keys(quizState.answers).length;
+  document.getElementById("pause-left").textContent=total-answered;
+  document.getElementById("pause-answered").textContent=answered;
+  document.getElementById("modal-pause").classList.add("active");
 }
+
+function resumeQuiz(){
+  document.getElementById("modal-pause").classList.remove("active");
+  overrideTimer(quizState.timeLeft||3600);
+}
+
+function exitQuiz(){
+  document.getElementById("modal-pause").classList.remove("active");
+  showScreen("home");
+}
+
+function stopQuiz(){pauseQuiz();}
+
+function overrideTimer(seconds){
+  clearInterval(timerInterval);testTimeLeft=seconds;updateTestTimer();
+  timerInterval=setInterval(()=>{
+    testTimeLeft--;updateTestTimer();
+    if(testTimeLeft<=0){clearInterval(timerInterval);showToast("⏰ Время вышло!",true);finishQuiz();}
+  },1000);
+}
+
+// ── ПРОГРЕСС ──────────────────────────────────────────────────────────────
+function saveProgress(){
+  try{localStorage.setItem(`quiz_${quizState.subjectId}`,JSON.stringify({...quizState,timeLeft:testTimeLeft,savedAt:Date.now()}));}catch(e){}
+}
+
+function loadProgress(subjectId){
+  try{
+    const raw=localStorage.getItem(`quiz_${subjectId}`);if(!raw)return null;
+    const d=JSON.parse(raw);
+    if(Date.now()-d.savedAt>24*60*60*1000){localStorage.removeItem(`quiz_${subjectId}`);return null;}
+    if(Object.keys(d.answers).length===d.questions.length)return null;
+    return d;
+  }catch(e){return null;}
+}
+
+function clearProgress(subjectId){try{localStorage.removeItem(`quiz_${subjectId}`);}catch(e){}}
 
 async function finishQuiz(){
-  clearInterval(timerInterval);
+  clearInterval(timerInterval);clearProgress(quizState.subjectId);
+  document.getElementById("modal-pause").classList.remove("active");
   try{const r=await api("POST","/results",{subject_id:quizState.subjectId,answers:quizState.answers});showResult(r);}
   catch(e){showToast("Ошибка: "+e.detail,true);}
 }
@@ -593,7 +782,64 @@ function showReview(){
   }).join("");
 }
 
-// ── ИСТОРИЯ ───────────────────────────────────────────────────────────────
+// ── БАЗА ЗНАНИЙ ───────────────────────────────────────────────────────────
+let knowledgeSubjectId = null;
+let knowledgePage = 1;
+const LETTERS = ['A','Б','В','Г','Д'];
+
+async function openKnowledge(subjectId, title) {
+  knowledgeSubjectId = subjectId;
+  knowledgePage = 1;
+  document.getElementById('knowledge-title').textContent = title;
+  showScreen('knowledge');
+  await loadKnowledge();
+}
+
+async function loadKnowledge() {
+  const list = document.getElementById('knowledge-list');
+  list.innerHTML = '<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
+
+  try {
+    const data = await api("GET", `/knowledge/${knowledgeSubjectId}?page=${knowledgePage}&per_page=30`);
+    const total = data.total;
+    const totalPages = Math.ceil(total / data.per_page);
+
+    document.getElementById('knowledge-count').textContent =
+      `Всего ${total} вопросов · Страница ${knowledgePage} из ${totalPages}`;
+
+    list.innerHTML = data.questions.map((q, i) => {
+      const opts = q.options.map((o, idx) => {
+        const isCorrect = idx === q.correct_option_id;
+        return `<div class="kb-opt ${isCorrect?'correct':'wrong'}">
+          <span class="kb-letter">${LETTERS[idx]||idx}</span>
+          <span>${o.text}</span>
+          ${isCorrect ? '<span style="margin-left:auto;font-size:11px">✓</span>' : ''}
+        </div>`;
+      }).join('');
+
+      const num = (knowledgePage - 1) * data.per_page + i + 1;
+      return `<div class="kb-item">
+        <div class="kb-q">${num}. ${q.text}</div>
+        ${opts}
+      </div>`;
+    }).join('');
+
+    // Пагинация
+    const pag = document.getElementById('knowledge-pagination');
+    pag.innerHTML = '';
+    if (totalPages > 1) {
+      for (let p = 1; p <= totalPages; p++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (p === knowledgePage ? ' active' : '');
+        btn.textContent = p;
+        btn.onclick = () => { knowledgePage = p; loadKnowledge(); window.scrollTo(0,0); };
+        pag.appendChild(btn);
+      }
+    }
+  } catch(e) {
+    list.innerHTML = `<p style="color:var(--red);text-align:center;padding:20px">Ошибка: ${e.detail||e}</p>`;
+  }
+}
 async function loadHistory(){
   const list=document.getElementById("history-list");
   list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
@@ -712,9 +958,10 @@ async function createSubject(){
   const title=document.getElementById("subj-title").value.trim();
   const emoji=document.getElementById("subj-emoji").value.trim()||"📚";
   const time_limit=parseInt(document.getElementById("subj-time").value)||60;
+  const question_count=parseInt(document.getElementById("subj-qcount")?.value)||30;
   if(!title){showToast("Введи название!",true);return;}
   try{
-    await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}`);
+    await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}&question_count=${question_count}`);
     showToast("Предмет добавлен ✅");document.getElementById("subj-title").value="";document.getElementById("subj-time").value="60";
     await loadAdminSubjects();
   }catch(e){showToast("Ошибка: "+e.detail,true);}
@@ -809,16 +1056,64 @@ function switchAdminTab(id,el){
   if(id==="at-results")loadAdminResults();if(id==="at-users")loadUsers();if(id==="at-subjects")loadAdminSubjects();
 }
 
+
+// ── БАЗА ВОПРОСОВ ─────────────────────────────────────────────────────────
+let qbankAll = [];
+let qbankSubjectId = null;
+
+async function openQBank(subjectId, title){
+  qbankSubjectId = subjectId;
+  document.getElementById("qbank-title").textContent = title;
+  document.getElementById("qbank-count").textContent = "Загрузка...";
+  document.getElementById("qbank-search").value = "";
+  showScreen("qbank");
+  const list = document.getElementById("qbank-list");
+  list.innerHTML = '<div class="loader"><div class="spinner"></div><span>Загрузка вопросов...</span></div>';
+  try{
+    qbankAll = await api("GET", `/admin/questions/${subjectId}`);
+    document.getElementById("qbank-count").textContent = `${qbankAll.length} вопросов в базе`;
+    renderQBank(qbankAll);
+  }catch(e){
+    list.innerHTML = '<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>';
+  }
+}
+
+function filterQBank(){
+  const q = document.getElementById("qbank-search").value.toLowerCase();
+  const filtered = q ? qbankAll.filter(item => item.text.toLowerCase().includes(q) || item.options.some(o=>o.text.toLowerCase().includes(q))) : qbankAll;
+  document.getElementById("qbank-count").textContent = `${filtered.length} из ${qbankAll.length} вопросов`;
+  renderQBank(filtered);
+}
+
+function renderQBank(questions){
+  const letters = ["A","Б","В","Г","Д"];
+  const list = document.getElementById("qbank-list");
+  if(!questions.length){list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">Ничего не найдено</p>';return;}
+  list.innerHTML = questions.map((q,i) => `
+    <div class="qbank-item">
+      <div class="qbank-num">#${i+1} · ID ${q.id}</div>
+      <div class="qbank-q">${q.text}</div>
+      <div class="qbank-opts">
+        ${q.options.map((o,j)=>`<div class="qbank-opt ${j===q.correct_option_id?'correct':''}">${letters[j]}. ${o.text}${j===q.correct_option_id?' ✓':''}</div>`).join("")}
+      </div>
+      <button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer">🗑 Удалить</button>
+    </div>
+  `).join("");
+}
+
+async function deleteQuestion(qId){
+  if(!confirm("Удалить этот вопрос?"))return;
+  try{
+    await api("DELETE", `/admin/questions/${qId}`);
+    showToast("Вопрос удалён ✅");
+    qbankAll = qbankAll.filter(q=>q.id!==qId);
+    filterQBank();
+    document.getElementById("qbank-count").textContent = `${qbankAll.length} вопросов в базе`;
+  }catch(e){showToast("Ошибка: "+e.detail,true);}
+}
+
 function showToast(msg,isError=false){
-  const t=document.getElementById("toast");
-  t.textContent=msg;
-  t.className="toast"+(isError?" error":"");
-  // Сбрасываем анимацию
-  t.classList.remove("show");
-  void t.offsetHeight; // принудительный reflow
-  t.classList.add("show");
-  clearTimeout(t._timer);
-  t._timer=setTimeout(()=>t.classList.remove("show"),3000);
+  const t=document.getElementById("toast");t.textContent=msg;t.className="toast"+(isError?" error":"");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);
 }
 
 addOpt();addOpt();addOpt();addOpt();
