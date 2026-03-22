@@ -247,9 +247,9 @@
     @keyframes spin{to{transform:rotate(360deg)}}
 
     /* ── TOAST ── */
-    .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--green);color:#000;border-radius:100px;padding:12px 22px;font-size:13px;font-weight:700;transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:999;pointer-events:none;white-space:nowrap}
-    .toast.show{transform:translateX(-50%) translateY(0)}
-    .toast.error{background:var(--red);color:#fff}
+    .toast{position:fixed;bottom:82px;left:16px;right:16px;text-align:center;transform:translateY(120px);background:#1c1d26;border:1.5px solid var(--green);color:var(--green);border-radius:12px;padding:13px 20px;font-size:13px;font-weight:700;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;z-index:9999;pointer-events:none;opacity:0}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.error{border-color:var(--red);color:var(--red)}
 
     /* ── TABS ── */
     .tabs-row{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -526,6 +526,22 @@
 </div>
 
 <!-- НАВИГАЦИЯ -->
+<!-- БАЗА ЗНАНИЙ ДЛЯ СТУДЕНТОВ -->
+<div id="screen-knowledge" class="screen">
+  <div style="padding:16px;border-bottom:1px solid var(--border)">
+    <div style="font-size:16px;font-weight:800;margin-bottom:12px">📖 База вопросов</div>
+    <select id="kb-subject-select" class="form-input" style="margin:0" onchange="loadKnowledgeSubject()">
+      <option value="">Выбери предмет...</option>
+    </select>
+  </div>
+  <div id="kb-content">
+    <div style="text-align:center;padding:60px 20px;color:var(--muted2)">
+      <div style="font-size:48px;margin-bottom:14px">📚</div>
+      <div style="font-size:14px">Выбери предмет чтобы увидеть все вопросы с правильными ответами</div>
+    </div>
+  </div>
+</div>
+
 <nav class="bottom-nav" id="bottom-nav" style="display:none">
   <div class="nav-item active" onclick="showScreen('home')" id="nav-home">
     <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
@@ -538,6 +554,10 @@
   <div class="nav-item" onclick="showScreen('history')" id="nav-history">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
     ИСТОРИЯ
+  </div>
+  <div class="nav-item" onclick="showScreen('knowledge')" id="nav-knowledge">
+    <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+    БАЗА
   </div>
   <div class="nav-item" onclick="showScreen('admin')" id="nav-admin" style="display:none">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
@@ -649,11 +669,12 @@ function showScreen(name){
   document.querySelectorAll(".screen").forEach(s=>{s.classList.remove("active");s.style.display="none";});
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
   const t=document.getElementById("screen-"+name);t.style.display="";t.classList.add("active");
-  const nm={home:"nav-home",history:"nav-history",admin:"nav-admin",rating:"nav-rating"};
+  const nm={home:"nav-home",history:"nav-history",admin:"nav-admin",rating:"nav-rating",knowledge:"nav-knowledge"};
   if(nm[name])document.getElementById(nm[name])?.classList.add("active");
   if(name==="history")loadHistory();
   if(name==="admin")loadAdminSubjects();
   if(name==="rating")loadRating();
+  if(name==="knowledge")initKnowledge();
 }
 
 // ── ПРЕДМЕТЫ ──────────────────────────────────────────────────────────────
@@ -1113,6 +1134,51 @@ async function deleteQuestion(qId){
     qbankAll=qbankAll.filter(q=>q.id!==qId);filterQBank();
     document.getElementById("qbank-count").textContent=`${qbankAll.length} вопросов`;
   }catch(e){showToast("Ошибка: "+e.detail,true);}
+}
+
+
+// ── БАЗА ЗНАНИЙ ───────────────────────────────────────────────────────────
+async function initKnowledge(){
+  const sel=document.getElementById("kb-subject-select");
+  sel.innerHTML='<option value="">Выбери предмет...</option>';
+  allSubjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id)));
+}
+
+async function loadKnowledgeSubject(){
+  const subjectId=document.getElementById("kb-subject-select").value;
+  const content=document.getElementById("kb-content");
+  if(!subjectId){
+    content.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--muted2)"><div style="font-size:48px;margin-bottom:14px">📚</div><div style="font-size:14px">Выбери предмет чтобы увидеть все вопросы</div></div>';
+    return;
+  }
+  content.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка вопросов...</span></div>';
+  try{
+    const questions=await api("GET",`/admin/questions/${subjectId}`);
+    const letters=["A","Б","В","Г","Д"];
+    if(!questions.length){content.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">В этом предмете пока нет вопросов</p>';return;}
+    content.innerHTML=`
+      <div style="padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted2);display:flex;justify-content:space-between;align-items:center">
+        <span>📝 ${questions.length} вопросов</span>
+        <span style="color:var(--green);font-weight:600">✓ = правильный ответ</span>
+      </div>
+      <div style="padding:12px 16px">
+        ${questions.map((q,i)=>`
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px">
+            <div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.5px">#${i+1}</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.55">${q.text}</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              ${q.options.map((o,j)=>`
+                <div style="font-size:13px;padding:8px 12px;border-radius:8px;line-height:1.4;${j===q.correct_option_id?
+                  "background:rgba(34,197,94,.1);color:var(--green);font-weight:600;border:1px solid rgba(34,197,94,.2)":
+                  "color:var(--muted2)"}">
+                  ${letters[j]}. ${o.text}${j===q.correct_option_id?" ✓":""}
+                </div>`).join("")}
+            </div>
+          </div>`).join("")}
+      </div>`;
+  }catch(e){
+    content.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>';
+  }
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────────────
