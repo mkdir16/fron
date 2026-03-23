@@ -204,6 +204,13 @@
     .option-row .form-input{margin-bottom:0;flex:1}
     .opt-letter{width:30px;height:30px;background:var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
     .correct-radio{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+    .opt-type-toggle{display:flex;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:2px;gap:2px;flex-shrink:0}
+    .opt-type-btn{padding:4px 8px;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;background:transparent;color:var(--muted2);transition:all .15s}
+    .opt-type-btn.active{background:var(--accent);color:#000}
+    .opt-img-preview{width:60px;height:40px;border-radius:6px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+    .opt-img-upload{width:60px;height:40px;border:1.5px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;transition:border-color .2s}
+    .opt-img-upload:active{border-color:var(--accent)}
+    .option-img-display{width:100%;border-radius:10px;max-height:120px;object-fit:contain;background:var(--card2)}
     .add-opt-btn{width:100%;background:transparent;border:1.5px dashed var(--border);color:var(--muted2);border-radius:var(--radius-sm);padding:12px;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;margin-bottom:14px;transition:border-color .2s}
     .add-opt-btn:active{border-color:var(--accent)}
 
@@ -498,7 +505,11 @@
       <div class="upload-zone" onclick="document.getElementById('img-input').click()">🖼 Загрузить картинку<img class="preview-img" id="img-preview"/></div>
       <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImg()"/>
     </div>
-    <div class="form-group"><label class="form-label">Варианты <span style="color:var(--muted);font-size:10px">(✓ = правильный)</span></label><div id="opts-container"></div><button class="add-opt-btn" onclick="addOpt()">+ Добавить вариант</button></div>
+    <div class="form-group">
+      <label class="form-label">Варианты <span style="color:var(--muted);font-size:10px">(✓ = правильный · 📝 текст · 🖼 картинка)</span></label>
+      <div id="opts-container"></div>
+      <button class="add-opt-btn" onclick="addOpt()">+ Добавить вариант</button>
+    </div>
     <button class="btn btn-accent" onclick="saveQuestion()">Сохранить вопрос</button>
   </div>
 
@@ -903,7 +914,10 @@ function renderQuestion(){
   q.options.forEach((opt,i)=>{
     const btn=document.createElement("button");btn.className="option-btn";
     btn.dataset.origIndex=i;
-    btn.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt.text}</span>`;
+    const optContent = opt.image_url
+      ? `<img src="${API_BASE}${opt.image_url}" style="max-height:100px;max-width:100%;border-radius:8px;object-fit:contain" />`
+      : `<span>${opt.text||""}</span>`;
+    btn.innerHTML=`<span class="option-letter">${letters[i]}</span>${optContent}`;
     if(alreadyAnswered){
       btn.disabled=true;
       if(i===q.correct_option_id)btn.classList.add("correct");
@@ -1117,9 +1131,64 @@ async function createSubject(){
 
 function addOpt(){
   const letters=["A","Б","В","Г","Д","Е"];const i=optCount++;
-  const row=document.createElement("div");row.className="option-row";
-  row.innerHTML=`<div class="opt-letter">${letters[i]||i}</div><input type="text" class="form-input" placeholder="Вариант ${letters[i]||i}"/><input type="radio" name="correct" class="correct-radio" value="${i}" ${i===0?"checked":""}/>`;
+  const row=document.createElement("div");
+  row.className="option-row";
+  row.style.cssText="flex-direction:column;align-items:stretch;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;gap:8px";
+  row.dataset.optIndex=i;
+  row.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="opt-letter">${letters[i]||i}</div>
+      <div style="flex:1;font-size:12px;font-weight:700;color:var(--muted2)">Вариант ${letters[i]||i}</div>
+      <div class="opt-type-toggle">
+        <button class="opt-type-btn active" onclick="setOptType(${i},'text',this)">📝 Текст</button>
+        <button class="opt-type-btn" onclick="setOptType(${i},'image',this)">🖼 Фото</button>
+      </div>
+      <input type="radio" name="correct" class="correct-radio" value="${i}" ${i===0?"checked":""}/>
+    </div>
+    <div class="opt-text-wrap" id="opt-text-${i}">
+      <input type="text" class="form-input" style="margin:0" placeholder="Введи текст варианта..."/>
+    </div>
+    <div class="opt-img-wrap" id="opt-img-${i}" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="opt-img-upload" onclick="document.getElementById('opt-file-${i}').click()" id="opt-upload-btn-${i}">🖼</div>
+        <input type="file" id="opt-file-${i}" accept="image/*" style="display:none" onchange="handleOptImg(${i},this)"/>
+        <div style="font-size:12px;color:var(--muted2)" id="opt-img-label-${i}">Нажми чтобы загрузить картинку</div>
+      </div>
+      <img id="opt-img-preview-${i}" style="display:none;max-height:100px;border-radius:8px;margin-top:8px;object-fit:contain"/>
+    </div>`;
   document.getElementById("opts-container").appendChild(row);
+}
+
+function setOptType(idx, type, btn){
+  btn.closest(".opt-type-toggle").querySelectorAll(".opt-type-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById(`opt-text-${idx}`).style.display = type==="text"?"block":"none";
+  document.getElementById(`opt-img-${idx}`).style.display = type==="image"?"block":"none";
+}
+
+const optImages = {}; // хранит image_url для каждого варианта
+
+async function handleOptImg(idx, input){
+  const file = input.files[0];
+  if(!file) return;
+  // Показываем превью
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById(`opt-img-preview-${idx}`);
+    prev.src = e.target.result;
+    prev.style.display = "block";
+    document.getElementById(`opt-img-label-${idx}`).textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+  // Загружаем на сервер
+  const fd = new FormData();
+  fd.append("file", file);
+  try{
+    const res = await fetch(API_BASE+"/admin/upload-option-image",{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
+    const data = await res.json();
+    optImages[idx] = data.image_url;
+    showToast("Картинка загружена 📸");
+  }catch(e){ showToast("Ошибка загрузки",true); }
 }
 
 async function handleImg(){
@@ -1134,14 +1203,40 @@ async function saveQuestion(){
   const subjectId=document.getElementById("q-subject").value;
   const text=document.getElementById("q-text-admin").value.trim();
   if(!subjectId){showToast("Выбери предмет!",true);return;}
-  if(!text){showToast("Введи вопрос!",true);return;}
-  const opts=[...document.querySelectorAll(".option-row input[type=text]")].map(i=>i.value.trim()).filter(Boolean);
+  if(!text&&!uploadedImg){showToast("Введи вопрос или загрузи картинку!",true);return;}
+
+  // Собираем варианты — текст или картинка
+  const rows=document.querySelectorAll("#opts-container .option-row");
+  const opts=[];
+  for(const row of rows){
+    const idx=parseInt(row.dataset.optIndex);
+    const isImg=row.querySelector(".opt-type-btn.active")?.textContent.includes("Фото");
+    if(isImg){
+      if(optImages[idx]){opts.push({text:null,image_url:optImages[idx]});}
+    }else{
+      const t=row.querySelector("input[type=text]")?.value.trim();
+      if(t)opts.push({text:t,image_url:null});
+    }
+  }
+
   if(opts.length<2){showToast("Минимум 2 варианта!",true);return;}
   const correct=document.querySelector('input[name="correct"]:checked');
+
   try{
-    await api("POST","/admin/questions",{subject_id:parseInt(subjectId),text,options:opts,correct_index:correct?parseInt(correct.value):0,image_url:uploadedImg});
-    showToast("Вопрос сохранён ✅");document.getElementById("q-text-admin").value="";document.getElementById("img-preview").style.display="none";
-    uploadedImg=null;optCount=0;document.getElementById("opts-container").innerHTML="";addOpt();addOpt();addOpt();addOpt();
+    await api("POST","/admin/questions",{
+      subject_id:parseInt(subjectId),
+      text:text||"[Смотри картинку]",
+      options:opts,
+      correct_index:correct?parseInt(correct.value):0,
+      image_url:uploadedImg
+    });
+    showToast("Вопрос сохранён ✅");
+    document.getElementById("q-text-admin").value="";
+    document.getElementById("img-preview").style.display="none";
+    uploadedImg=null;optCount=0;
+    Object.keys(optImages).forEach(k=>delete optImages[k]);
+    document.getElementById("opts-container").innerHTML="";
+    addOpt();addOpt();addOpt();addOpt();
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
 
@@ -1393,7 +1488,7 @@ async function loadKnowledgeSubject(){
                 <div style="font-size:13px;padding:8px 12px;border-radius:8px;line-height:1.4;${j===q.correct_option_id?
                   "background:rgba(34,197,94,.1);color:var(--green);font-weight:600;border:1px solid rgba(34,197,94,.2)":
                   "color:var(--muted2)"}">
-                  ${letters[j]}. ${o.text}${j===q.correct_option_id?" ✓":""}
+                  ${letters[j]}. ${o.image_url?`<img src="${API_BASE}${o.image_url}" style="max-height:80px;border-radius:6px;object-fit:contain;vertical-align:middle;margin-left:4px"/>`:o.text||""}${j===q.correct_option_id?" ✓":""}
                 </div>`).join("")}
             </div>
           </div>`).join("")}
