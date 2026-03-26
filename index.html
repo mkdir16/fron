@@ -264,6 +264,15 @@
     .tab-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
 
     .sub-form{display:flex;gap:8px}.sub-form .form-input{margin-bottom:0;flex:1}
+    *{-webkit-tap-highlight-color:transparent}
+    img{transition:opacity .3s ease}
+    .subject-row{transition:border-color .15s,transform .1s}
+    .subject-row:active{transform:scale(.98)}
+    .option-btn{transition:border-color .15s,background .15s,transform .1s}
+    .option-btn:active:not(:disabled){transform:scale(.98)}
+    .btn{transition:opacity .15s,transform .1s}
+    .btn:active:not(:disabled){transform:scale(.98)}
+
   </style>
 </head>
 <body>
@@ -456,6 +465,7 @@
     <div class="admin-tab" onclick="switchAdminTab('at-subjects',this)">Предметы</div>
     <div class="admin-tab" onclick="switchAdminTab('at-results',this)">Результаты</div>
     <div class="admin-tab" onclick="switchAdminTab('at-users',this)" id="tab-users-btn" style="display:none">Студенты</div>
+    <div class="admin-tab" onclick="switchAdminTab('at-db',this)" id="tab-db-btn" style="display:none">База ⚙️</div>
   </div>
 
   <div id="at-questions" class="admin-content active">
@@ -532,6 +542,22 @@
       <button class="btn btn-green" onclick="exportExcel()" style="flex:1">📥 Excel</button>
     </div>
     <div style="overflow-x:auto"><table><thead><tr><th>Студент</th><th>Предмет</th><th>Балл</th><th>Дата</th></tr></thead><tbody id="results-table"></tbody></table></div>
+  </div>
+
+  <div id="at-db" class="admin-content">
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">⚙️ Управление базой данных</div>
+      <div class="form-group">
+        <label class="form-label">Предмет</label>
+        <select id="db-subject" class="form-input" onchange="loadDBQuestions()"><option value="">Выберите предмет...</option></select>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button class="btn btn-outline" onclick="loadDBQuestions()" style="flex:1">🔄 Загрузить</button>
+        <div style="font-size:12px;color:var(--muted2);align-self:center" id="db-count"></div>
+      </div>
+      <input type="text" class="form-input" id="db-search" placeholder="🔍 Поиск по вопросам..." oninput="filterDBQuestions()" style="margin-bottom:10px"/>
+    </div>
+    <div id="db-list"></div>
   </div>
 
   <div id="at-users" class="admin-content">
@@ -709,8 +735,23 @@ async function api(method,path,body){
 // ── AUTH ──────────────────────────────────────────────────────────────────
 async function init(){
   if(!token){showLoginScreen();return;}
-  try{currentUser=await api("GET","/me");setupUI();await loadSubjects();showScreen("home");}
-  catch(e){logout();}
+  // Сразу показываем из кэша чтобы не было белого экрана
+  const cached=localStorage.getItem("user");
+  if(cached){
+    try{
+      currentUser=JSON.parse(cached);
+      setupUI();
+      showScreen("home");
+    }catch(e){}
+  }
+  // Обновляем данные с сервера в фоне
+  try{
+    currentUser=await api("GET","/me");
+    localStorage.setItem("user",JSON.stringify(currentUser));
+    setupUI();
+    await loadSubjects();
+    if(!cached)showScreen("home");
+  }catch(e){logout();}
 }
 
 function showLoginScreen(){
@@ -740,7 +781,7 @@ async function doLogin(){
     const res=await fetch(API_BASE+"/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,password})});
     const result=await res.json();
     if(!res.ok){errBox.textContent=result.detail||"Неверный логин или пароль";errBox.style.display="block";btn.disabled=false;btn.textContent="Войти";return;}
-    token=result.token;currentUser=result.user;localStorage.setItem("token",token);
+    token=result.token;currentUser=result.user;localStorage.setItem("token",token);localStorage.setItem("user",JSON.stringify(result.user));
     setupUI();await loadSubjects();showScreen("home");
   }catch(e){errBox.textContent="Сервер недоступен";errBox.style.display="block";btn.disabled=false;btn.textContent="Войти";}
 }
@@ -760,13 +801,13 @@ async function doRegister(){
     const res=await fetch(API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({full_name,username,password})});
     const result=await res.json();
     if(!res.ok){errBox.textContent=result.detail||"Ошибка регистрации";errBox.style.display="block";btn.disabled=false;btn.textContent="Зарегистрироваться";return;}
-    token=result.token;currentUser=result.user;localStorage.setItem("token",token);
+    token=result.token;currentUser=result.user;localStorage.setItem("token",token);localStorage.setItem("user",JSON.stringify(result.user));
     setupUI();await loadSubjects();showScreen("home");showToast("Добро пожаловать! 3 дня бесплатно 🎉");
   }catch(e){errBox.textContent="Сервер недоступен";errBox.style.display="block";btn.disabled=false;btn.textContent="Зарегистрироваться";}
 }
 
 document.getElementById("login-password").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
-function logout(){token=null;currentUser=null;localStorage.removeItem("token");showLoginScreen();}
+function logout(){token=null;currentUser=null;localStorage.removeItem("token");localStorage.removeItem("user");showLoginScreen();}
 
 function setupUI(){
   document.getElementById("main-header").style.display="flex";
@@ -780,7 +821,10 @@ function setupUI(){
   const td=document.getElementById("trial-dot");
   td.style.display=(u.is_trial&&u.subscription_active&&u.days_left>0)?"block":"none";
   if(u.role==="teacher"||u.role==="admin")document.getElementById("nav-admin").style.display="flex";
-  if(u.role==="admin")document.getElementById("tab-users-btn").style.display="block";
+  if(u.role==="admin"){
+    document.getElementById("tab-users-btn").style.display="block";
+    document.getElementById("tab-db-btn").style.display="block";
+  }
 }
 
 // ── НАВИГАЦИЯ ─────────────────────────────────────────────────────────────
@@ -800,11 +844,35 @@ function showScreen(name){
 async function loadSubjects(){
   allSubjects=await api("GET","/subjects");
   const grid=document.getElementById("subjects-grid");grid.innerHTML="";
-  allSubjects.forEach(s=>{
+  for(const s of allSubjects){
     const row=document.createElement("div");row.className="subject-row";
-    row.innerHTML=`<div class="subject-emoji">${s.emoji}</div><div class="subject-info"><div class="subject-name">${s.title}</div><div class="subject-meta">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} вопросов</div></div><div class="subject-start">▶</div>`;
-    row.onclick=()=>startQuiz(s.id);grid.appendChild(row);
-  });
+    row.style.flexDirection="column";row.style.alignItems="stretch";row.style.gap="0";
+    row.innerHTML=`
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="startQuiz(${s.id})">
+        <div class="subject-emoji">${s.emoji}</div>
+        <div class="subject-info">
+          <div class="subject-name">${s.title}</div>
+          <div class="subject-meta">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} вопросов</div>
+        </div>
+        <div class="subject-start">▶</div>
+      </div>
+      <div id="prog-${s.id}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:5px">
+          <span>Мой прогресс</span>
+          <span id="prog-txt-${s.id}"></span>
+        </div>
+        <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+          <div id="prog-bar-${s.id}" style="height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .5s ease"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:5px">
+          <span style="color:var(--color-text-secondary)" id="prog-attempts-${s.id}"></span>
+          <span style="color:var(--color-text-secondary)" id="prog-best-${s.id}"></span>
+        </div>
+      </div>`;
+    grid.appendChild(row);
+    // Загружаем прогресс асинхронно
+    loadSubjectProgress(s.id);
+  }
   const u=currentUser;
   const hasAccess=u.subscription_active||(u.role==="teacher"||u.role==="admin");
   // Триал баннер
@@ -819,6 +887,20 @@ async function loadSubjects(){
   }
   // Прогресс из истории
   loadHomeProgress();
+}
+
+async function loadSubjectProgress(subjectId){
+  try{
+    const p=await api("GET",`/my-progress/${subjectId}`);
+    if(!p||p.attempts===0)return;
+    const wrap=document.getElementById(`prog-${subjectId}`);
+    if(!wrap)return;
+    wrap.style.display="block";
+    document.getElementById(`prog-bar-${subjectId}`).style.width=p.best_pct+"%";
+    document.getElementById(`prog-txt-${subjectId}`).textContent=p.best_pct+"%";
+    document.getElementById(`prog-attempts-${subjectId}`).textContent=`${p.attempts} попыток`;
+    document.getElementById(`prog-best-${subjectId}`).textContent=`Лучший: ${p.best_score}/${p.best_total}`;
+  }catch(e){}
 }
 
 async function loadHomeProgress(){
@@ -865,6 +947,21 @@ async function startQuiz(subjectId){
   }
   quizState={questions:[],index:0,answers:{},score:0,subjectId,reviewData:[],timeLeft:timeLimit*60};
   showScreen("quiz");
+  // Показываем красивый загрузчик
+  document.getElementById("q-nav").innerHTML="";
+  document.getElementById("options-list").innerHTML="";
+  document.getElementById("q-text").textContent="";
+  document.getElementById("q-counter").textContent="Загрузка...";
+  document.getElementById("q-image").style.display="none";
+  document.getElementById("prev-btn").style.display="none";
+  document.getElementById("next-btn").style.display="none";
+  document.getElementById("finish-btn").style.display="none";
+  document.getElementById("options-list").innerHTML=`
+    <div style="text-align:center;padding:40px 20px">
+      <div class="spinner" style="margin:0 auto 16px"></div>
+      <div style="font-size:14px;font-weight:600;color:var(--color-text-primary);margin-bottom:6px">Загружаем вопросы...</div>
+      <div style="font-size:12px;color:var(--color-text-secondary)">Подключаемся к серверу</div>
+    </div>`;
   try{
     const q=await api("GET",`/questions/${subjectId}`);
     quizState.questions=q;
@@ -907,7 +1004,14 @@ function renderQuestion(){
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
   document.getElementById("q-text").textContent=q.text;
   const img=document.getElementById("q-image");
-  if(q.image_url){img.src=API_BASE+q.image_url;img.style.display="block";}else{img.style.display="none";}
+  if(q.image_url){
+    img.src=API_BASE+q.image_url;
+    img.style.display="block";
+    img.style.opacity="0";
+    img.style.transition="opacity 0.3s";
+    img.onload=()=>img.style.opacity="1";
+    img.onerror=()=>{img.style.opacity="0.4";};
+  }else{img.style.display="none";}
   const letters=["A","Б","В","Г","Д"];
   const list=document.getElementById("options-list");list.innerHTML="";
   const alreadyAnswered=quizState.answers[q.id]!==undefined;
@@ -915,7 +1019,7 @@ function renderQuestion(){
     const btn=document.createElement("button");btn.className="option-btn";
     btn.dataset.origIndex=i;
     const optContent = opt.image_url
-      ? `<img src="${API_BASE}${opt.image_url}" style="max-height:100px;max-width:100%;border-radius:8px;object-fit:contain" />`
+      ? `<img src="${API_BASE}${opt.image_url}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block" loading="lazy" onerror="this.style.opacity=0.3;this.alt='Ошибка загрузки'" />`
       : `<span>${opt.text||""}</span>`;
     btn.innerHTML=`<span class="option-letter">${letters[i]}</span>${optContent}`;
     if(alreadyAnswered){
@@ -1031,7 +1135,8 @@ async function loadRating(){
   const list=document.getElementById("rating-list");
   list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
   try{
-    const results=await api("GET","/admin/results");
+    // Используем публичный роут рейтинга (доступен всем)
+    const results=await api("GET","/rating");
     const tabsRow=document.getElementById("rating-subject-tabs");tabsRow.innerHTML="";
     const by={};results.forEach(r=>{if(!by[r.subject])by[r.subject]=[];by[r.subject].push(r);});
     const names=Object.keys(by);
@@ -1101,7 +1206,7 @@ async function importQuestions(){
 async function loadAdminSubjects(){
   try{
     const subjects=await api("GET","/subjects");allSubjects=subjects;
-    ["q-subject","import-subject","ai-subject"].forEach(id=>{
+    ["q-subject","import-subject","ai-subject","db-subject"].forEach(id=>{
       const sel=document.getElementById(id);if(!sel)return;
       sel.innerHTML='<option value="">Выберите предмет...</option>';
       subjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id)));
@@ -1223,14 +1328,15 @@ async function saveQuestion(){
   const correct=document.querySelector('input[name="correct"]:checked');
 
   try{
-    await api("POST","/admin/questions",{
-      subject_id:parseInt(subjectId),
-      text:text||"[Смотри картинку]",
-      options:opts,
-      correct_index:correct?parseInt(correct.value):0,
-      image_url:uploadedImg
-    });
-    showToast("Вопрос сохранён ✅");
+    const payload={subject_id:parseInt(subjectId),text:text||"[Смотри картинку]",options:opts,correct_index:correct?parseInt(correct.value):0,image_url:uploadedImg};
+    if(window._editingQuestionId){
+      await api("PUT",`/admin/questions/${window._editingQuestionId}`,payload);
+      window._editingQuestionId=null;
+      showToast("Вопрос обновлён ✅");
+    }else{
+      await api("POST","/admin/questions",payload);
+      showToast("Вопрос сохранён ✅");
+    }
     document.getElementById("q-text-admin").value="";
     document.getElementById("img-preview").style.display="none";
     uploadedImg=null;optCount=0;
@@ -1657,6 +1763,104 @@ function resetDuel(){
   document.getElementById("duel-result").style.display="none";
   document.getElementById("duel-menu").style.display="block";
   document.getElementById("duel-code-input").value="";
+}
+
+
+// ── УПРАВЛЕНИЕ БД ─────────────────────────────────────────────────────────
+let dbAllQuestions = [];
+
+async function loadDBQuestions(){
+  const subjectId = document.getElementById("db-subject").value;
+  const list = document.getElementById("db-list");
+  const countEl = document.getElementById("db-count");
+  if(!subjectId){ list.innerHTML=""; countEl.textContent=""; return; }
+  list.innerHTML = '<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
+  try{
+    dbAllQuestions = await api("GET", `/admin/questions/${subjectId}`);
+    countEl.textContent = dbAllQuestions.length + " вопросов";
+    renderDBQuestions(dbAllQuestions);
+  }catch(e){
+    list.innerHTML = '<p style="color:var(--red);padding:20px;text-align:center">Ошибка загрузки</p>';
+  }
+}
+
+function filterDBQuestions(){
+  const q = document.getElementById("db-search").value.toLowerCase();
+  const filtered = q ? dbAllQuestions.filter(item => item.text.toLowerCase().includes(q)) : dbAllQuestions;
+  document.getElementById("db-count").textContent = filtered.length + " вопросов";
+  renderDBQuestions(filtered);
+}
+
+function renderDBQuestions(questions){
+  const letters = ["A","Б","В","Г","Д"];
+  const list = document.getElementById("db-list");
+  if(!questions.length){ list.innerHTML = '<p style="color:var(--muted2);text-align:center;padding:30px 0">Ничего не найдено</p>'; return; }
+  list.innerHTML = questions.map((q,i) => `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px" id="dbq-${q.id}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted)">#${i+1} · ID ${q.id}</div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button onclick="editDBQuestion(${q.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">✏️ Изменить</button>
+          <button onclick="deleteDBQuestion(${q.id})" style="background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer">🗑</button>
+        </div>
+      </div>
+      ${q.image_url ? `<img src="${API_BASE}${q.image_url}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;margin-bottom:8px;background:var(--card2)"/>` : ""}
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px;line-height:1.5">${q.text}</div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        ${q.options.map((o,j) => `
+          <div style="font-size:12px;padding:6px 10px;border-radius:7px;${j===q.correct_option_id ?
+            "background:rgba(34,197,94,.1);color:var(--green);font-weight:600" :
+            "color:var(--muted2)"}">
+            ${letters[j]}. ${o.image_url ? `<img src="${API_BASE}${o.image_url}" style="max-height:50px;border-radius:4px;vertical-align:middle"/>` : o.text||""}
+            ${j===q.correct_option_id ? " ✓" : ""}
+          </div>`).join("")}
+      </div>
+    </div>`).join("");
+}
+
+async function deleteDBQuestion(qId){
+  if(!confirm("Удалить этот вопрос?"))return;
+  try{
+    await api("DELETE", `/admin/questions/${qId}`);
+    showToast("Вопрос удалён ✅");
+    dbAllQuestions = dbAllQuestions.filter(q=>q.id!==qId);
+    document.getElementById("db-count").textContent = dbAllQuestions.length + " вопросов";
+    document.getElementById(`dbq-${qId}`)?.remove();
+  }catch(e){ showToast("Ошибка: "+e.detail, true); }
+}
+
+function editDBQuestion(qId){
+  const q = dbAllQuestions.find(x=>x.id===qId);
+  if(!q)return;
+  // Переключаемся на вкладку вопросов с заполненной формой
+  switchAdminTab("at-questions", document.querySelector('.admin-tab'));
+  document.getElementById("q-text-admin").value = q.text;
+  const subjectId = document.getElementById("db-subject").value;
+  document.getElementById("q-subject").value = subjectId;
+  // Очищаем варианты
+  optCount=0; document.getElementById("opts-container").innerHTML="";
+  const letters=["A","Б","В","Г","Д"];
+  q.options.forEach((opt,i)=>{
+    addOpt();
+    const rows = document.querySelectorAll(".option-row");
+    const row = rows[rows.length-1];
+    if(opt.text){
+      row.querySelector("input[type=text]").value = opt.text;
+    }
+    if(i===q.correct_option_id){
+      row.querySelector(".correct-radio").checked = true;
+    }
+  });
+  uploadedImg = q.image_url||null;
+  if(q.image_url){
+    const prev = document.getElementById("img-preview");
+    prev.src = API_BASE+q.image_url;
+    prev.style.display = "block";
+  }
+  // Сохраняем ID редактируемого вопроса
+  window._editingQuestionId = qId;
+  showToast("Заполни форму и нажми Сохранить");
+  document.getElementById("q-text-admin").scrollIntoView({behavior:"smooth"});
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────────────
