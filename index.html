@@ -480,6 +480,26 @@
       </div>
       <div id="import-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div>
     </div>
+    <!-- Блок для импорта из Word -->
+<div class="import-box" style="margin-top: 12px;">
+  <div class="import-title">📄 Импорт из Word</div>
+  <div class="form-group">
+    <label class="form-label">Предмет</label>
+    <select id="import-word-subject" class="form-input">
+      <option value="">Выберите предмет...</option>
+    </select>
+  </div>
+  <div class="upload-zone" onclick="document.getElementById('word-input').click()">
+    📄 Выбрать Word файл (.docx)
+    <div id="import-word-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div>
+  </div>
+  <input type="file" id="word-input" accept=".docx" style="display:none" onchange="handleWordSelect()"/>
+  <div style="display:flex;gap:8px;margin-top: 10px;">
+    <button class="btn btn-green" onclick="importQuestionsWord()" style="flex:1">⬆️ Загрузить из Word</button>
+    <button class="btn btn-outline" onclick="downloadWordTemplate()" style="flex:1">⬇️ Шаблон Word</button>
+  </div>
+  <div id="import-word-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div>
+</div>
     <!-- AI ГЕНЕРАЦИЯ (временно скрыто) -->
     <div style="display:none">
     <div class="import-box" style="border-color:rgba(127,255,0,.2);background:rgba(127,255,0,.04)">
@@ -1206,7 +1226,7 @@ async function importQuestions(){
 async function loadAdminSubjects(){
   try{
     const subjects=await api("GET","/subjects");allSubjects=subjects;
-    ["q-subject","import-subject","ai-subject","db-subject"].forEach(id=>{
+    ["q-subject", "import-subject", "ai-subject", "import-word-subject"].forEach(id => {
       const sel=document.getElementById(id);if(!sel)return;
       sel.innerHTML='<option value="">Выберите предмет...</option>';
       subjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id)));
@@ -1870,7 +1890,103 @@ function showToast(msg,isError=false){
   t.classList.remove("show");void t.offsetHeight;t.classList.add("show");
   clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove("show"),3000);
 }
+// Глобальные переменные для Word
+let selectedWordFile = null;
 
+// Обработка выбора Word файла
+function handleWordSelect() {
+  const f = document.getElementById("word-input").files[0];
+  if (!f) return;
+  selectedWordFile = f;
+  document.getElementById("import-word-filename").textContent = "📄 " + f.name;
+}
+
+// Импорт из Word
+async function importQuestionsWord() {
+  const subjectId = document.getElementById("import-word-subject").value;
+  const resultDiv = document.getElementById("import-word-result");
+  
+  if (!subjectId) {
+    showToast("Выбери предмет!", true);
+    return;
+  }
+  if (!selectedWordFile) {
+    showToast("Выбери Word файл!", true);
+    return;
+  }
+  
+  resultDiv.style.display = "block";
+  resultDiv.style.background = "var(--card2)";
+  resultDiv.style.color = "var(--muted2)";
+  resultDiv.textContent = "⏳ Загружаем вопросы из Word...";
+  
+  const fd = new FormData();
+  fd.append("file", selectedWordFile);
+  
+  try {
+    const res = await fetch(`${API_BASE}/admin/import-questions-word?subject_id=${subjectId}`, {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token },
+      body: fd
+    });
+    const data = await res.json();
+    
+    if (!res.ok) {
+      resultDiv.style.background = "rgba(239,68,68,.1)";
+      resultDiv.style.color = "var(--red)";
+      resultDiv.textContent = "❌ " + (data.detail || "Ошибка загрузки");
+      return;
+    }
+    
+    let msg = `✅ ${data.message}`;
+    if (data.errors && data.errors.length) {
+      msg += "\n\nОшибки:\n" + data.errors.join("\n");
+      resultDiv.style.background = "rgba(249,115,22,.1)";
+      resultDiv.style.color = "var(--orange)";
+    } else {
+      resultDiv.style.background = "rgba(34,197,94,.1)";
+      resultDiv.style.color = "var(--green)";
+    }
+    resultDiv.textContent = msg;
+    
+    selectedWordFile = null;
+    document.getElementById("word-input").value = "";
+    document.getElementById("import-word-filename").textContent = "";
+    
+    showToast(`Добавлено ${data.added} вопросов из Word ✅`);
+    
+  } catch(e) {
+    resultDiv.style.background = "rgba(239,68,68,.1)";
+    resultDiv.style.color = "var(--red)";
+    resultDiv.textContent = "❌ Ошибка: " + e.message;
+  }
+}
+
+// Скачать шаблон Word
+async function downloadWordTemplate() {
+  try {
+    const response = await fetch(`${API_BASE}/admin/download-word-template`, {
+      method: "GET",
+      headers: { "Authorization": "Bearer " + token }
+    });
+    
+    if (!response.ok) throw new Error("Ошибка загрузки");
+    
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "UniQuiz_шаблон_вопросов.docx";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    showToast("Шаблон Word скачан ✅");
+  } catch(e) {
+    showToast("Ошибка: " + e.message, true);
+  }
+}
 addOpt();addOpt();addOpt();addOpt();
 init();
 </script>
