@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UniQuiz</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     :root{
@@ -472,34 +473,14 @@
     <div class="import-box">
       <div class="import-title">📥 Импорт из Excel</div>
       <div class="form-group"><label class="form-label">Предмет</label><select id="import-subject" class="form-input"><option value="">Выберите предмет...</option></select></div>
-      <div class="upload-zone" onclick="document.getElementById('excel-input').click()">📊 Выбрать Excel файл<div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div></div>
-      <input type="file" id="excel-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcelSelect()"/>
+      <div class="upload-zone" onclick="document.getElementById('excel-input').click()">📊 Excel или 📝 Word файл<div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div></div>
+      <input type="file" id="excel-input" accept=".xlsx,.xls,.docx,.doc" style="display:none" onchange="handleExcelSelect()"/>
       <div style="display:flex;gap:8px">
         <button class="btn btn-green" onclick="importQuestions()" style="flex:1">⬆️ Загрузить</button>
         <button class="btn btn-outline" onclick="downloadTemplate()" style="flex:1">⬇️ Шаблон</button>
       </div>
       <div id="import-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div>
     </div>
-    <!-- Блок для импорта из Word -->
-<div class="import-box" style="margin-top: 12px;">
-  <div class="import-title">📄 Импорт из Word</div>
-  <div class="form-group">
-    <label class="form-label">Предмет</label>
-    <select id="import-word-subject" class="form-input">
-      <option value="">Выберите предмет...</option>
-    </select>
-  </div>
-  <div class="upload-zone" onclick="document.getElementById('word-input').click()">
-    📄 Выбрать Word файл (.docx)
-    <div id="import-word-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div>
-  </div>
-  <input type="file" id="word-input" accept=".docx" style="display:none" onchange="handleWordSelect()"/>
-  <div style="display:flex;gap:8px;margin-top: 10px;">
-    <button class="btn btn-green" onclick="importQuestionsWord()" style="flex:1">⬆️ Загрузить из Word</button>
-    <button class="btn btn-outline" onclick="downloadWordTemplate()" style="flex:1">⬇️ Шаблон Word</button>
-  </div>
-  <div id="import-word-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div>
-</div>
     <!-- AI ГЕНЕРАЦИЯ (временно скрыто) -->
     <div style="display:none">
     <div class="import-box" style="border-color:rgba(127,255,0,.2);background:rgba(127,255,0,.04)">
@@ -734,6 +715,15 @@
 
 <script>
 const API_BASE="https://bec-2805.onrender.com";
+
+function imgUrl(url){
+  if(!url)return null;
+  // Если уже полный URL (Cloudinary) — используем как есть
+  if(url.startsWith("http"))return url;
+  // Иначе добавляем API_BASE (локальные файлы)
+  return API_BASE+url;
+}
+
 let currentUser=null,token=localStorage.getItem("token")||null;
 let quizState={questions:[],index:0,answers:{},score:0,subjectId:null,reviewData:[]};
 let optCount=0,uploadedImg=null,timerInterval=null,testTimeLeft=0,allSubjects=[];
@@ -1025,7 +1015,7 @@ function renderQuestion(){
   document.getElementById("q-text").textContent=q.text;
   const img=document.getElementById("q-image");
   if(q.image_url){
-    img.src=API_BASE+q.image_url;
+    img.src=imgUrl(q.image_url);
     img.style.display="block";
     img.style.opacity="0";
     img.style.transition="opacity 0.3s";
@@ -1039,7 +1029,7 @@ function renderQuestion(){
     const btn=document.createElement("button");btn.className="option-btn";
     btn.dataset.origIndex=i;
     const optContent = opt.image_url
-      ? `<img src="${API_BASE}${opt.image_url}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block" loading="lazy" onerror="this.style.opacity=0.3;this.alt='Ошибка загрузки'" />`
+      ? `<img src="${imgUrl(opt.image_url)}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block" loading="lazy" onerror="this.style.opacity=0.3;this.alt='Ошибка загрузки'" />`
       : `<span>${opt.text||""}</span>`;
     btn.innerHTML=`<span class="option-letter">${letters[i]}</span>${optContent}`;
     if(alreadyAnswered){
@@ -1226,7 +1216,7 @@ async function importQuestions(){
 async function loadAdminSubjects(){
   try{
     const subjects=await api("GET","/subjects");allSubjects=subjects;
-    ["q-subject", "import-subject", "ai-subject", "import-word-subject"].forEach(id => {
+    ["q-subject","import-subject","ai-subject","db-subject"].forEach(id=>{
       const sel=document.getElementById(id);if(!sel)return;
       sel.innerHTML='<option value="">Выберите предмет...</option>';
       subjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id)));
@@ -1614,7 +1604,7 @@ async function loadKnowledgeSubject(){
                 <div style="font-size:13px;padding:8px 12px;border-radius:8px;line-height:1.4;${j===q.correct_option_id?
                   "background:rgba(34,197,94,.1);color:var(--green);font-weight:600;border:1px solid rgba(34,197,94,.2)":
                   "color:var(--muted2)"}">
-                  ${letters[j]}. ${o.image_url?`<img src="${API_BASE}${o.image_url}" style="max-height:80px;border-radius:6px;object-fit:contain;vertical-align:middle;margin-left:4px"/>`:o.text||""}${j===q.correct_option_id?" ✓":""}
+                  ${letters[j]}. ${o.image_url?`<img src="${imgUrl(o.image_url)}" style="max-height:80px;border-radius:6px;object-fit:contain;vertical-align:middle;margin-left:4px"/>`:o.text||""}${j===q.correct_option_id?" ✓":""}
                 </div>`).join("")}
             </div>
           </div>`).join("")}
@@ -1824,14 +1814,14 @@ function renderDBQuestions(questions){
           <button onclick="deleteDBQuestion(${q.id})" style="background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer">🗑</button>
         </div>
       </div>
-      ${q.image_url ? `<img src="${API_BASE}${q.image_url}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;margin-bottom:8px;background:var(--card2)"/>` : ""}
+      ${q.image_url ? `<img src="${imgUrl(q.image_url)}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;margin-bottom:8px;background:var(--card2)"/>` : ""}
       <div style="font-size:14px;font-weight:500;margin-bottom:8px;line-height:1.5">${q.text}</div>
       <div style="display:flex;flex-direction:column;gap:4px">
         ${q.options.map((o,j) => `
           <div style="font-size:12px;padding:6px 10px;border-radius:7px;${j===q.correct_option_id ?
             "background:rgba(34,197,94,.1);color:var(--green);font-weight:600" :
             "color:var(--muted2)"}">
-            ${letters[j]}. ${o.image_url ? `<img src="${API_BASE}${o.image_url}" style="max-height:50px;border-radius:4px;vertical-align:middle"/>` : o.text||""}
+            ${letters[j]}. ${o.image_url ? `<img src="${imgUrl(o.image_url)}" style="max-height:50px;border-radius:4px;vertical-align:middle"/>` : o.text||""}
             ${j===q.correct_option_id ? " ✓" : ""}
           </div>`).join("")}
       </div>
@@ -1874,7 +1864,7 @@ function editDBQuestion(qId){
   uploadedImg = q.image_url||null;
   if(q.image_url){
     const prev = document.getElementById("img-preview");
-    prev.src = API_BASE+q.image_url;
+    prev.src = imgUrl(q.image_url);
     prev.style.display = "block";
   }
   // Сохраняем ID редактируемого вопроса
@@ -1890,103 +1880,7 @@ function showToast(msg,isError=false){
   t.classList.remove("show");void t.offsetHeight;t.classList.add("show");
   clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove("show"),3000);
 }
-// Глобальные переменные для Word
-let selectedWordFile = null;
 
-// Обработка выбора Word файла
-function handleWordSelect() {
-  const f = document.getElementById("word-input").files[0];
-  if (!f) return;
-  selectedWordFile = f;
-  document.getElementById("import-word-filename").textContent = "📄 " + f.name;
-}
-
-// Импорт из Word
-async function importQuestionsWord() {
-  const subjectId = document.getElementById("import-word-subject").value;
-  const resultDiv = document.getElementById("import-word-result");
-  
-  if (!subjectId) {
-    showToast("Выбери предмет!", true);
-    return;
-  }
-  if (!selectedWordFile) {
-    showToast("Выбери Word файл!", true);
-    return;
-  }
-  
-  resultDiv.style.display = "block";
-  resultDiv.style.background = "var(--card2)";
-  resultDiv.style.color = "var(--muted2)";
-  resultDiv.textContent = "⏳ Загружаем вопросы из Word...";
-  
-  const fd = new FormData();
-  fd.append("file", selectedWordFile);
-  
-  try {
-    const res = await fetch(`${API_BASE}/admin/import-questions-word?subject_id=${subjectId}`, {
-      method: "POST",
-      headers: { "Authorization": "Bearer " + token },
-      body: fd
-    });
-    const data = await res.json();
-    
-    if (!res.ok) {
-      resultDiv.style.background = "rgba(239,68,68,.1)";
-      resultDiv.style.color = "var(--red)";
-      resultDiv.textContent = "❌ " + (data.detail || "Ошибка загрузки");
-      return;
-    }
-    
-    let msg = `✅ ${data.message}`;
-    if (data.errors && data.errors.length) {
-      msg += "\n\nОшибки:\n" + data.errors.join("\n");
-      resultDiv.style.background = "rgba(249,115,22,.1)";
-      resultDiv.style.color = "var(--orange)";
-    } else {
-      resultDiv.style.background = "rgba(34,197,94,.1)";
-      resultDiv.style.color = "var(--green)";
-    }
-    resultDiv.textContent = msg;
-    
-    selectedWordFile = null;
-    document.getElementById("word-input").value = "";
-    document.getElementById("import-word-filename").textContent = "";
-    
-    showToast(`Добавлено ${data.added} вопросов из Word ✅`);
-    
-  } catch(e) {
-    resultDiv.style.background = "rgba(239,68,68,.1)";
-    resultDiv.style.color = "var(--red)";
-    resultDiv.textContent = "❌ Ошибка: " + e.message;
-  }
-}
-
-// Скачать шаблон Word
-async function downloadWordTemplate() {
-  try {
-    const response = await fetch(`${API_BASE}/admin/download-word-template`, {
-      method: "GET",
-      headers: { "Authorization": "Bearer " + token }
-    });
-    
-    if (!response.ok) throw new Error("Ошибка загрузки");
-    
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "UniQuiz_шаблон_вопросов.docx";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-    
-    showToast("Шаблон Word скачан ✅");
-  } catch(e) {
-    showToast("Ошибка: " + e.message, true);
-  }
-}
 addOpt();addOpt();addOpt();addOpt();
 init();
 </script>
