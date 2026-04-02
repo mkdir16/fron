@@ -1196,20 +1196,107 @@ async function importQuestions(){
   const subjectId=document.getElementById("import-subject").value;
   const resultDiv=document.getElementById("import-result");
   if(!subjectId){showToast("Выбери предмет!",true);return;}
-  if(!selectedExcelFile){showToast("Выбери Excel файл!",true);return;}
-  resultDiv.style.display="block";resultDiv.style.background="var(--card2)";resultDiv.style.color="var(--muted2)";resultDiv.textContent="⏳ Загружаем вопросы...";
-  const fd=new FormData();fd.append("file",selectedExcelFile);
+  if(!selectedExcelFile){showToast("Выбери файл!",true);return;}
+
+  resultDiv.style.display="block";resultDiv.style.background="var(--card2)";
+  resultDiv.style.color="var(--muted2)";resultDiv.style.whiteSpace="pre-line";
+  resultDiv.textContent="⏳ Обрабатываем файл...";
+
+  const fname=selectedExcelFile.name.toLowerCase();
+  const isWord=fname.endsWith(".docx")||fname.endsWith(".doc");
+
   try{
-    const res=await fetch(`${API_BASE}/admin/import-questions?subject_id=${subjectId}`,{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
-    const data=await res.json();
-    if(!res.ok){resultDiv.style.background="rgba(239,68,68,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ "+data.detail;return;}
-    let msg=`✅ ${data.message}`;
-    if(data.errors&&data.errors.length){msg+="\n\nОшибки:\n"+data.errors.join("\n");resultDiv.style.background="rgba(249,115,22,.1)";resultDiv.style.color="var(--orange)";}
-    else{resultDiv.style.background="rgba(34,197,94,.1)";resultDiv.style.color="var(--green)";}
-    resultDiv.textContent=msg;
-    selectedExcelFile=null;document.getElementById("excel-input").value="";document.getElementById("import-filename").textContent="";
-    showToast(`Добавлено ${data.added} вопросов ✅`);
-  }catch(e){resultDiv.style.background="rgba(239,68,68,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ Ошибка загрузки";}
+    if(isWord){
+      // Word — парсим в браузере
+      resultDiv.textContent="📝 Читаем Word файл...";
+      const arrayBuffer=await selectedExcelFile.arrayBuffer();
+      const result=await mammoth.extractRawText({arrayBuffer});
+      const text=result.value;
+      resultDiv.textContent="🔍 Распознаём вопросы...";
+      await new Promise(r=>setTimeout(r,50));
+      const questions=parseQuestionsFromText(text);
+      if(!questions.length){
+        resultDiv.style.background="rgba(249,115,22,.1)";resultDiv.style.color="var(--orange)";
+        resultDiv.textContent="⚠️ Вопросы не найдены.\nФормат:\n1. Вопрос?\nA) вариант\nОтвет: A";
+        return;
+      }
+      resultDiv.textContent="⏳ Сохраняем "+questions.length+" вопросов...";
+      let saved=0,errors=0;
+      for(const q of questions){
+        try{
+          await api("POST","/admin/questions",{
+            subject_id:parseInt(subjectId),
+            text:q.question,
+            options:q.options.map(o=>({text:o,image_url:null})),
+            correct_index:q.correct,
+            image_url:null
+          });
+          saved++;
+          if(saved%5===0)resultDiv.textContent="⏳ Сохраняем... "+saved+"/"+questions.length;
+        }catch(e2){errors++;}
+      }
+      resultDiv.style.background="rgba(34,197,94,.1)";resultDiv.style.color="var(--green)";
+      resultDiv.textContent="✅ Добавлено "+saved+" вопросов из Word!"+(errors?"\n⚠️ Ошибок: "+errors:"");
+      showToast("Добавлено "+saved+" вопросов ✅");
+    } else {
+      // Excel — через бэкенд
+      const fd=new FormData();fd.append("file",selectedExcelFile);
+      const res=await fetch(API_BASE+"/admin/import-questions?subject_id="+subjectId,{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
+      const data=await res.json();
+      if(!res.ok){resultDiv.style.background="rgba(239,68,68,.1)";resultDiv.style.color="var(--red)";resultDiv.textContent="❌ "+data.detail;return;}
+      let msg="✅ "+data.message;
+      if(data.errors&&data.errors.length){msg+="\n\nОшибки:\n"+data.errors.join("\n");resultDiv.style.background="rgba(249,115,22,.1)";resultDiv.style.color="var(--orange)";}
+      else{resultDiv.style.background="rgba(34,197,94,.1)";resultDiv.style.color="var(--green)";}
+      resultDiv.textContent=msg;
+      showToast("Добавлено "+data.added+" вопросов ✅");
+    }
+    selectedExcelFile=null;
+    document.getElementById("excel-input").value="";
+    document.getElementById("import-filename").textContent="";
+  }catch(e){
+    resultDiv.style.background="rgba(239,68,68,.1)";resultDiv.style.color="var(--red)";
+    resultDiv.textContent="❌ Ошибка: "+(e.message||"попробуй ещё раз");
+  }
+}
+
+function parseQuestionsFromText(text){
+  text=text.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
+  const questions=[];
+  const lmap={"A":0,"B":1,"C":2,"D":3,"E":4,"А":0,"Б":1,"В":2,"Г":3,"Д":4,"a":0,"b":1,"c":2,"d":3,"e":4,"а":0,"б":1,"в":2,"г":3,"д":4};
+  const blocks=text.split(/\n(?=\d+[\.\)]\s)/);
+  for(const block of blocks){
+    if(!block.trim())continue;
+    const lines=block.split("\n").map(l=>l.trim()).filter(Boolean);
+    if(!lines.length)continue;
+    const qLine=lines[0].replace(/^\d+[\.\)]\s*/,"").trim();
+    if(!qLine||qLine.length<5)continue;
+    const options=[];let correctIndex=-1;
+    for(let i=1;i<lines.length;i++){
+      const line=lines[i];
+      const ansMatch=line.match(/^(ответ|правильный[\s_]ответ|answer|ans)[\s:\.\)]+([A-EА-ДABCDEabcdeабвгдАБВГД])/i);
+      if(ansMatch){correctIndex=lmap[ansMatch[2].toUpperCase()]??-1;continue;}
+      const optMatch=line.match(/^([A-EА-ДABCDEabcdeабвгдАБВГД])[\.\)\s]\s*(.+)/);
+      if(optMatch&&optMatch[2].trim())options.push(optMatch[2].trim());
+    }
+    if(options.length>=2)questions.push({question:qLine,options,correct:correctIndex>=0?correctIndex:0});
+  }
+  if(!questions.length){
+    const paras=text.split(/\n{2,}/);
+    for(const para of paras){
+      const lines=para.split("\n").map(l=>l.trim()).filter(Boolean);
+      if(lines.length<3)continue;
+      const qLine=lines[0].replace(/^[A-EА-Д\d][\.\)\s]+/,"").trim();
+      if(!qLine||qLine.length<5)continue;
+      const options=[];let correctIndex=-1;
+      for(let i=1;i<lines.length;i++){
+        const isCorrect=lines[i].startsWith("*");
+        const optText=lines[i].replace(/^\*/,"").replace(/^[A-EА-Д][\.\)\s]+/,"").trim();
+        if(optText.length>1){if(isCorrect)correctIndex=options.length;options.push(optText);}
+      }
+      if(options.length>=2)questions.push({question:qLine,options,correct:correctIndex>=0?correctIndex:0});
+    }
+  }
+  return questions;
 }
 
 // ── ADMIN SUBJECTS ────────────────────────────────────────────────────────
