@@ -804,11 +804,13 @@ async function doRegister(){
   const btn=document.getElementById("reg-btn");
   errBox.style.display="none";
   if(!full_name||!username||!password){errBox.textContent="Заполни все поля";errBox.style.display="block";return;}
+  const phone=document.getElementById("reg-phone").value.trim();
   if(username.length<3){errBox.textContent="Логин минимум 3 символа";errBox.style.display="block";return;}
   if(password.length<4){errBox.textContent="Пароль минимум 4 символа";errBox.style.display="block";return;}
+  if(!phone||phone.replace(/[^0-9]/g,"").length<9){errBox.textContent="Введи номер телефона";errBox.style.display="block";return;}
   btn.disabled=true;btn.textContent="Регистрируемся...";
   try{
-    const res=await fetch(API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({full_name,username,password})});
+    const res=await fetch(API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({full_name,username,password,phone})});
     const result=await res.json();
     if(!res.ok){errBox.textContent=result.detail||"Ошибка регистрации";errBox.style.display="block";btn.disabled=false;btn.textContent="Зарегистрироваться";return;}
     token=result.token;currentUser=result.user;localStorage.setItem("token",token);localStorage.setItem("user",JSON.stringify(result.user));
@@ -1467,7 +1469,7 @@ async function loadUsers(){
       else if(u.subscription_active&&u.is_trial){const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";ab='<span class="badge badge-orange">пробный</span>';ai=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";}
       else if(u.subscription_active){const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):"";ab='<span class="badge badge-green">активна</span>';ai=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:"";}
       else ab='<span class="badge badge-red">нет</span>';
-      return `<tr><td><b>${u.full_name||u.username}</b><br><span style="color:var(--muted);font-size:11px">${u.username}</span></td><td><span class="badge ${rb}">${u.role}</span></td><td>${ab}${ai}</td><td style="white-space:nowrap">${(!u.subscription_active||u.is_trial)?`<button onclick="activateSub(${u.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px">+30д</button>`:""}<button onclick="deleteUser(${u.id},'${u.username}')" style="background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer">🗑</button></td></tr>`;
+      return `<tr><td><b>${u.full_name||u.username}</b><br><span style="color:var(--muted);font-size:11px">${u.username}</span><br><span style="color:var(--muted);font-size:10px">${u.phone||""}</span></td><td><span class="badge ${rb}">${u.role}</span></td><td>${ab}${ai}</td><td style="white-space:nowrap">${(!u.subscription_active||u.is_trial)?`<button onclick="activateSub(${u.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px">+30д</button>`:""}<button onclick="deleteUser(${u.id},'${u.username}')" style="background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer">🗑</button></td></tr>`;
     }).join("");
   }catch(e){showToast("Ошибка: "+e.detail,true);}
 }
