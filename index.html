@@ -819,14 +819,23 @@
 if(window.Telegram&&window.Telegram.WebApp){
   const tg=window.Telegram.WebApp;
   tg.ready();
-  tg.expand(); // Раскрываем на весь экран
-  tg.disableVerticalSwipes(); // Отключаем свайп вниз
-  // Применяем цвета Telegram
-  document.documentElement.style.setProperty('--tg-bg', tg.backgroundColor||'#13141a');
-  // Устанавливаем цвет заголовка
-  tg.setHeaderColor('#13141a');
-  tg.setBackgroundColor('#13141a');
+  tg.expand();
+  // Полный экран — новый API для ПК и ноутбуков
+  if(tg.requestFullscreen){
+    tg.requestFullscreen();
+  }
+  if(tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+  try{tg.setHeaderColor('#13141a');}catch(e){}
+  try{tg.setBackgroundColor('#13141a');}catch(e){}
 }
+
+// Также запрашиваем fullscreen через браузерный API если не в Telegram
+document.addEventListener('click', function tryFS(){
+  if(!window.Telegram?.WebApp && document.documentElement.requestFullscreen){
+    // не запускаем автоматически — только через Telegram
+  }
+  document.removeEventListener('click', tryFS);
+}, {once: true});
 
 const API_BASE="https://bec-2805.onrender.com";
 
