@@ -7,6 +7,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UniQuiz</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2313141a'/><text y='75' font-size='70' text-anchor='middle' x='50'>🎓</text></svg>"/>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
   <style>
@@ -839,6 +840,159 @@ document.addEventListener('click', function tryFS(){
 
 const API_BASE="https://bec-2805.onrender.com";
 
+// ── i18n ──────────────────────────────────────────────────────────────────
+const LANGS = {
+  ru: {
+    login:"Войти", register:"Регистрация", username:"Логин", password:"Пароль",
+    fullname:"Имя", phone:"Номер телефона", phone_ph:"+998 XX XXX XX XX",
+    username_ph:"aziz2005", password_ph:"Минимум 4 символа", fullname_ph:"Азиз Каримов",
+    login_btn:"Войти", reg_btn:"Зарегистрироваться", logging_in:"Входим...", registering:"Регистрируемся...",
+    free_trial:"После регистрации — 3 дня бесплатно 🎉",
+    fill_all:"Заполни все поля", login_min:"Логин минимум 3 символа",
+    pass_min:"Пароль минимум 4 символа", phone_err:"Введи номер телефона",
+    nav_tests:"ТЕСТЫ", nav_rating:"РЕЙТИНГ", nav_history:"ИСТОРИЯ",
+    nav_knowledge:"БАЗА", nav_panel:"ПАНЕЛЬ",
+    subjects_title:"ПРЕДМЕТЫ", loading_q:"Загружаем вопросы...",
+    connecting:"Подключаемся к серверу", question:"Вопрос",
+    of:"из", correct_ans:"✓", pause:"Пауза",
+    prev:"← Назад", next:"Следующий →", finish:"Завершить ✓",
+    paused:"Тест на паузе", answered:"Отвечено", remaining:"Осталось",
+    resume:"▶ Продолжить", exit_save:"← Выйти (прогресс сохранится)",
+    result_titles:["Отлично! 🏆","Хороший результат 👍","Неплохо 📚","Нужно повторить 💪"],
+    result_subs:["Ты настоящий эксперт!","Почти всё правильно!","Есть над чем поработать","Попробуй ещё раз!"],
+    to_subjects:"← К предметам", review_btn:"📋 Разбор ошибок", history_btn:"📊 История",
+    review_title:"Разбор ошибок", history_title:"История тестов",
+    rating_title:"Рейтинг студентов", knowledge_title:"База вопросов",
+    search_ph:"🔍 Поиск...", no_tests:"Ты ещё не проходил тесты",
+    trial_banner:"Пробный период: осталось {n} дня. После — 20 000 сум/мес.",
+    paywall_title:"Нужна подписка", paywall_trial_title:"Пробный период закончился",
+    paywall_text:"Для прохождения тестов оформи подписку на месяц.",
+    paywall_trial_text:"Твои 3 бесплатных дня истекли. Оформи подписку чтобы продолжить.",
+    pay_how:"КАК ОПЛАТИТЬ", pay_1:"Переведи 20 000 сум на Payme или Click",
+    pay_2:"Напиши администратору что оплатил", pay_3:"Получи доступ в течение 5 минут",
+    write_admin:"✍️ Написать администратору", our_group:"💬 Наша группа",
+    no_questions:"В этом предмете пока нет вопросов",
+    duel:"⚔️ Дуэль", badges:"🏅 Бейджи",
+    lang_label:"Язык / Language / Til",
+    select_subject:"Выберите предмет...",
+  },
+  uz: {
+    login:"Kirish", register:"Ro'yxatdan o'tish", username:"Login", password:"Parol",
+    fullname:"Ism", phone:"Telefon raqam", phone_ph:"+998 XX XXX XX XX",
+    username_ph:"aziz2005", password_ph:"Kamida 4 ta belgi", fullname_ph:"Aziz Karimov",
+    login_btn:"Kirish", reg_btn:"Ro'yxatdan o'tish", logging_in:"Kirilmoqda...", registering:"Ro'yxatdan o'tilmoqda...",
+    free_trial:"Ro'yxatdan o'tgandan so'ng — 3 kun bepul 🎉",
+    fill_all:"Barcha maydonlarni to'ldiring", login_min:"Login kamida 3 ta belgi",
+    pass_min:"Parol kamida 4 ta belgi", phone_err:"Telefon raqamni kiriting",
+    nav_tests:"TESTLAR", nav_rating:"REYTING", nav_history:"TARIX",
+    nav_knowledge:"BAZA", nav_panel:"PANEL",
+    subjects_title:"FANLAR", loading_q:"Savollar yuklanmoqda...",
+    connecting:"Serverga ulanilmoqda", question:"Savol",
+    of:"dan", correct_ans:"✓", pause:"To'xtatish",
+    prev:"← Orqaga", next:"Keyingisi →", finish:"Yakunlash ✓",
+    paused:"Test to'xtatildi", answered:"Javob berildi", remaining:"Qoldi",
+    resume:"▶ Davom etish", exit_save:"← Chiqish (jarayon saqlanadi)",
+    result_titles:["Ajoyib! 🏆","Yaxshi natija 👍","Yomon emas 📚","Takrorlash kerak 💪"],
+    result_subs:["Siz haqiqiy mutaxasssissiz!","Deyarli hammasi to'g'ri!","Ishlash kerak","Yana urinib ko'ring!"],
+    to_subjects:"← Fanlarga", review_btn:"📋 Xatolar tahlili", history_btn:"📊 Tarix",
+    review_title:"Xatolar tahlili", history_title:"Testlar tarixi",
+    rating_title:"Talabalar reytingi", knowledge_title:"Savollar bazasi",
+    search_ph:"🔍 Qidirish...", no_tests:"Siz hali test topshirmadingiz",
+    trial_banner:"Sinov muddati: {n} kun qoldi. Keyin — oyiga 20 000 so'm.",
+    paywall_title:"Obuna kerak", paywall_trial_title:"Sinov muddati tugadi",
+    paywall_text:"Testlardan o'tish uchun oylik obuna rasmiylashtiring.",
+    paywall_trial_text:"3 kunlik bepul muddatingiz tugadi. Davom etish uchun obuna oling.",
+    pay_how:"QANDAY TO'LASH MUMKIN", pay_1:"Payme yoki Click orqali 20 000 so'm o'tkazing",
+    pay_2:"Administratorga to'laganingiz haqida yozing", pay_3:"5 daqiqa ichida kirish huquqini oling",
+    write_admin:"✍️ Administratorga yozish", our_group:"💬 Bizning guruh",
+    no_questions:"Bu fanda hali savollar yo'q",
+    duel:"⚔️ Duel", badges:"🏅 Nishonlar",
+    lang_label:"Язык / Language / Til",
+    select_subject:"Fanni tanlang...",
+  },
+  en: {
+    login:"Sign In", register:"Sign Up", username:"Username", password:"Password",
+    fullname:"Full Name", phone:"Phone Number", phone_ph:"+998 XX XXX XX XX",
+    username_ph:"aziz2005", password_ph:"Min 4 characters", fullname_ph:"Aziz Karimov",
+    login_btn:"Sign In", reg_btn:"Create Account", logging_in:"Signing in...", registering:"Creating account...",
+    free_trial:"After sign up — 3 days free 🎉",
+    fill_all:"Please fill all fields", login_min:"Username min 3 characters",
+    pass_min:"Password min 4 characters", phone_err:"Enter your phone number",
+    nav_tests:"TESTS", nav_rating:"RATING", nav_history:"HISTORY",
+    nav_knowledge:"BASE", nav_panel:"PANEL",
+    subjects_title:"SUBJECTS", loading_q:"Loading questions...",
+    connecting:"Connecting to server", question:"Question",
+    of:"of", correct_ans:"✓", pause:"Pause",
+    prev:"← Back", next:"Next →", finish:"Finish ✓",
+    paused:"Test Paused", answered:"Answered", remaining:"Remaining",
+    resume:"▶ Continue", exit_save:"← Exit (progress saved)",
+    result_titles:["Excellent! 🏆","Good Result 👍","Not Bad 📚","Keep Trying 💪"],
+    result_subs:["You're a real expert!","Almost everything right!","Room for improvement","Try again!"],
+    to_subjects:"← To Subjects", review_btn:"📋 Review Errors", history_btn:"📊 History",
+    review_title:"Review Errors", history_title:"Test History",
+    rating_title:"Student Rating", knowledge_title:"Question Bank",
+    search_ph:"🔍 Search...", no_tests:"You haven't taken any tests yet",
+    trial_banner:"Trial period: {n} days left. After — 20,000 UZS/month.",
+    paywall_title:"Subscription Required", paywall_trial_title:"Trial Period Ended",
+    paywall_text:"Subscribe to access tests.",
+    paywall_trial_text:"Your 3-day trial has ended. Subscribe to continue.",
+    pay_how:"HOW TO PAY", pay_1:"Transfer 20,000 UZS via Payme or Click",
+    pay_2:"Message the admin that you paid", pay_3:"Get access within 5 minutes",
+    write_admin:"✍️ Message Admin", our_group:"💬 Our Group",
+    no_questions:"No questions in this subject yet",
+    duel:"⚔️ Duel", badges:"🏅 Badges",
+    lang_label:"Язык / Language / Til",
+    select_subject:"Select subject...",
+  }
+};
+
+let currentLang = localStorage.getItem("lang") || "ru";
+function t(key, vars={}){
+  const txt = (LANGS[currentLang]||LANGS.ru)[key] || (LANGS.ru)[key] || key;
+  return txt.replace(/{(\w+)}/g, (_,k)=>vars[k]||"");
+}
+function setLang(lang){
+  currentLang=lang;
+  localStorage.setItem("lang",lang);
+  updateLangButtons();
+  // Сохраняем на сервере если залогинен
+  if(token&&currentUser)api("POST",`/me/lang?lang=${lang}`).catch(()=>{});
+}
+function applyLang(){
+  // Навигация
+  const navMap={home:"nav_tests",rating:"nav_rating",history:"nav_history",knowledge:"nav_knowledge",admin:"nav_panel"};
+  Object.entries(navMap).forEach(([id,key])=>{
+    const el=document.getElementById("nav-"+id);
+    if(el){const span=el.querySelector("span:last-child");if(span)span.textContent=t(key);}
+  });
+  // Логин форма
+  const fields={
+    "login-username":{placeholder:"username_ph"},"login-password":{placeholder:"password_ph"},
+    "reg-fullname":{placeholder:"fullname_ph"},"reg-username":{placeholder:"username_ph"},
+    "reg-password":{placeholder:"password_ph"},"reg-phone":{placeholder:"phone_ph"},
+  };
+  Object.entries(fields).forEach(([id,cfg])=>{
+    const el=document.getElementById(id);
+    if(el&&cfg.placeholder)el.placeholder=t(cfg.placeholder);
+  });
+  const labels={
+    "label-login":t("login"),"label-register":t("register"),
+    "label-username":t("username"),"label-password":t("password"),
+    "label-fullname":t("fullname"),"label-phone":t("phone"),
+    "login-btn":t("login_btn"),"reg-btn":t("reg_btn"),
+    "free-trial-text":t("free_trial"),
+  };
+  Object.entries(labels).forEach(([id,txt])=>{
+    const el=document.getElementById(id);if(el)el.textContent=txt;
+  });
+  // Вкладки авторизации
+  const tabLogin=document.getElementById("tab-login-btn");
+  const tabReg=document.getElementById("tab-reg-btn");
+  if(tabLogin)tabLogin.textContent=t("login");
+  if(tabReg)tabReg.textContent=t("register");
+}
+
+
 function imgUrl(url){
   if(!url)return null;
   // Если уже полный URL (Cloudinary) — используем как есть
@@ -866,7 +1020,19 @@ async function api(method,path,body){
 }
 
 // ── AUTH ──────────────────────────────────────────────────────────────────
+function updateLangButtons(){
+  ["ru","uz","en"].forEach(l=>{
+    const btn=document.getElementById("lang-"+l);
+    if(!btn)return;
+    btn.style.background=currentLang===l?"var(--accent)":"transparent";
+    btn.style.color=currentLang===l?"#000":"var(--color-text-secondary)";
+    btn.style.borderColor=currentLang===l?"var(--accent)":"var(--border)";
+  });
+  applyLang();
+}
+
 async function init(){
+  updateLangButtons();
   if(!token){showLoginScreen();return;}
   // Сразу показываем из кэша чтобы не было белого экрана
   const cached=localStorage.getItem("user");
@@ -992,7 +1158,10 @@ function showScreen(name){
 async function loadSubjects(){
   allSubjects=await api("GET","/subjects");
   const grid=document.getElementById("subjects-grid");grid.innerHTML="";
-  for(const s of allSubjects){
+  // Фильтруем предметы по языку студента
+  const userLang=currentUser?.lang||currentLang;
+  const filtered=allSubjects.filter(s=>!s.lang||s.lang==="all"||s.lang===userLang);
+  for(const s of filtered){
     const row=document.createElement("div");row.className="subject-row";
     row.style.flexDirection="column";row.style.alignItems="stretch";row.style.gap="0";
     row.innerHTML=`
@@ -1450,7 +1619,7 @@ async function loadAdminSubjects(){
     list.innerHTML=subjects.length?subjects.map(s=>`
       <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px">
         <span style="font-size:24px">${s.emoji}</span>
-        <div style="flex:1"><div style="font-weight:600;font-size:14px">${s.title}</div><div style="color:var(--muted);font-size:11px;margin-top:2px">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} из ${s.total_questions||0}</div></div>
+        <div style="flex:1"><div style="font-weight:600;font-size:14px">${s.title}</div><div style="color:var(--muted);font-size:11px;margin-top:2px">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} из ${s.total_questions||0} · ${s.lang==="all"?"🌍":s.lang==="ru"?"🇷🇺":s.lang==="uz"?"🇺🇿":"🇬🇧"}</div></div>
         <button onclick="openQBank(${s.id},'${s.title}')" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer">📋 База</button>
       </div>`).join(""):'<p style="color:var(--muted2);font-size:13px">Предметов пока нет</p>';
   }catch(e){}
@@ -1461,9 +1630,10 @@ async function createSubject(){
   const emoji=document.getElementById("subj-emoji").value.trim()||"📚";
   const time_limit=parseInt(document.getElementById("subj-time").value)||60;
   const question_count=parseInt(document.getElementById("subj-qcount")?.value)||30;
+  const lang=document.getElementById("subj-lang")?.value||"all";
   if(!title){showToast("Введи название!",true);return;}
   try{
-    await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}&question_count=${question_count}`);
+    await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}&question_count=${question_count}&lang=${lang}`);
     showToast("Предмет добавлен ✅");document.getElementById("subj-title").value="";
     await loadAdminSubjects();
   }catch(e){showToast("Ошибка: "+e.detail,true);}
