@@ -7,7 +7,6 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>UniQuiz</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2313141a'/><text y='75' font-size='70' text-anchor='middle' x='50'>🎓</text></svg>"/>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
   <style>
@@ -83,19 +82,6 @@
     .progress-stat{font-size:12px;font-weight:600}
     .stat-green{color:var(--green)}.stat-red{color:var(--red)}.stat-muted{color:var(--muted2)}
 
-    .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px}
-    .home-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
-    .home-card:active{transform:scale(.97);border-color:var(--accent)}
-    .home-card.accent-card{background:var(--accent);border-color:var(--accent)}
-    .home-card.full-width{grid-column:1/-1}
-    .home-card-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
-    .home-card.accent-card .home-card-icon{background:rgba(0,0,0,.15)}
-    .home-card-title{font-size:14px;font-weight:700;margin-bottom:3px}
-    .home-card.accent-card .home-card-title{color:#000}
-    .home-card-sub{font-size:11px;color:var(--muted2);line-height:1.4}
-    .home-card.accent-card .home-card-sub{color:rgba(0,0,0,.6)}
-    .home-card-arr{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:16px;color:#000}
-
     .section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:0 16px;margin-top:4px;margin-bottom:8px}
 
     .paywall{padding:40px 20px;text-align:center}
@@ -117,11 +103,9 @@
     .quiz-timer{font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:6px 14px}
     .quiz-timer.urgent{color:var(--red);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08);animation:pulse .5s ease infinite alternate}
     @keyframes pulse{from{opacity:1}to{opacity:.6}}
-    .quiz-timer-icon{font-size:14px}
 
-    .q-nav-wrap{padding:10px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;gap:6px;border-bottom:1px solid var(--border)}
+    .q-nav-wrap{padding:10px 16px;overflow-x:auto;display:flex;gap:6px;border-bottom:1px solid var(--border)}
     .q-dot{width:36px;height:36px;border-radius:50%;border:2px solid var(--border);background:var(--card2);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted2);transition:all .15s;flex-shrink:0}
-    .q-dot:active{transform:scale(.9)}
     .q-dot.current{border-color:var(--accent);background:transparent;color:var(--accent)}
     .q-dot.answered-correct{border-color:var(--green);background:var(--green);color:#000}
     .q-dot.answered-wrong{border-color:var(--red);background:var(--red);color:#fff}
@@ -132,8 +116,7 @@
 
     .options-list{display:flex;flex-direction:column;gap:8px}
     .option-btn{background:var(--card);border:2px solid var(--border);color:var(--text);border-radius:var(--radius);padding:14px 16px;text-align:left;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;width:100%}
-    .option-btn:active:not(:disabled){border-color:var(--accent);background:var(--accent-dim)}
-    .option-letter{width:28px;height:28px;border-radius:8px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:'Inter',sans-serif}
+    .option-letter{width:28px;height:28px;border-radius:8px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
     .option-btn.correct{border-color:var(--green);background:rgba(34,197,94,.08)}
     .option-btn.correct .option-letter{background:var(--green);border-color:var(--green);color:#000}
     .option-btn.wrong{border-color:var(--red);background:rgba(239,68,68,.08)}
@@ -144,86 +127,19 @@
     .quiz-actions .btn{margin:0}
 
     .result-page{padding:24px 16px;text-align:center}
-    .result-ring{width:140px;height:140px;border-radius:50%;border:4px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;position:relative}
+    .result-ring{width:140px;height:140px;border-radius:50%;border:4px solid var(--accent);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px}
     .result-num{font-size:40px;font-weight:900;color:var(--accent);line-height:1}
     .result-of{font-size:12px;color:var(--muted2);margin-top:2px}
     .result-emoji{font-size:36px;margin-bottom:10px}
     .result-title{font-size:20px;font-weight:800;margin-bottom:6px}
-    .result-sub{color:var(--muted2);font-size:14px;margin-bottom:28px;line-height:1.5}
+    .result-sub{color:var(--muted2);font-size:14px;margin-bottom:28px}
     .result-actions{display:flex;flex-direction:column;gap:8px}
-
-    .review-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
-    .review-status{font-size:11px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-    .review-q{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.55;color:var(--text)}
-    .review-opt{font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);margin-bottom:5px;line-height:1.4}
-    .review-opt.correct{background:rgba(34,197,94,.1);color:var(--green);font-weight:600}
-    .review-opt.wrong{background:rgba(239,68,68,.08);color:var(--red)}
-    .review-opt.neutral{color:var(--muted2)}
-
-    .history-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:8px}
-    .history-icon{width:44px;height:44px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-    .history-info{flex:1;min-width:0}
-    .history-subject{font-weight:600;font-size:14px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .history-date{font-size:11px;color:var(--muted)}
-    .history-score{font-size:14px;font-weight:700;flex-shrink:0}
-    .score-good{color:var(--green)}.score-ok{color:var(--accent)}.score-bad{color:var(--red)}
-
-    .rating-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
-    .rating-pos{font-size:20px;width:36px;text-align:center;flex-shrink:0}
-    .rating-info{flex:1}
-    .rating-name{font-weight:600;font-size:14px}
-    .rating-detail{font-size:11px;color:var(--muted);margin-top:2px}
-    .rating-pct{font-size:15px;font-weight:800;color:var(--accent)}
-
-    .admin-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch}
-    .admin-tab{flex-shrink:0;padding:8px 16px;background:var(--card2);border:1.5px solid var(--border);border-radius:100px;font-size:12px;font-weight:700;color:var(--muted2);cursor:pointer;transition:all .2s;white-space:nowrap}
-    .admin-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
-    .admin-content{display:none;padding:16px}.admin-content.active{display:block}
-
-    .import-box{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
-    .import-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-    .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;color:var(--muted2);font-size:13px;margin-bottom:10px}
-    .upload-zone:active{border-color:var(--accent)}
-    .preview-img{width:100%;border-radius:10px;margin-top:10px;display:none;max-height:180px;object-fit:cover}
-    .divider{text-align:center;color:var(--muted);font-size:11px;margin:14px 0;position:relative}
-    .divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
-    .divider span{position:relative;background:var(--bg);padding:0 10px}
-
-    .option-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-    .option-row .form-input{margin-bottom:0;flex:1}
-    .opt-letter{width:30px;height:30px;background:var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-    .correct-radio{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
-    .opt-type-toggle{display:flex;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:2px;gap:2px;flex-shrink:0}
-    .opt-type-btn{padding:4px 8px;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;background:transparent;color:var(--muted2);transition:all .15s}
-    .opt-type-btn.active{background:var(--accent);color:#000}
-    .opt-img-preview{width:60px;height:40px;border-radius:6px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
-    .opt-img-upload{width:60px;height:40px;border:1.5px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;transition:border-color .2s}
-    .opt-img-upload:active{border-color:var(--accent)}
-    .option-img-display{width:100%;border-radius:10px;max-height:120px;object-fit:contain;background:var(--card2)}
-    .add-opt-btn{width:100%;background:transparent;border:1.5px dashed var(--border);color:var(--muted2);border-radius:var(--radius-sm);padding:12px;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;margin-bottom:14px;transition:border-color .2s}
-    .add-opt-btn:active{border-color:var(--accent)}
-
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th{text-align:left;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;padding:10px 10px;border-bottom:1px solid var(--border)}
-    td{padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
-    .badge{display:inline-block;border-radius:100px;padding:3px 9px;font-size:11px;font-weight:600}
-    .badge-green{background:rgba(34,197,94,.15);color:var(--green)}
-    .badge-accent{background:var(--accent-dim);color:var(--accent)}
-    .badge-red{background:rgba(239,68,68,.15);color:var(--red)}
-    .badge-orange{background:rgba(249,115,22,.15);color:var(--orange)}
-
-    .qbank-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
-    .qbank-num{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.5px}
-    .qbank-q{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.55}
-    .qbank-opts{display:flex;flex-direction:column;gap:5px}
-    .qbank-opt{font-size:13px;padding:8px 12px;border-radius:var(--radius-xs);color:var(--muted2);line-height:1.4}
-    .qbank-opt.correct{background:rgba(34,197,94,.1);color:var(--green);font-weight:600}
 
     .subjects-list{padding:0 16px;display:flex;flex-direction:column;gap:10px}
     .subject-row{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .15s}
     .subject-row:active{border-color:var(--accent)}
     .subject-emoji{width:48px;height:48px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
-    .subject-info{flex:1;min-width:0}
+    .subject-info{flex:1}
     .subject-name{font-size:15px;font-weight:700;margin-bottom:3px}
     .subject-meta{font-size:12px;color:var(--muted2)}
     .subject-start{width:40px;height:40px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
@@ -238,94 +154,37 @@
     .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    .toast{position:fixed;bottom:82px;left:16px;right:16px;text-align:center;transform:translateY(120px);background:#1c1d26;border:1.5px solid var(--green);color:var(--green);border-radius:12px;padding:13px 20px;font-size:13px;font-weight:700;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;z-index:9999;pointer-events:none;opacity:0}
+    .toast{position:fixed;bottom:82px;left:16px;right:16px;text-align:center;transform:translateY(120px);background:#1c1d26;border:1.5px solid var(--green);color:var(--green);border-radius:12px;padding:13px 20px;font-size:13px;font-weight:700;transition:transform .3s;z-index:9999;pointer-events:none;opacity:0}
     .toast.show{transform:translateY(0);opacity:1}
     .toast.error{border-color:var(--red);color:var(--red)}
 
-    .tabs-row{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .tab-btn{flex-shrink:0;padding:8px 14px;background:var(--card2);border:1.5px solid var(--border);border-radius:100px;font-size:11px;font-weight:700;color:var(--muted2);cursor:pointer;transition:all .2s}
-    .tab-btn.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+    .admin-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;border-bottom:1px solid var(--border)}
+    .admin-tab{flex-shrink:0;padding:8px 16px;background:var(--card2);border:1.5px solid var(--border);border-radius:100px;font-size:12px;font-weight:700;color:var(--muted2);cursor:pointer}
+    .admin-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
+    .admin-content{display:none;padding:16px}.admin-content.active{display:block}
 
-    .sub-form{display:flex;gap:8px}.sub-form .form-input{margin-bottom:0;flex:1}
+    .import-box{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+    .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;color:var(--muted2);font-size:13px;margin-bottom:10px}
+    .option-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .option-row .form-input{margin-bottom:0;flex:1}
+    .add-opt-btn{width:100%;background:transparent;border:1.5px dashed var(--border);color:var(--muted2);border-radius:var(--radius-sm);padding:12px;cursor:pointer;margin-bottom:14px}
+    .correct-radio{width:20px;height:20px;accent-color:var(--accent);cursor:pointer}
 
-    @media (min-width: 900px){
-      body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;max-width:1200px;margin:0 auto;gap:0}
-      .app-shell{display:contents}
-      .header{display:none!important}
-      .bottom-nav{display:none!important}
-      #desktop-sidebar{display:flex!important}
-      .screen{margin-top:0;padding:28px 32px}
-      #screen-login{padding:0;align-items:center;justify-content:center}
-      body{padding-bottom:0}
-    }
-    @media (max-width:899px){#desktop-sidebar{display:none!important}}
-
-    #desktop-sidebar{
-      display:none;flex-direction:column;
-      background:var(--card);border-right:1px solid var(--border);
-      padding:28px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;
-    }
-    .sidebar-logo{font-size:20px;font-weight:900;margin-bottom:32px;padding:0 8px;display:flex;align-items:center;gap:10px}
-    .sidebar-logo span{color:var(--accent)}
-    .sidebar-logo-icon{width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px}
-    .sidebar-nav{display:flex;flex-direction:column;gap:4px;flex:1}
-    .sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);cursor:pointer;color:var(--muted2);font-size:13px;font-weight:600;transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
-    .sidebar-item:hover{background:var(--card2);color:var(--text)}
-    .sidebar-item.active{background:var(--accent-dim);color:var(--accent)}
-    .sidebar-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-    .sidebar-user{border-top:1px solid var(--border);padding-top:16px;margin-top:auto}
-    .sidebar-user-info{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:background .15s}
-    .sidebar-user-info:hover{background:var(--card2)}
-    .sidebar-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-dim);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0}
-    .sidebar-user-name{font-size:13px;font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .sidebar-user-role{font-size:11px;color:var(--muted2)}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+    .badge{display:inline-block;border-radius:100px;padding:3px 9px;font-size:11px;font-weight:600}
+    .badge-green{background:rgba(34,197,94,.15);color:var(--green)}
+    .badge-accent{background:var(--accent-dim);color:var(--accent)}
+    .badge-red{background:rgba(239,68,68,.15);color:var(--red)}
 
     @media (min-width: 768px){
-      body{display:flex;justify-content:center;background:var(--bg);padding-bottom:0}
-      .app-shell{width:100%;max-width:480px;min-height:100vh;position:relative;background:var(--bg);box-shadow:0 0 60px rgba(0,0,0,.5);padding-bottom:70px}
+      .app-shell{max-width:480px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,.5);min-height:100vh}
       .bottom-nav{max-width:480px;left:50%;transform:translateX(-50%)}
-      .header{max-width:480px;left:50%;transform:translateX(-50%);width:100%;position:fixed;top:0}
-      .screen{margin-top:60px}
-      #screen-login{margin-top:0}
     }
-    @media (min-width: 1024px){
-      body{background:#0a0a0f}
-      .app-shell{border-radius:20px;margin:20px auto;min-height:calc(100vh - 40px);box-shadow:0 0 80px rgba(0,0,0,.8)}
-    }
-    *{-webkit-tap-highlight-color:transparent}
-    img{transition:opacity .3s ease}
-    .subject-row{transition:border-color .15s,transform .1s}
-    .subject-row:active{transform:scale(.98)}
-    .option-btn{transition:border-color .15s,background .15s,transform .1s}
-    .option-btn:active:not(:disabled){transform:scale(.98)}
-    .btn{transition:opacity .15s,transform .1s}
-    .btn:active:not(:disabled){transform:scale(.98)}
   </style>
 </head>
 <body>
-<div id="desktop-sidebar">
-  <div class="sidebar-logo">
-    <div class="sidebar-logo-icon">🎓</div>
-    UNI<span>QUIZ</span>
-  </div>
-  <nav class="sidebar-nav">
-    <button class="sidebar-item active" id="snav-home" onclick="showScreen('home')"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Тесты</button>
-    <button class="sidebar-item" id="snav-knowledge" onclick="showScreen('knowledge')"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>База знаний</button>
-    <button class="sidebar-item" id="snav-rating" onclick="showScreen('rating')"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Рейтинг</button>
-    <button class="sidebar-item" id="snav-history" onclick="showScreen('history')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>История</button>
-    <button class="sidebar-item" id="snav-duel" onclick="showDuel()"><svg viewBox="0 0 24 24"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M15.5 19H14v1.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/><path d="M8.5 5H10V3.5C10 2.67 9.33 2 8.5 2S7 2.67 7 3.5 7.67 5 8.5 5z"/></svg>Дуэль</button>
-    <button class="sidebar-item" id="snav-achievements" onclick="showAchievements()"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>Достижения</button>
-    <button class="sidebar-item" id="snav-admin" onclick="showScreen('admin')" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Панель</button>
-  </nav>
-  <div class="sidebar-user" id="sidebar-user-block" style="display:none">
-    <div class="sidebar-user-info" onclick="logout()">
-      <div class="sidebar-avatar" id="sidebar-avatar">?</div>
-      <div><div class="sidebar-user-name" id="sidebar-name">...</div><div class="sidebar-user-role" id="sidebar-role">студент</div></div>
-    </div>
-  </div>
-</div>
-
-<div class="app-shell" id="app-shell">
+<div class="app-shell">
 <div class="header" id="main-header" style="display:none">
   <div class="logo"><div class="logo-icon">🎓</div>UNI<span>QUIZ</span></div>
   <div class="user-badge" onclick="logout()"><span class="user-name" id="user-name">...</span><span class="role-pill role-student" id="role-pill">студент</span><div class="trial-dot" id="trial-dot" style="display:none"></div></div>
@@ -340,96 +199,84 @@
     <button id="lang-en" onclick="setLang('en')" style="flex:1;padding:9px 4px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer">🇬🇧 EN</button>
   </div>
   <div class="login-box">
-    <div class="auth-tabs"><button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">Войти</button><button class="auth-tab" id="tab-reg-btn" onclick="switchAuthTab('register')">Регистрация</button></div>
+    <div class="auth-tabs"><button class="auth-tab active" onclick="switchAuthTab('login')">Войти</button><button class="auth-tab" onclick="switchAuthTab('register')">Регистрация</button></div>
     <div class="error-box" id="login-error"></div>
-    <div id="form-login"><input type="text" class="form-input" id="login-username" placeholder="Логин"/><input type="password" class="form-input" id="login-password" placeholder="Пароль"/><button class="btn btn-accent" id="login-btn" onclick="doLogin()">Войти</button></div>
-    <div id="form-register" style="display:none"><input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/><input type="text" class="form-input" id="reg-username" placeholder="aziz2005"/><input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/><input type="tel" class="form-input" id="reg-phone" placeholder="+998 XX XXX XX XX"/><button class="btn btn-accent" id="reg-btn" onclick="doRegister()">Зарегистрироваться</button><p id="free-trial-text" style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted2)">После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉</p></div>
+    <div id="form-login"><input type="text" class="form-input" id="login-username" placeholder="Логин"/><input type="password" class="form-input" id="login-password" placeholder="Пароль"/><button class="btn btn-accent" onclick="doLogin()">Войти</button></div>
+    <div id="form-register" style="display:none"><input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/><input type="text" class="form-input" id="reg-username" placeholder="aziz2005"/><input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/><input type="tel" class="form-input" id="reg-phone" placeholder="+998 XX XXX XX XX"/><button class="btn btn-accent" onclick="doRegister()">Зарегистрироваться</button><p style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted2)">После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉</p></div>
   </div>
 </div>
 
-<div id="screen-home" class="screen"><div id="trial-banner" style="display:none"><div class="trial-banner"><span style="font-size:20px">⏰</span><div class="trial-text">Пробный период: осталось <b id="trial-days-left">3</b> дня. После — 20 000 сум/мес.</div></div></div><div id="progress-card-wrap" style="display:none"><div class="progress-card"><div class="progress-card-top"><div class="progress-card-label">📊 Прогресс по базе</div><div class="progress-card-pct" id="home-pct">0%</div></div><div class="progress-bar-wrap"><div class="progress-bar-fill" id="home-bar" style="width:0%"></div></div><div class="progress-stats"><span class="progress-stat stat-green" id="home-correct">✓ 0</span><span class="progress-stat stat-red" id="home-wrong">✗ 0</span><span class="progress-stat stat-muted" id="home-total">из 0</span></div></div></div><div id="paywall-block" style="display:none"><div class="paywall"><div class="paywall-icon" id="paywall-icon">🔒</div><h2 id="paywall-title">Нужна подписка</h2><p id="paywall-text">Для прохождения тестов оформи подписку на месяц.</p><div class="price-tag">20 000 <span style="font-size:13px;font-weight:500">сум/мес</span></div><div class="pay-steps"><div class="pay-step"><div class="pay-step-num">1</div><div class="pay-step-text">Переведи <b style="color:var(--text)">20 000 сум</b> на Payme или Click</div></div><div class="pay-step"><div class="pay-step-num">2</div><div class="pay-step-text">Напиши администратору что оплатил</div></div><div class="pay-step"><div class="pay-step-num">3</div><div class="pay-step-text">Получи доступ в течение 5 минут</div></div></div><a href="https://t.me/mkdir16" target="_blank" class="btn btn-accent" style="text-decoration:none">✍️ Написать администратору</a><a href="https://t.me/+vpPlzmuE9Zc3MzRi" target="_blank" class="btn btn-outline" style="text-decoration:none;margin-top:8px">💬 Наша группа</a></div></div><div id="subjects-block" style="display:none"><div style="display:flex;gap:10px;padding:14px 16px 4px"><div onclick="showDuel()" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;text-align:center"><div style="font-size:24px;margin-bottom:4px">⚔️</div><div style="font-size:11px;font-weight:700">ДУЭЛЬ</div></div><div onclick="showAchievements()" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;text-align:center"><div style="font-size:24px;margin-bottom:4px">🏅</div><div style="font-size:11px;font-weight:700">БЕЙДЖИ</div></div></div><div class="section-label" style="margin-top:14px">ПРЕДМЕТЫ</div><div class="subjects-list" id="subjects-grid"></div></div></div>
+<div id="screen-home" class="screen"><div id="trial-banner" style="display:none"><div class="trial-banner"><span style="font-size:20px">⏰</span><div class="trial-text">Пробный период: осталось <b id="trial-days-left">3</b> дня. После — 20 000 сум/мес.</div></div></div><div id="progress-card-wrap" style="display:none"><div class="progress-card"><div class="progress-card-top"><div class="progress-card-label">📊 Прогресс по базе</div><div class="progress-card-pct" id="home-pct">0%</div></div><div class="progress-bar-wrap"><div class="progress-bar-fill" id="home-bar" style="width:0%"></div></div><div class="progress-stats"><span class="progress-stat stat-green" id="home-correct">✓ 0</span><span class="progress-stat stat-red" id="home-wrong">✗ 0</span><span class="progress-stat stat-muted" id="home-total">из 0</span></div></div></div><div id="paywall-block" style="display:none"><div class="paywall"><div class="paywall-icon">🔒</div><h2>Нужна подписка</h2><p>Для прохождения тестов оформи подписку на месяц.</p><div class="price-tag">20 000 <span style="font-size:13px;font-weight:500">сум/мес</span></div><div class="pay-steps"><div class="pay-step"><div class="pay-step-num">1</div><div class="pay-step-text">Переведи <b>20 000 сум</b> на Payme или Click</div></div><div class="pay-step"><div class="pay-step-num">2</div><div class="pay-step-text">Напиши администратору что оплатил</div></div><div class="pay-step"><div class="pay-step-num">3</div><div class="pay-step-text">Получи доступ в течение 5 минут</div></div></div><a href="https://t.me/mkdir16" target="_blank" class="btn btn-accent" style="text-decoration:none">✍️ Написать администратору</a></div></div><div id="subjects-block" style="display:none"><div class="section-label">ПРЕДМЕТЫ</div><div class="subjects-list" id="subjects-grid"></div></div></div>
 
-<div id="screen-quiz" class="screen"><div class="quiz-topbar"><div class="quiz-btn-icon" onclick="pauseQuiz()">⏸</div><div class="quiz-timer" id="timer-badge"><span class="quiz-timer-icon">⏱</span><span id="timer-text">60:00</span></div><div style="font-size:12px;font-weight:700;color:var(--muted2)" id="q-score-live">0 ✓</div></div><div class="q-nav-wrap" id="q-nav"></div><div class="quiz-body"><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px" id="q-counter">Вопрос 1 из 30</div><img id="q-image" class="question-img" alt=""/><p class="question-text" id="q-text"></p><div class="options-list" id="options-list"></div></div><div class="quiz-actions"><button class="btn btn-outline" id="prev-btn" onclick="goToQuestion(quizState.index-1)" style="display:none;flex:1">← Назад</button><button class="btn btn-accent" id="next-btn" onclick="nextQuestion()" style="display:none;flex:1">Следующий →</button><button class="btn btn-green" id="finish-btn" onclick="finishQuiz()" style="display:none;flex:1">Завершить ✓</button></div></div>
+<div id="screen-quiz" class="screen"><div class="quiz-topbar"><div class="quiz-btn-icon" onclick="pauseQuiz()">⏸</div><div class="quiz-timer">⏱ <span id="timer-text">60:00</span></div><div style="font-size:12px;font-weight:700;color:var(--muted2)" id="q-score-live">0 ✓</div></div><div class="q-nav-wrap" id="q-nav"></div><div class="quiz-body"><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px" id="q-counter"></div><img id="q-image" class="question-img" alt=""/><p class="question-text" id="q-text"></p><div class="options-list" id="options-list"></div></div><div class="quiz-actions"><button class="btn btn-outline" id="prev-btn" onclick="goToQuestion(quizState.index-1)" style="display:none">← Назад</button><button class="btn btn-accent" id="next-btn" onclick="nextQuestion()" style="display:none">Следующий →</button><button class="btn btn-green" id="finish-btn" onclick="finishQuiz()" style="display:none">Завершить ✓</button></div></div>
 
-<div id="screen-result" class="screen"><div class="result-page"><div class="result-ring"><div class="result-num" id="res-score"></div><div class="result-of">из <span id="res-total"></span></div></div><div class="result-emoji" id="res-emoji">🏆</div><div class="result-title" id="res-title"></div><div class="result-sub" id="res-sub"></div><div class="result-actions"><button class="btn btn-accent" onclick="showScreen('home')">← К предметам</button><button class="btn btn-outline" onclick="showReview()">📋 Разбор ошибок</button><button class="btn btn-outline" onclick="showScreen('history')">📊 История</button></div></div></div>
+<div id="screen-result" class="screen"><div class="result-page"><div class="result-ring"><div class="result-num" id="res-score"></div><div class="result-of">из <span id="res-total"></span></div></div><div class="result-emoji" id="res-emoji">🏆</div><div class="result-title" id="res-title"></div><div class="result-sub" id="res-sub"></div><div class="result-actions"><button class="btn btn-accent" onclick="showScreen('home')">← К предметам</button><button class="btn btn-outline" onclick="showReview()">📋 Разбор ошибок</button></div></div></div>
 
-<div id="screen-review" class="screen"><div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:60px;background:var(--bg)"><div class="quiz-btn-icon" onclick="showScreen('result')">←</div><div style="font-size:14px;font-weight:700">Разбор ошибок</div></div><div class="page" id="review-list"></div></div>
+<div id="screen-review" class="screen"><div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)"><div class="quiz-btn-icon" onclick="showScreen('result')">←</div><div style="font-size:14px;font-weight:700">Разбор ошибок</div></div><div class="page" id="review-list"></div></div>
 
-<div id="screen-history" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800">История тестов</div></div><div class="page" id="history-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div></div>
+<div id="screen-history" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800">История тестов</div></div><div class="page" id="history-list"></div></div>
 
-<div id="screen-rating" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800">Рейтинг студентов</div></div><div class="page"><div id="rating-subject-tabs" class="tabs-row"></div><div id="rating-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div></div></div>
+<div id="screen-rating" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800">Рейтинг студентов</div></div><div class="page"><div id="rating-list"></div></div></div>
 
-<div id="screen-qbank" class="screen"><div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:60px;background:var(--bg)"><div class="quiz-btn-icon" onclick="showScreen('admin')">←</div><div style="flex:1"><div style="font-size:14px;font-weight:700" id="qbank-title">База вопросов</div><div style="font-size:11px;color:var(--muted)" id="qbank-count"></div></div></div><div style="padding:12px 16px;border-bottom:1px solid var(--border)"><input type="text" class="form-input" id="qbank-search" placeholder="🔍 Поиск..." oninput="filterQBank()" style="margin:0"/></div><div class="page" id="qbank-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div></div>
+<div id="screen-admin" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800">Панель управления</div></div><div class="admin-tabs"><div class="admin-tab active" onclick="switchAdminTab('at-questions',this)">Вопросы</div><div class="admin-tab" onclick="switchAdminTab('at-subjects',this)">Предметы</div><div class="admin-tab" onclick="switchAdminTab('at-results',this)">Результаты</div><div class="admin-tab" onclick="switchAdminTab('at-users',this)" id="tab-users-btn" style="display:none">Студенты</div></div><div id="at-questions" class="admin-content active"><div class="import-box"><div class="import-title">📥 Импорт из Excel</div><select id="import-subject" class="form-input"><option value="">Выберите предмет...</option></select><div class="upload-zone" onclick="document.getElementById('excel-input').click()">📊 Excel или Word файл</div><input type="file" id="excel-input" accept=".xlsx,.xls,.docx,.doc" style="display:none" onchange="handleExcelSelect()"/><button class="btn btn-green" onclick="importQuestions()">⬆️ Загрузить</button><div id="import-result" style="display:none;margin-top:10px;padding:12px;border-radius:8px;font-size:13px"></div></div><select id="q-subject" class="form-input"><option value="">Выберите предмет...</option></select><textarea id="q-text-admin" class="form-input" placeholder="Вопрос"></textarea><div id="opts-container"></div><button class="add-opt-btn" onclick="addOpt()">+ Добавить вариант</button><button class="btn btn-accent" onclick="saveQuestion()">Сохранить вопрос</button></div><div id="at-subjects" class="admin-content"><input type="text" class="form-input" id="subj-title" placeholder="Название предмета"/><button class="btn btn-accent" onclick="createSubject()">Добавить предмет</button><div id="subjects-admin-list"></div></div><div id="at-results" class="admin-content"><button class="btn btn-outline" onclick="loadAdminResults()">Обновить</button><div style="overflow-x:auto"><table><thead><tr><th>Студент</th><th>Предмет</th><th>Балл</th><th>Дата</th></tr></thead><tbody id="results-table"></tbody></table></div></div><div id="at-users" class="admin-content"><button class="btn btn-accent" onclick="openCreateUser()">+ Добавить студента</button><div id="users-table"></div></div></div>
 
-<div id="screen-admin" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800">Панель управления</div></div><div class="admin-tabs"><div class="admin-tab active" onclick="switchAdminTab('at-questions',this)">Вопросы</div><div class="admin-tab" onclick="switchAdminTab('at-subjects',this)">Предметы</div><div class="admin-tab" onclick="switchAdminTab('at-results',this)">Результаты</div><div class="admin-tab" onclick="switchAdminTab('at-users',this)" id="tab-users-btn" style="display:none">Студенты</div><div class="admin-tab" onclick="switchAdminTab('at-db',this)" id="tab-db-btn" style="display:none">База ⚙️</div></div><div id="at-questions" class="admin-content active"><div class="import-box"><div class="import-title">📥 Импорт из Excel</div><div class="form-group"><label class="form-label">Предмет</label><select id="import-subject" class="form-input"><option value="">Выберите предмет...</option></select></div><div class="upload-zone" onclick="document.getElementById('excel-input').click()">📊 Excel или 📝 Word файл<div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div></div><input type="file" id="excel-input" accept=".xlsx,.xls,.docx,.doc" style="display:none" onchange="handleExcelSelect()"/><div style="display:flex;gap:8px"><button class="btn btn-green" onclick="importQuestions()" style="flex:1">⬆️ Загрузить</button><button class="btn btn-outline" onclick="downloadTemplate()" style="flex:1">⬇️ Шаблон</button></div><div id="import-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div></div><div class="divider"><span>или добавь вручную</span></div><div class="form-group"><label class="form-label">Предмет</label><select id="q-subject" class="form-input"><option value="">Выберите предмет...</option></select></div><div class="form-group"><label class="form-label">Вопрос</label><textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..."></textarea></div><div class="form-group"><label class="form-label">Картинка (необязательно)</label><div class="upload-zone" onclick="document.getElementById('img-input').click()">🖼 Загрузить картинку<img class="preview-img" id="img-preview"/></div><input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImg()"/></div><div class="form-group"><label class="form-label">Варианты <span style="color:var(--muted);font-size:10px">(✓ = правильный · 📝 текст · 🖼 картинка)</span></label><div id="opts-container"></div><button class="add-opt-btn" onclick="addOpt()">+ Добавить вариант</button></div><button class="btn btn-accent" onclick="saveQuestion()">Сохранить вопрос</button></div><div id="at-subjects" class="admin-content"><div class="form-group"><label class="form-label">Название</label><div class="sub-form"><input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center;margin-bottom:0"/><input type="text" class="form-input" id="subj-title" placeholder="Название предмета" style="margin-bottom:0"/></div></div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:center"><div style="flex:1"><label class="form-label">⏱ Время (мин)</label><input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="margin:0"/></div><div style="flex:1"><label class="form-label">📝 Вопросов</label><input type="number" class="form-input" id="subj-qcount" value="30" min="5" max="500" style="margin:0"/></div></div><div class="form-group"><label class="form-label">Язык предмета</label><select id="subj-lang" class="form-input"><option value="all">🌍 Все языки</option><option value="ru">🇷🇺 Русский</option><option value="uz">🇺🇿 Узбекский</option><option value="en">🇬🇧 Английский</option></select></div><button class="btn btn-accent" onclick="createSubject()" style="margin-bottom:20px">Добавить предмет</button><label class="form-label">Существующие</label><div id="subjects-admin-list"></div></div><div id="at-results" class="admin-content"><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" onclick="loadAdminResults()" style="flex:1">🔄 Обновить</button><button class="btn btn-green" onclick="exportExcel()" style="flex:1">📥 Excel</button></div><div style="overflow-x:auto"><table><thead><tr><th>Студент</th><th>Предмет</th><th>Балл</th><th>Дата</th></tr></thead><tbody id="results-table"></tbody></table></div></div><div id="at-db" class="admin-content"><div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">⚙️ Управление базой данных</div><div class="form-group"><label class="form-label">Предмет</label><select id="db-subject" class="form-input" onchange="loadDBQuestions()"><option value="">Выберите предмет...</option></select></div><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" onclick="loadDBQuestions()" style="flex:1">🔄 Загрузить</button><div style="font-size:12px;color:var(--muted2);align-self:center" id="db-count"></div></div><input type="text" class="form-input" id="db-search" placeholder="🔍 Поиск по вопросам..." oninput="filterDBQuestions()" style="margin-bottom:10px"/></div><div id="db-list"></div></div><div id="at-users" class="admin-content"><button class="btn btn-accent" onclick="openCreateUser()" style="margin-bottom:8px">+ Добавить студента</button><button class="btn btn-outline" onclick="loadUsers()" style="margin-bottom:14px">🔄 Обновить</button><div style="overflow-x:auto"><table><thead><tr><th>Имя/Логин</th><th>Роль</th><th>Доступ</th><th></th></tr></thead><tbody id="users-table"></tbody></table></div></div></div>
+<div class="modal-overlay" id="modal-pause"><div class="modal"><div class="modal-handle"></div><h3>⏸ Тест на паузе</h3><button class="btn btn-accent" onclick="resumeQuiz()">▶ Продолжить</button><button class="btn btn-outline" onclick="exitQuiz()">← Выйти</button></div></div>
 
-<div class="modal-overlay" id="modal-pause"><div class="modal"><div class="modal-handle"></div><h3>⏸ Тест на паузе</h3><div style="background:var(--card2);border-radius:var(--radius-sm);padding:14px;margin-bottom:18px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:var(--muted2)">Отвечено</span><span style="font-weight:700;color:var(--green)" id="pause-answered">0</span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted2)">Осталось</span><span style="font-weight:700;color:var(--accent)" id="pause-left">0</span></div></div><button class="btn btn-accent" onclick="resumeQuiz()">▶ Продолжить</button><button class="btn btn-outline" onclick="exitQuiz()" style="margin-top:8px">← Выйти (прогресс сохранится)</button></div></div>
+<div class="modal-overlay" id="modal-create-user"><div class="modal"><div class="modal-handle"></div><h3>Новый пользователь</h3><input type="text" class="form-input" id="new-username" placeholder="Логин"/><input type="password" class="form-input" id="new-password" placeholder="Пароль"/><input type="text" class="form-input" id="new-fullname" placeholder="Имя"/><select class="form-input" id="new-role"><option value="student">Студент</option><option value="teacher">Преподаватель</option><option value="admin">Админ</option></select><button class="btn btn-accent" onclick="createUser()">Создать</button><button class="btn btn-outline" onclick="closeModal()">Отмена</button></div></div>
 
-<div class="modal-overlay" id="modal-create-user"><div class="modal"><div class="modal-handle"></div><h3>Новый пользователь</h3><label class="form-label">Логин</label><input type="text" class="form-input" id="new-username" placeholder="student01"/><label class="form-label">Пароль</label><input type="password" class="form-input" id="new-password" placeholder="Минимум 4 символа"/><label class="form-label">Имя</label><input type="text" class="form-input" id="new-fullname" placeholder="Азиз Каримов"/><label class="form-label">Роль</label><select class="form-input" id="new-role"><option value="student">Студент (3 дня бесплатно)</option><option value="teacher">Преподаватель</option><option value="admin">Админ</option></select><button class="btn btn-accent" onclick="createUser()">Создать</button><button class="btn btn-outline" onclick="closeModal()" style="margin-top:8px">Отмена</button></div></div>
+<nav class="bottom-nav" id="bottom-nav" style="display:none"><div class="nav-item active" onclick="showScreen('home')"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>ТЕСТЫ</div><div class="nav-item" onclick="showScreen('rating')"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>РЕЙТИНГ</div><div class="nav-item" onclick="showScreen('history')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>ИСТОРИЯ</div><div class="nav-item" onclick="showScreen('admin')" id="nav-admin" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>ПАНЕЛЬ</div></nav>
 
-<div id="screen-knowledge" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800;margin-bottom:12px">📖 База вопросов</div><select id="kb-subject-select" class="form-input" style="margin:0" onchange="loadKnowledgeSubject()"><option value="">Выбери предмет...</option></select></div><div id="kb-content"><div style="text-align:center;padding:60px 20px;color:var(--muted2)"><div style="font-size:48px;margin-bottom:14px">📚</div><div style="font-size:14px">Выбери предмет чтобы увидеть все вопросы с правильными ответами</div></div></div></div>
-
-<div id="screen-achievements" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px"><div class="quiz-btn-icon" onclick="showScreen('home')">←</div><div style="font-size:16px;font-weight:800">Мои достижения</div></div><div class="page" id="achievements-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div></div>
-
-<div id="screen-duel" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px"><div class="quiz-btn-icon" onclick="showScreen('home')">←</div><div style="font-size:16px;font-weight:800">⚔️ Дуэль</div></div><div class="page"><div id="duel-menu"><div style="text-align:center;padding:20px 0 28px"><div style="font-size:52px;margin-bottom:12px">⚔️</div><div style="font-size:17px;font-weight:800;margin-bottom:8px">Вызови соперника!</div><div style="font-size:13px;color:var(--muted2);line-height:1.6">10 вопросов. Кто ответит правильнее — победил.<br>Соперник присоединяется по коду.</div></div><div class="form-group"><label class="form-label">Выбери предмет</label><select id="duel-subject" class="form-input"><option value="">Выберите предмет...</option></select></div><button class="btn btn-accent" onclick="createDuel()" style="margin-bottom:16px">⚔️ Создать дуэль</button><div style="text-align:center;color:var(--muted);font-size:12px;margin-bottom:12px">— или присоединись по коду —</div><div style="display:flex;gap:8px"><input type="text" class="form-input" id="duel-code-input" placeholder="Введи код (напр. AB12CD)" style="margin:0;flex:1;text-transform:uppercase;letter-spacing:3px;font-size:16px;font-weight:700;text-align:center"/><button class="btn btn-outline" onclick="joinDuel()" style="width:auto;padding:0 20px">Войти</button></div></div><div id="duel-waiting" style="display:none;text-align:center;padding:40px 0"><div style="font-size:52px;margin-bottom:16px">⏳</div><div style="font-size:16px;font-weight:800;margin-bottom:8px">Ожидаем соперника</div><div style="font-size:13px;color:var(--muted2);margin-bottom:24px">Отправь этот код другу</div><div style="background:var(--card2);border:2px solid var(--accent);border-radius:var(--radius);padding:20px;margin-bottom:24px"><div style="font-size:36px;font-weight:900;letter-spacing:8px;color:var(--accent)" id="duel-code-display">------</div></div><div style="font-size:12px;color:var(--muted);margin-bottom:20px">Страница обновится автоматически когда соперник войдёт</div><button class="btn btn-outline" onclick="cancelDuelWait()">Отмена</button></div><div id="duel-result" style="display:none;text-align:center;padding:32px 0"><div style="font-size:64px;margin-bottom:16px" id="duel-result-emoji">🏆</div><div style="font-size:22px;font-weight:900;margin-bottom:8px" id="duel-result-title">Победа!</div><div style="font-size:14px;color:var(--muted2);margin-bottom:28px" id="duel-result-sub"></div><div style="display:flex;gap:12px;margin-bottom:28px"><div style="flex:1;background:var(--card);border:1px solid var(--green);border-radius:var(--radius);padding:16px;text-align:center"><div style="font-size:11px;color:var(--muted2);margin-bottom:4px">Ты</div><div style="font-size:28px;font-weight:900;color:var(--green)" id="duel-my-score">0</div></div><div style="display:flex;align-items:center;font-size:20px;color:var(--muted)">vs</div><div style="flex:1;background:var(--card);border:1px solid var(--red);border-radius:var(--radius);padding:16px;text-align:center"><div style="font-size:11px;color:var(--muted2);margin-bottom:4px" id="duel-opp-name">Соперник</div><div style="font-size:28px;font-weight:900;color:var(--red)" id="duel-opp-score">0</div></div></div><button class="btn btn-accent" onclick="resetDuel()">Ещё раз ⚔️</button><button class="btn btn-outline" onclick="showScreen('home')" style="margin-top:8px">На главную</button></div></div></div>
-
-<nav class="bottom-nav" id="bottom-nav" style="display:none"><div class="nav-item active" onclick="showScreen('home')" id="nav-home"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>ТЕСТЫ</div><div class="nav-item" onclick="showScreen('rating')" id="nav-rating"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>РЕЙТИНГ</div><div class="nav-item" onclick="showScreen('history')" id="nav-history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>ИСТОРИЯ</div><div class="nav-item" onclick="showScreen('knowledge')" id="nav-knowledge"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>БАЗА</div><div class="nav-item" onclick="showScreen('admin')" id="nav-admin" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>ПАНЕЛЬ</div></nav>
 <div class="toast" id="toast"></div>
 </div>
 
 <script>
 const API_BASE="https://bec-2805.onrender.com";
 
-// Telegram WebApp — безопасная инициализация без ошибок
-if(window.Telegram && window.Telegram.WebApp){
-  const tg = window.Telegram.WebApp;
-  try { tg.ready(); } catch(e) {}
-  try { tg.expand(); } catch(e) {}
-  // Только если методы существуют
-  if(typeof tg.disableVerticalSwipes === 'function') tg.disableVerticalSwipes();
-  if(typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#13141a');
-  if(typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#13141a');
-}
-
 let currentUser=null, token=localStorage.getItem("token")||null;
 let quizState={questions:[],index:0,answers:{},score:0,subjectId:null,reviewData:[]};
-let optCount=0, uploadedImg=null, timerInterval=null, testTimeLeft=0, allSubjects=[];
-let selectedExcelFile=null, qbankAll=[], qbankSubjectId=null, currentLang=localStorage.getItem("lang")||"ru";
-let currentDuelId=null, duelPollTimer=null;
+let optCount=0, timerInterval=null, testTimeLeft=0, allSubjects=[];
+let selectedExcelFile=null, currentLang=localStorage.getItem("lang")||"ru";
+
+if(window.Telegram?.WebApp){
+  try{ window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }catch(e){}
+}
+
+function setLang(lang){
+  currentLang=lang;
+  localStorage.setItem("lang",lang);
+  document.querySelectorAll("[id^='lang-']").forEach(btn=>{
+    let l=btn.id.split('-')[1];
+    btn.style.background=currentLang===l?"var(--accent)":"transparent";
+    btn.style.color=currentLang===l?"#000":"var(--muted2)";
+  });
+  if(token&&currentUser) fetch(API_BASE+"/me/lang?lang="+lang,{method:"POST",headers:{Authorization:"Bearer "+token}}).catch(()=>{});
+  loadSubjects();
+}
 
 async function api(method,path,body){
-  const opts={method:method||"GET",headers:{}};
-  if(token)opts.headers["Authorization"]="Bearer "+token;
-  if(body){opts.headers["Content-Type"]="application/json";opts.body=JSON.stringify(body);}
+  const opts={method,headers:{}};
+  if(token) opts.headers["Authorization"]="Bearer "+token;
+  if(body){ opts.headers["Content-Type"]="application/json"; opts.body=JSON.stringify(body); }
   const res=await fetch(API_BASE+path,opts);
   const data=await res.json();
-  if(res.status===401){logout();return;}
-  if(!res.ok)throw{status:res.status,detail:data.detail||JSON.stringify(data)};
+  if(res.status===401){ logout(); return; }
+  if(!res.ok) throw data;
   return data;
 }
 
-function imgUrl(url){ if(!url)return null; return url.startsWith("http")?url:API_BASE+url; }
-function t(key){ return key; }
-
-function updateLangButtons(){
-  ["ru","uz","en"].forEach(l=>{
-    const btn=document.getElementById("lang-"+l);
-    if(btn){ btn.style.background=currentLang===l?"var(--accent)":"transparent"; btn.style.color=currentLang===l?"#000":"var(--muted2)"; btn.style.borderColor=currentLang===l?"var(--accent)":"var(--border)"; }
-  });
-}
-function setLang(lang){ currentLang=lang; localStorage.setItem("lang",lang); updateLangButtons(); if(token&&currentUser)api("POST",`/me/lang?lang=${lang}`).catch(()=>{}); }
-
 async function init(){
-  updateLangButtons();
+  document.querySelectorAll("[id^='lang-']").forEach(btn=>{
+    let l=btn.id.split('-')[1];
+    btn.style.background=currentLang===l?"var(--accent)":"transparent";
+    btn.style.color=currentLang===l?"#000":"var(--muted2)";
+  });
   if(!token){ showLoginScreen(); return; }
-  const cached=localStorage.getItem("user");
-  if(cached){ try{ currentUser=JSON.parse(cached); setupUI(); showScreen("home"); }catch(e){} }
   try{
     currentUser=await api("GET","/me");
     localStorage.setItem("user",JSON.stringify(currentUser));
     setupUI();
     await loadSubjects();
-    if(!cached) showScreen("home");
+    showScreen("home");
   }catch(e){ logout(); }
 }
 
@@ -445,8 +292,6 @@ function switchAuthTab(tab){
   document.getElementById("form-login").style.display=isLogin?"block":"none";
   document.getElementById("form-register").style.display=isLogin?"none":"block";
   document.getElementById("login-error").style.display="none";
-  document.getElementById("tab-login-btn").className="auth-tab"+(isLogin?" active":"");
-  document.getElementById("tab-reg-btn").className="auth-tab"+(!isLogin?" active":"");
 }
 
 async function doLogin(){
@@ -470,9 +315,6 @@ async function doRegister(){
   const phone=document.getElementById("reg-phone").value.trim();
   const errBox=document.getElementById("login-error");
   if(!full_name||!username||!password||!phone){ errBox.textContent="Заполни все поля"; errBox.style.display="block"; return; }
-  if(username.length<3){ errBox.textContent="Логин минимум 3 символа"; errBox.style.display="block"; return; }
-  if(password.length<4){ errBox.textContent="Пароль минимум 4 символа"; errBox.style.display="block"; return; }
-  if(phone.replace(/[^0-9]/g,"").length<9){ errBox.textContent="Введи номер телефона"; errBox.style.display="block"; return; }
   try{
     const res=await fetch(API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({full_name,username,password,phone})});
     const result=await res.json();
@@ -490,343 +332,277 @@ function setupUI(){
   const u=currentUser;
   document.getElementById("user-name").textContent=u.full_name||u.username;
   const rn={student:"студент",teacher:"учитель",admin:"админ"};
-  const rc={student:"role-student",teacher:"role-teacher",admin:"role-admin"};
   document.getElementById("role-pill").textContent=rn[u.role]||u.role;
-  document.getElementById("role-pill").className="role-pill "+(rc[u.role]||"role-student");
-  document.getElementById("trial-dot").style.display=(u.is_trial&&u.subscription_active&&u.days_left>0)?"block":"none";
+  if(u.role==="admin") document.getElementById("tab-users-btn").style.display="block";
   if(u.role==="teacher"||u.role==="admin") document.getElementById("nav-admin").style.display="flex";
-  if(u.role==="admin"){ document.getElementById("tab-users-btn").style.display="block"; document.getElementById("tab-db-btn").style.display="block"; }
-  const sb=document.getElementById("sidebar-user-block");
-  if(sb){ sb.style.display="block"; document.getElementById("sidebar-name").textContent=u.full_name||u.username; document.getElementById("sidebar-role").textContent=rn[u.role]||u.role; document.getElementById("sidebar-avatar").textContent=(u.full_name||u.username)[0].toUpperCase(); if(u.role==="teacher"||u.role==="admin") document.getElementById("snav-admin").style.display="flex"; }
 }
 
 function showScreen(name){
   document.querySelectorAll(".screen").forEach(s=>{s.classList.remove("active");s.style.display="none";});
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-  const t=document.getElementById("screen-"+name); t.style.display=""; t.classList.add("active");
-  const nm={home:"nav-home",history:"nav-history",admin:"nav-admin",rating:"nav-rating",knowledge:"nav-knowledge"};
-  document.querySelectorAll(".sidebar-item").forEach(i=>i.classList.remove("active"));
-  const snm={home:"snav-home",history:"snav-history",admin:"snav-admin",rating:"snav-rating",knowledge:"snav-knowledge"};
-  if(snm[name]) document.getElementById(snm[name])?.classList.add("active");
-  if(nm[name]) document.getElementById(nm[name])?.classList.add("active");
+  document.getElementById("screen-"+name).style.display=""; document.getElementById("screen-"+name).classList.add("active");
+  if(name==="home"){ loadHomeProgress(); }
   if(name==="history") loadHistory();
   if(name==="admin") loadAdminSubjects();
   if(name==="rating") loadRating();
-  if(name==="knowledge") initKnowledge();
 }
 
 async function loadSubjects(){
-  allSubjects=await api("GET","/subjects");
-  const grid=document.getElementById("subjects-grid"); grid.innerHTML="";
-  const userLang=currentUser?.lang||currentLang;
-  const filtered=allSubjects.filter(s=>!s.lang||s.lang==="all"||s.lang===userLang);
-  for(const s of filtered){
-    const row=document.createElement("div"); row.className="subject-row";
-    row.style.flexDirection="column"; row.style.alignItems="stretch"; row.style.gap="0";
-    row.innerHTML=`<div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="startQuiz(${s.id})"><div class="subject-emoji">${s.emoji}</div><div class="subject-info"><div class="subject-name">${s.title}</div><div class="subject-meta">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} вопросов</div></div><div class="subject-start">▶</div></div><div id="prog-${s.id}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);margin-bottom:5px"><span>Мой прогресс</span><span id="prog-txt-${s.id}"></span></div><div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div id="prog-bar-${s.id}" style="height:100%;background:var(--accent);border-radius:3px;width:0%"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;margin-top:5px"><span style="color:var(--muted2)" id="prog-attempts-${s.id}"></span><span style="color:var(--muted2)" id="prog-best-${s.id}"></span></div></div>`;
-    grid.appendChild(row);
-    loadSubjectProgress(s.id);
+  try{
+    const res=await fetch(API_BASE+"/subjects",{headers:token?{Authorization:"Bearer "+token}:{}});
+    if(!res.ok) throw new Error();
+    allSubjects=await res.json();
+  }catch(e){
+    allSubjects=[];
+    showToast("Ошибка загрузки предметов",true);
   }
-  const u=currentUser;
-  const hasAccess=u.subscription_active||(u.role==="teacher"||u.role==="admin");
-  const tb=document.getElementById("trial-banner");
-  if(hasAccess&&u.is_trial&&u.days_left>0){ tb.style.display="block"; document.getElementById("trial-days-left").textContent=u.days_left; } else tb.style.display="none";
+  const grid=document.getElementById("subjects-grid"); if(!grid) return;
+  grid.innerHTML="";
+  for(const s of allSubjects){
+    const div=document.createElement("div"); div.className="subject-row";
+    div.innerHTML=`<div class="subject-emoji">${s.emoji||"📚"}</div><div class="subject-info"><div class="subject-name">${s.title}</div><div class="subject-meta">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} вопросов</div></div><div class="subject-start">▶</div>`;
+    div.onclick=()=>startQuiz(s.id);
+    grid.appendChild(div);
+  }
+  const hasAccess=currentUser?.subscription_active||(currentUser?.role==="teacher"||currentUser?.role==="admin");
   document.getElementById("paywall-block").style.display=hasAccess?"none":"block";
   document.getElementById("subjects-block").style.display=hasAccess?"block":"none";
-  if(!hasAccess){ if(u.is_trial){ document.getElementById("paywall-icon").textContent="⏰"; document.getElementById("paywall-title").textContent="Пробный период закончился"; document.getElementById("paywall-text").textContent="Твои 3 бесплатных дня истекли. Оформи подписку чтобы продолжить."; } else { document.getElementById("paywall-icon").textContent="🔒"; document.getElementById("paywall-title").textContent="Нужна подписка"; document.getElementById("paywall-text").textContent="Для прохождения тестов оформи подписку на месяц."; } }
-  loadHomeProgress();
+  if(hasAccess && currentUser?.is_trial && currentUser?.days_left>0){
+    document.getElementById("trial-banner").style.display="block";
+    document.getElementById("trial-days-left").textContent=currentUser.days_left;
+  }
 }
 
-async function loadSubjectProgress(subjectId){
-  try{ const p=await api("GET",`/my-progress/${subjectId}`); if(!p||p.attempts===0)return; const wrap=document.getElementById(`prog-${subjectId}`); if(wrap){ wrap.style.display="block"; document.getElementById(`prog-bar-${subjectId}`).style.width=p.best_pct+"%"; document.getElementById(`prog-txt-${subjectId}`).textContent=p.best_pct+"%"; document.getElementById(`prog-attempts-${subjectId}`).textContent=`${p.attempts} попыток`; document.getElementById(`prog-best-${subjectId}`).textContent=`Лучший: ${p.best_score}/${p.best_total}`; } }catch(e){}
-}
 async function loadHomeProgress(){
-  try{ const pw=document.getElementById("progress-card-wrap"); const results=await api("GET","/my-results"); if(!results.length){ pw.style.display="none"; return; } const correct=results.reduce((s,r)=>s+r.score,0); const total=results.reduce((s,r)=>s+r.total,0); const wrong=total-correct; const pct=total?Math.round(correct/total*100):0; document.getElementById("home-pct").textContent=pct+"%"; document.getElementById("home-bar").style.width=pct+"%"; document.getElementById("home-correct").textContent="✓ "+correct; document.getElementById("home-wrong").textContent="✗ "+wrong; document.getElementById("home-total").textContent="из "+total; pw.style.display="block"; }catch(e){}
+  try{
+    const results=await api("GET","/my-results");
+    if(!results.length){ document.getElementById("progress-card-wrap").style.display="none"; return; }
+    const correct=results.reduce((s,r)=>s+r.score,0);
+    const total=results.reduce((s,r)=>s+r.total,0);
+    const pct=total?Math.round(correct/total*100):0;
+    document.getElementById("home-pct").textContent=pct+"%";
+    document.getElementById("home-bar").style.width=pct+"%";
+    document.getElementById("home-correct").textContent="✓ "+correct;
+    document.getElementById("home-wrong").textContent="✗ "+(total-correct);
+    document.getElementById("home-total").textContent="из "+total;
+    document.getElementById("progress-card-wrap").style.display="block";
+  }catch(e){}
 }
 
-function startTestTimer(minutes){ clearInterval(timerInterval); testTimeLeft=minutes*60; updateTestTimer(); timerInterval=setInterval(()=>{ testTimeLeft--; updateTestTimer(); if(testTimeLeft<=0){ clearInterval(timerInterval); showToast("⏰ Время вышло!",true); finishQuiz(); } },1000); }
-function updateTestTimer(){ const txt=document.getElementById("timer-text"); if(!txt)return; const m=Math.floor(testTimeLeft/60),s=testTimeLeft%60; txt.textContent=`${m}:${s.toString().padStart(2,"0")}`; const el=document.getElementById("timer-badge"); if(el) el.className="quiz-timer"+(testTimeLeft<=60?" urgent":""); }
+function startTestTimer(minutes){ clearInterval(timerInterval); testTimeLeft=minutes*60; updateTimer(); timerInterval=setInterval(()=>{ testTimeLeft--; updateTimer(); if(testTimeLeft<=0){ clearInterval(timerInterval); finishQuiz(); } },1000); }
+function updateTimer(){ let m=Math.floor(testTimeLeft/60),s=testTimeLeft%60; document.getElementById("timer-text").textContent=`${m}:${s.toString().padStart(2,"0")}`; }
 
-function loadProgress(id){ try{ const d=JSON.parse(localStorage.getItem(`quiz_${id}`)); if(!d)return null; if(Date.now()-d.savedAt>86400000){ localStorage.removeItem(`quiz_${id}`); return null; } if(Object.keys(d.answers).length===d.questions.length)return null; return d; }catch(e){ return null; } }
-function saveProgress(){ try{ localStorage.setItem(`quiz_${quizState.subjectId}`,JSON.stringify({...quizState,timeLeft:testTimeLeft,savedAt:Date.now()})); }catch(e){} }
-function clearProgress(id){ try{ localStorage.removeItem(`quiz_${id}`); }catch(e){} }
+function saveProgress(){ try{ localStorage.setItem(`quiz_${quizState.subjectId}`,JSON.stringify({...quizState,timeLeft:testTimeLeft})); }catch(e){} }
+function loadProgress(id){ try{ return JSON.parse(localStorage.getItem(`quiz_${id}`)); }catch(e){ return null; } }
 
 async function startQuiz(subjectId){
   const subject=allSubjects.find(s=>s.id===subjectId);
-  const timeLimit=(subject&&subject.time_limit)?subject.time_limit:60;
+  const timeLimit=subject?.time_limit||60;
   const saved=loadProgress(subjectId);
-  if(saved&&saved.questions&&saved.questions.length>0){
-    if(confirm(`У тебя есть незавершённый тест (${Object.keys(saved.answers).length} из ${saved.questions.length}). Продолжить?`)){
-      quizState=saved; showScreen("quiz"); renderQuestion(); renderNavDots(); overrideTimer(saved.timeLeft||timeLimit*60); return;
+  if(saved?.questions?.length && Object.keys(saved.answers).length<saved.questions.length){
+    if(confirm("Продолжить незавершённый тест?")){
+      quizState=saved; showScreen("quiz"); renderQuestion(); renderNavDots(); testTimeLeft=saved.timeLeft||timeLimit*60; updateTimer(); timerInterval=setInterval(()=>{ testTimeLeft--; updateTimer(); if(testTimeLeft<=0) finishQuiz(); },1000);
+      return;
     }
   }
-  quizState={questions:[],index:0,answers:{},score:0,subjectId,reviewData:[],timeLeft:timeLimit*60};
+  quizState={questions:[],index:0,answers:{},score:0,subjectId,reviewData:[]};
   showScreen("quiz");
-  document.getElementById("q-nav").innerHTML=""; document.getElementById("options-list").innerHTML=""; document.getElementById("q-text").textContent=""; document.getElementById("q-counter").textContent="Загрузка..."; document.getElementById("q-image").style.display="none"; document.getElementById("prev-btn").style.display="none"; document.getElementById("next-btn").style.display="none"; document.getElementById("finish-btn").style.display="none"; document.getElementById("options-list").innerHTML=`<div style="text-align:center;padding:40px 20px"><div class="spinner" style="margin:0 auto 16px"></div><div style="font-size:14px;font-weight:600;margin-bottom:6px">Загружаем вопросы...</div><div style="font-size:12px;color:var(--muted2)">Подключаемся к серверу</div></div>`;
-  try{ const q=await api("GET",`/questions/${subjectId}`); quizState.questions=q; if(!q.length){ showToast("В этом предмете пока нет вопросов",true); showScreen("home"); return; } renderQuestion(); renderNavDots(); startTestTimer(timeLimit); saveProgress(); } catch(e){ if(e.status===402){ showScreen("home"); showToast("Нужна подписка!",true); } else{ showToast("Ошибка: "+e.detail,true); showScreen("home"); } }
+  document.getElementById("q-text").textContent="Загрузка...";
+  try{
+    const q=await api("GET",`/questions/${subjectId}`);
+    quizState.questions=q;
+    if(!q.length){ showToast("Нет вопросов",true); showScreen("home"); return; }
+    renderQuestion(); renderNavDots(); startTestTimer(timeLimit);
+  }catch(e){ showToast("Ошибка загрузки",true); showScreen("home"); }
 }
 
-function renderNavDots(){ const nav=document.getElementById("q-nav"); nav.innerHTML=""; quizState.questions.forEach((_,i)=>{ const d=document.createElement("button"); d.className="q-dot"; d.textContent=i+1; d.id=`dot-${i}`; d.onclick=()=>goToQuestion(i); nav.appendChild(d); }); updateNavDots(); }
-function updateNavDots(){ quizState.questions.forEach((q,i)=>{ const d=document.getElementById(`dot-${i}`); if(!d)return; d.className="q-dot"; if(i===quizState.index) d.classList.add("current"); else if(quizState.answers[q.id]!==undefined) d.classList.add(quizState.answers[q.id]===q.correct_option_id?"answered-correct":"answered-wrong"); }); const cur=document.getElementById(`dot-${quizState.index}`); if(cur) cur.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"}); }
+function renderNavDots(){
+  const nav=document.getElementById("q-nav"); nav.innerHTML="";
+  quizState.questions.forEach((_,i)=>{ let d=document.createElement("div"); d.className="q-dot"; d.textContent=i+1; d.onclick=()=>goToQuestion(i); nav.appendChild(d); });
+  updateNavDots();
+}
+function updateNavDots(){
+  document.querySelectorAll(".q-dot").forEach((d,i)=>{
+    d.classList.remove("current","answered-correct","answered-wrong");
+    if(i===quizState.index) d.classList.add("current");
+    else if(quizState.answers[quizState.questions[i]?.id]!==undefined) d.classList.add(quizState.answers[quizState.questions[i].id]===quizState.questions[i].correct_option_id?"answered-correct":"answered-wrong");
+  });
+}
 function goToQuestion(idx){ if(idx<0||idx>=quizState.questions.length)return; quizState.index=idx; renderQuestion(); updateNavDots(); }
 function renderQuestion(){
   const q=quizState.questions[quizState.index];
-  const total=quizState.questions.length;
-  document.getElementById("q-counter").textContent=`Вопрос ${quizState.index+1} из ${total}`;
+  document.getElementById("q-counter").textContent=`Вопрос ${quizState.index+1} из ${quizState.questions.length}`;
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
   document.getElementById("q-text").textContent=q.text;
-  const img=document.getElementById("q-image");
-  if(q.image_url){ img.src=imgUrl(q.image_url); img.style.display="block"; } else img.style.display="none";
+  const img=document.getElementById("q-image"); img.style.display=q.image_url?"block":"none"; if(q.image_url) img.src=q.image_url;
   const letters=["A","Б","В","Г","Д"];
   const list=document.getElementById("options-list"); list.innerHTML="";
-  const alreadyAnswered=quizState.answers[q.id]!==undefined;
+  const answered=quizState.answers[q.id]!==undefined;
   q.options.forEach((opt,i)=>{
-    const btn=document.createElement("button"); btn.className="option-btn";
-    btn.dataset.origIndex=i;
-    const optContent = opt.image_url ? `<img src="${imgUrl(opt.image_url)}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block" loading="lazy"/>` : `<span>${opt.text||""}</span>`;
-    btn.innerHTML=`<span class="option-letter">${letters[i]}</span>${optContent}`;
-    if(alreadyAnswered){ btn.disabled=true; if(i===q.correct_option_id)btn.classList.add("correct"); else if(i===quizState.answers[q.id])btn.classList.add("wrong"); } else btn.onclick=()=>selectAnswer(i,btn,q);
+    let btn=document.createElement("button"); btn.className="option-btn";
+    btn.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt.text||""}</span>`;
+    if(answered){
+      btn.disabled=true;
+      if(i===q.correct_option_id) btn.classList.add("correct");
+      else if(i===quizState.answers[q.id]) btn.classList.add("wrong");
+    } else btn.onclick=()=>selectAnswer(i,btn,q);
     list.appendChild(btn);
   });
-  const isLast=quizState.index===total-1;
-  const allAnswered=Object.keys(quizState.answers).length===total;
+  let isLast=quizState.index===quizState.questions.length-1;
+  let allAnswered=Object.keys(quizState.answers).length===quizState.questions.length;
   document.getElementById("prev-btn").style.display=quizState.index>0?"block":"none";
-  document.getElementById("next-btn").style.display=(alreadyAnswered&&!isLast)?"block":"none";
+  document.getElementById("next-btn").style.display=(answered&&!isLast)?"block":"none";
   document.getElementById("finish-btn").style.display=allAnswered?"block":"none";
 }
-function selectAnswer(origIndex,btn,question){
+function selectAnswer(idx,btn,q){
   document.querySelectorAll(".option-btn").forEach(b=>b.disabled=true);
-  quizState.answers[question.id]=origIndex;
-  const ci=question.correct_option_id;
-  const isCorrect=origIndex===ci;
+  quizState.answers[q.id]=idx;
+  let isCorrect=idx===q.correct_option_id;
   if(isCorrect) quizState.score++;
   btn.classList.add(isCorrect?"correct":"wrong");
-  if(!isCorrect) document.querySelectorAll(".option-btn").forEach(b=>{ if(parseInt(b.dataset.origIndex)===ci) b.classList.add("correct"); });
-  quizState.reviewData.push({question,chosen:origIndex,correct:ci,isCorrect});
+  if(!isCorrect) document.querySelectorAll(".option-btn").forEach(b=>{ if(parseInt(b.querySelector(".option-letter")?.textContent?.charCodeAt(0)-65||0)===q.correct_option_id) b.classList.add("correct"); });
+  quizState.reviewData.push({question:q,chosen:idx,correct:q.correct_option_id,isCorrect});
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
-  const total=quizState.questions.length;
-  const isLast=quizState.index===total-1;
-  const allAnswered=Object.keys(quizState.answers).length===total;
-  document.getElementById("next-btn").style.display=isLast?"none":"block";
+  let allAnswered=Object.keys(quizState.answers).length===quizState.questions.length;
+  document.getElementById("next-btn").style.display=quizState.index<quizState.questions.length-1?"block":"none";
   document.getElementById("finish-btn").style.display=allAnswered?"block":"none";
   updateNavDots(); saveProgress();
 }
 function nextQuestion(){ goToQuestion(quizState.index+1); }
-function pauseQuiz(){ clearInterval(timerInterval); quizState.timeLeft=testTimeLeft; saveProgress(); const total=quizState.questions.length, answered=Object.keys(quizState.answers).length; document.getElementById("pause-answered").textContent=answered; document.getElementById("pause-left").textContent=total-answered; document.getElementById("modal-pause").classList.add("active"); }
-function resumeQuiz(){ document.getElementById("modal-pause").classList.remove("active"); overrideTimer(quizState.timeLeft||3600); }
+function pauseQuiz(){ clearInterval(timerInterval); document.getElementById("modal-pause").classList.add("active"); }
+function resumeQuiz(){ document.getElementById("modal-pause").classList.remove("active"); startTestTimer(Math.ceil(testTimeLeft/60)); }
 function exitQuiz(){ document.getElementById("modal-pause").classList.remove("active"); showScreen("home"); }
-function overrideTimer(seconds){ clearInterval(timerInterval); testTimeLeft=seconds; updateTestTimer(); timerInterval=setInterval(()=>{ testTimeLeft--; updateTestTimer(); if(testTimeLeft<=0){ clearInterval(timerInterval); showToast("⏰ Время вышло!",true); finishQuiz(); } },1000); }
-
 async function finishQuiz(){
   clearInterval(timerInterval);
-  document.getElementById("modal-pause").classList.remove("active");
-  if(quizState.isDuel){ await finishDuel(); return; }
-  clearProgress(quizState.subjectId);
-  try{ const r=await api("POST","/results",{subject_id:quizState.subjectId,answers:quizState.answers}); showResult(r); if(r.new_achievements&&r.new_achievements.length) showNewAchievements(r.new_achievements); }catch(e){ showToast("Ошибка: "+e.detail,true); }
+  try{
+    let r=await api("POST","/results",{subject_id:quizState.subjectId,answers:quizState.answers});
+    showResult(r);
+    localStorage.removeItem(`quiz_${quizState.subjectId}`);
+  }catch(e){ showToast("Ошибка",true); }
 }
 function showResult(r){
   showScreen("result");
   document.getElementById("res-score").textContent=r.score;
   document.getElementById("res-total").textContent=r.total;
-  const pct=r.percentage;
-  const map=[[90,"🏆","Отлично!","Ты настоящий эксперт!"],[70,"👍","Хороший результат","Почти всё правильно!"],[50,"📚","Неплохо","Есть над чем поработать"],[0,"💪","Нужно повторить","Попробуй ещё раз!"]];
-  const[,emoji,title,sub]=map.find(([min])=>pct>=min);
-  document.getElementById("res-emoji").textContent=emoji;
-  document.getElementById("res-title").textContent=title;
-  document.getElementById("res-sub").textContent=sub;
+  let pct=r.percentage;
+  if(pct>=90){ document.getElementById("res-emoji").textContent="🏆"; document.getElementById("res-title").textContent="Отлично!"; document.getElementById("res-sub").textContent="Ты настоящий эксперт!"; }
+  else if(pct>=70){ document.getElementById("res-emoji").textContent="👍"; document.getElementById("res-title").textContent="Хороший результат"; document.getElementById("res-sub").textContent="Почти всё правильно!"; }
+  else if(pct>=50){ document.getElementById("res-emoji").textContent="📚"; document.getElementById("res-title").textContent="Неплохо"; document.getElementById("res-sub").textContent="Есть над чем поработать"; }
+  else{ document.getElementById("res-emoji").textContent="💪"; document.getElementById("res-title").textContent="Нужно повторить"; document.getElementById("res-sub").textContent="Попробуй ещё раз!"; }
 }
 function showReview(){
   showScreen("review");
   const letters=["A","Б","В","Г","Д"];
-  document.getElementById("review-list").innerHTML=quizState.reviewData.map((item,qi)=>{ const q=item.question; const si=item.isCorrect?"✅":"❌"; const optsHtml=q.options.map((opt,i)=>{ let cls="neutral"; if(i===item.correct) cls="correct"; else if(i===item.chosen&&!item.isCorrect) cls="wrong"; return `<div class="review-opt ${cls}">${letters[i]}. ${opt.text}${i===item.correct?" ✓":""}</div>`; }).join(""); return `<div class="review-item"><div class="review-status">${si} Вопрос ${qi+1}</div><div class="review-q">${q.text}</div>${optsHtml}</div>`; }).join("");
+  document.getElementById("review-list").innerHTML=quizState.reviewData.map((item,i)=>{
+    let q=item.question;
+    return `<div class="review-item"><div class="review-status">${item.isCorrect?"✅":"❌"} Вопрос ${i+1}</div><div class="review-q">${q.text}</div>${q.options.map((opt,j)=>`<div class="review-opt ${j===item.correct?"correct":j===item.chosen&&!item.isCorrect?"wrong":"neutral"}">${letters[j]}. ${opt.text}${j===item.correct?" ✓":""}</div>`).join("")}</div>`;
+  }).join("");
 }
 async function loadHistory(){
-  const list=document.getElementById("history-list");
-  list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
-  try{ const results=await api("GET","/my-results"); if(!results.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">Ты ещё не проходил тесты</p>'; return; } list.innerHTML=results.map(r=>{ const cls=r.percentage>=70?"score-good":r.percentage>=50?"score-ok":"score-bad"; const date=r.date?new Date(r.date).toLocaleDateString("ru-RU"):""; return `<div class="history-item"><div class="history-icon">${r.emoji}</div><div class="history-info"><div class="history-subject">${r.subject}</div><div class="history-date">${date}</div></div><div class="history-score ${cls}">${r.score}/${r.total}<br><span style="font-size:10px;opacity:.7">${r.percentage}%</span></div></div>`; }).join(""); }catch(e){ list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>'; }
+  let list=document.getElementById("history-list");
+  list.innerHTML='<div class="loader"><div class="spinner"></div></div>';
+  try{
+    let results=await api("GET","/my-results");
+    if(!results.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px">Нет результатов</p>'; return; }
+    list.innerHTML=results.map(r=>`<div class="history-item"><div class="history-icon">${r.emoji}</div><div><div class="history-subject">${r.subject}</div><div class="history-date">${new Date(r.date).toLocaleDateString()}</div></div><div class="history-score ${r.percentage>=70?"score-good":r.percentage>=50?"score-ok":"score-bad"}">${r.score}/${r.total}</div></div>`).join("");
+  }catch(e){ list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка</p>'; }
 }
 async function loadRating(){
-  const list=document.getElementById("rating-list");
-  list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
-  try{ const results=await api("GET","/rating"); const tabsRow=document.getElementById("rating-subject-tabs"); tabsRow.innerHTML=""; const by={}; results.forEach(r=>{ if(!by[r.subject])by[r.subject]=[]; by[r.subject].push(r); }); const names=Object.keys(by); if(!names.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">Пока нет результатов</p>'; return; } names.forEach((name,i)=>{ const btn=document.createElement("div"); btn.className="tab-btn"+(i===0?" active":""); btn.textContent=name; btn.onclick=()=>{ document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); renderRating(by[name]); }; tabsRow.appendChild(btn); }); renderRating(by[names[0]]); }catch(e){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:20px">Загружаем...</p>'; }
-}
-function renderRating(results){
-  const list=document.getElementById("rating-list");
-  const best={}; results.forEach(r=>{ const n=r.student||"—"; const p=Math.round(r.score/r.total*100); if(!best[n]||p>best[n].pct) best[n]={name:n,score:r.score,total:r.total,pct:p}; });
-  const sorted=Object.values(best).sort((a,b)=>b.pct-a.pct);
-  const medals=["🥇","🥈","🥉"];
-  list.innerHTML=sorted.map((s,i)=>`<div class="rating-item"><div class="rating-pos">${i<3?medals[i]:i+1}</div><div class="rating-info"><div class="rating-name">${s.name}</div><div class="rating-detail">${s.score} из ${s.total}</div></div><div class="rating-pct">${s.pct}%</div></div>`).join("")||'<p style="color:var(--muted2);text-align:center;padding:20px">Нет данных</p>';
-}
-async function exportExcel(){
-  try{ const results=await api("GET","/admin/results"); if(!results.length){ showToast("Нет данных",true); return; } const data=[["Студент","Логин","Предмет","Правильных","Всего","Процент","Дата"],...results.map(r=>[r.student||"—",r.username||"—",r.subject,r.score,r.total,Math.round(r.score/r.total*100)+"%",r.date?new Date(r.date).toLocaleDateString("ru-RU"):"—"])]; const wb=XLSX.utils.book_new(); const ws=XLSX.utils.aoa_to_sheet(data); ws["!cols"]=[{wch:20},{wch:15},{wch:20},{wch:12},{wch:8},{wch:10},{wch:14}]; XLSX.utils.book_append_sheet(wb,ws,"Результаты"); XLSX.writeFile(wb,`UniQuiz_${new Date().toLocaleDateString("ru-RU").replace(/\./g,"-")}.xlsx`); showToast("Excel скачан ✅"); }catch(e){ showToast("Ошибка: "+e.detail,true); }
-}
-function handleExcelSelect(){ const f=document.getElementById("excel-input").files[0]; if(!f)return; selectedExcelFile=f; document.getElementById("import-filename").textContent="📄 "+f.name; }
-function downloadTemplate(){ const data=[["Вопрос *","Вариант A *","Вариант Б *","Вариант В","Вариант Г","Вариант Д","Правильный ответ * (A/Б/В/Г/Д)"],["⚠️ Обязательные поля отмечены *","","","","","",""],["Столица Узбекистана?","Ташкент","Самарканд","Бухара","Наманган","","A"],["Сколько будет 2+2?","3","4","5","6","","Б"],["","","","","","",""]]; const wb=XLSX.utils.book_new(); const ws=XLSX.utils.aoa_to_sheet(data); ws["!cols"]=[{wch:60},{wch:25},{wch:25},{wch:25},{wch:25},{wch:25},{wch:30}]; XLSX.utils.book_append_sheet(wb,ws,"Вопросы"); XLSX.writeFile(wb,"UniQuiz_шаблон_вопросов.xlsx"); showToast("Шаблон скачан ✅"); }
-async function importQuestions(){
-  const subjectId=document.getElementById("import-subject").value;
-  const resultDiv=document.getElementById("import-result");
-  if(!subjectId){ showToast("Выбери предмет!",true); return; }
-  if(!selectedExcelFile){ showToast("Выбери файл!",true); return; }
-  resultDiv.style.display="block"; resultDiv.style.background="var(--card2)"; resultDiv.style.color="var(--muted2)"; resultDiv.textContent="⏳ Обрабатываем файл...";
-  const fname=selectedExcelFile.name.toLowerCase();
-  const isWord=fname.endsWith(".docx")||fname.endsWith(".doc");
+  let list=document.getElementById("rating-list");
+  list.innerHTML='<div class="loader"><div class="spinner"></div></div>';
   try{
-    if(isWord){
-      const arrayBuffer=await selectedExcelFile.arrayBuffer();
-      const result=await mammoth.extractRawText({arrayBuffer});
-      const text=result.value;
-      const questions=parseQuestionsFromText(text);
-      if(!questions.length){ resultDiv.style.background="rgba(249,115,22,.1)"; resultDiv.style.color="var(--orange)"; resultDiv.textContent="⚠️ Вопросы не найдены.\nФормат:\n1. Вопрос?\nA) вариант\nОтвет: A"; return; }
-      let saved=0,errors=0;
-      for(const q of questions){
-        try{ await api("POST","/admin/questions",{subject_id:parseInt(subjectId),text:q.question,options:q.options.map(o=>({text:o,image_url:null})),correct_index:q.correct,image_url:null}); saved++; }catch(e2){ errors++; }
-      }
-      resultDiv.style.background="rgba(34,197,94,.1)"; resultDiv.style.color="var(--green)"; resultDiv.textContent="✅ Добавлено "+saved+" вопросов из Word!"+(errors?"\n⚠️ Ошибок: "+errors:"");
-      showToast("Добавлено "+saved+" вопросов ✅");
-    } else {
-      const fd=new FormData(); fd.append("file",selectedExcelFile);
-      const res=await fetch(API_BASE+"/admin/import-questions?subject_id="+subjectId,{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
-      const data=await res.json();
-      if(!res.ok){ resultDiv.style.background="rgba(239,68,68,.1)"; resultDiv.style.color="var(--red)"; resultDiv.textContent="❌ "+data.detail; return; }
-      let msg="✅ "+data.message;
-      if(data.errors&&data.errors.length){ msg+="\n\nОшибки:\n"+data.errors.join("\n"); resultDiv.style.background="rgba(249,115,22,.1)"; resultDiv.style.color="var(--orange)"; } else { resultDiv.style.background="rgba(34,197,94,.1)"; resultDiv.style.color="var(--green)"; }
-      resultDiv.textContent=msg;
-      showToast("Добавлено "+data.added+" вопросов ✅");
-    }
-    selectedExcelFile=null; document.getElementById("excel-input").value=""; document.getElementById("import-filename").textContent="";
-  } catch(e){ resultDiv.style.background="rgba(239,68,68,.1)"; resultDiv.style.color="var(--red)"; resultDiv.textContent="❌ Ошибка: "+(e.message||"попробуй ещё раз"); }
+    let results=await api("GET","/rating");
+    let bySubject={};
+    results.forEach(r=>{ if(!bySubject[r.subject]) bySubject[r.subject]=[]; bySubject[r.subject].push(r); });
+    let subjects=Object.keys(bySubject);
+    if(!subjects.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px">Нет данных</p>'; return; }
+    let html='<div class="tabs-row">'+subjects.map(s=>`<div class="tab-btn active" onclick="showRatingSubject('${s}')">${s}</div>`).join("")+'</div><div id="rating-content"></div>';
+    list.innerHTML=html;
+    showRatingSubject(subjects[0],bySubject);
+  }catch(e){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:20px">Ошибка</p>'; }
 }
-function parseQuestionsFromText(text){
-  text=text.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
-  const questions=[];
-  const lmap={"A":0,"B":1,"C":2,"D":3,"E":4,"А":0,"Б":1,"В":2,"Г":3,"Д":4,"a":0,"b":1,"c":2,"d":3,"e":4,"а":0,"б":1,"в":2,"г":3,"д":4};
-  const blocks=text.split(/\n(?=\d+[\.\)]\s)/);
-  for(const block of blocks){
-    if(!block.trim()) continue;
-    const lines=block.split("\n").map(l=>l.trim()).filter(Boolean);
-    if(!lines.length) continue;
-    const qLine=lines[0].replace(/^\d+[\.\)]\s*/,"").trim();
-    if(!qLine||qLine.length<5) continue;
-    const options=[]; let correctIndex=-1;
-    for(let i=1;i<lines.length;i++){
-      const line=lines[i];
-      const ansMatch=line.match(/^(ответ|правильный[\s_]ответ|answer|ans)[\s:\.\)]+([A-EА-ДABCDEabcdeабвгдАБВГД])/i);
-      if(ansMatch){ correctIndex=lmap[ansMatch[2].toUpperCase()]??-1; continue; }
-      const optMatch=line.match(/^([A-EА-ДABCDEabcdeабвгдАБВГД])[\.\)\s]\s*(.+)/);
-      if(optMatch&&optMatch[2].trim()) options.push(optMatch[2].trim());
-    }
-    if(options.length>=2) questions.push({question:qLine,options,correct:correctIndex>=0?correctIndex:0});
-  }
-  return questions;
+function showRatingSubject(subject,bySubject){
+  let results=bySubject?.[subject]||[];
+  let best={};
+  results.forEach(r=>{ let n=r.student; let p=Math.round(r.score/r.total*100); if(!best[n]||p>best[n].pct) best[n]={name:n,score:r.score,total:r.total,pct:p}; });
+  let sorted=Object.values(best).sort((a,b)=>b.pct-a.pct);
+  let medals=["🥇","🥈","🥉"];
+  let html=sorted.map((s,i)=>`<div class="rating-item"><div class="rating-pos">${i<3?medals[i]:i+1}</div><div><div class="rating-name">${s.name}</div><div class="rating-detail">${s.score}/${s.total}</div></div><div class="rating-pct">${s.pct}%</div></div>`).join("");
+  document.getElementById("rating-content").innerHTML=html;
 }
 async function loadAdminSubjects(){
-  try{ const subjects=await api("GET","/subjects"); allSubjects=subjects; ["q-subject","import-subject","ai-subject","db-subject"].forEach(id=>{ const sel=document.getElementById(id); if(!sel)return; sel.innerHTML='<option value="">Выберите предмет...</option>'; subjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }); const list=document.getElementById("subjects-admin-list"); list.innerHTML=subjects.length?subjects.map(s=>`<div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px"><span style="font-size:24px">${s.emoji}</span><div style="flex:1"><div style="font-weight:600;font-size:14px">${s.title}</div><div style="color:var(--muted);font-size:11px;margin-top:2px">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} из ${s.total_questions||0} · ${s.lang==="all"?"🌍":s.lang==="ru"?"🇷🇺":s.lang==="uz"?"🇺🇿":"🇬🇧"}</div></div><button onclick="openQBank(${s.id},'${s.title}')" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer">📋 База</button></div>`).join(""):'<p style="color:var(--muted2);font-size:13px">Предметов пока нет</p>'; }catch(e){}
+  let subjects=await api("GET","/subjects");
+  ["q-subject","import-subject"].forEach(id=>{ let sel=document.getElementById(id); if(sel){ sel.innerHTML='<option value="">Выберите...</option>'; subjects.forEach(s=>sel.add(new Option(s.title,s.id))); } });
+  let list=document.getElementById("subjects-admin-list");
+  list.innerHTML=subjects.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--card2);border-radius:8px;margin-bottom:5px"><span>${s.emoji} ${s.title}</span><button onclick="deleteSubject(${s.id})" style="background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:6px;padding:5px 10px">🗑</button></div>`).join("");
 }
 async function createSubject(){
-  const title=document.getElementById("subj-title").value.trim();
-  const emoji=document.getElementById("subj-emoji").value.trim()||"📚";
-  const time_limit=parseInt(document.getElementById("subj-time").value)||60;
-  const question_count=parseInt(document.getElementById("subj-qcount").value)||30;
-  const lang=document.getElementById("subj-lang").value||"all";
-  if(!title){ showToast("Введи название!",true); return; }
-  try{ await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}&question_count=${question_count}&lang=${lang}`); showToast("Предмет добавлен ✅"); document.getElementById("subj-title").value=""; await loadAdminSubjects(); } catch(e){ showToast("Ошибка: "+e.detail,true); }
+  let title=document.getElementById("subj-title").value.trim();
+  if(!title){ showToast("Введите название",true); return; }
+  try{ await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}`); showToast("Предмет добавлен"); document.getElementById("subj-title").value=""; loadAdminSubjects(); await loadSubjects(); }catch(e){ showToast("Ошибка",true); }
+}
+async function deleteSubject(id){
+  if(!confirm("Удалить предмет?")) return;
+  try{ await api("DELETE",`/admin/subjects/${id}`); showToast("Удалено"); loadAdminSubjects(); await loadSubjects(); }catch(e){ showToast("Ошибка",true); }
 }
 function addOpt(){
-  const letters=["A","Б","В","Г","Д","Е"]; const i=optCount++;
-  const row=document.createElement("div"); row.className="option-row"; row.style.cssText="flex-direction:column;align-items:stretch;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;gap:8px"; row.dataset.optIndex=i;
-  row.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><div class="opt-letter">${letters[i]||i}</div><div style="flex:1;font-size:12px;font-weight:700;color:var(--muted2)">Вариант ${letters[i]||i}</div><div class="opt-type-toggle"><button class="opt-type-btn active" onclick="setOptType(${i},'text',this)">📝 Текст</button><button class="opt-type-btn" onclick="setOptType(${i},'image',this)">🖼 Фото</button></div><input type="radio" name="correct" class="correct-radio" value="${i}" ${i===0?"checked":""}/></div><div class="opt-text-wrap" id="opt-text-${i}"><input type="text" class="form-input" style="margin:0" placeholder="Введи текст варианта..."/></div><div class="opt-img-wrap" id="opt-img-${i}" style="display:none"><div style="display:flex;align-items:center;gap:10px"><div class="opt-img-upload" onclick="document.getElementById('opt-file-${i}').click()" id="opt-upload-btn-${i}">🖼</div><input type="file" id="opt-file-${i}" accept="image/*" style="display:none" onchange="handleOptImg(${i},this)"/><div style="font-size:12px;color:var(--muted2)" id="opt-img-label-${i}">Нажми чтобы загрузить картинку</div></div><img id="opt-img-preview-${i}" style="display:none;max-height:100px;border-radius:8px;margin-top:8px;object-fit:contain"/></div>`;
-  document.getElementById("opts-container").appendChild(row);
-}
-function setOptType(idx, type, btn){ btn.closest(".opt-type-toggle").querySelectorAll(".opt-type-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); document.getElementById(`opt-text-${idx}`).style.display = type==="text"?"block":"none"; document.getElementById(`opt-img-${idx}`).style.display = type==="image"?"block":"none"; }
-const optImages={};
-async function handleOptImg(idx, input){
-  const file=input.files[0]; if(!file) return;
-  const reader=new FileReader(); reader.onload=e=>{ const prev=document.getElementById(`opt-img-preview-${idx}`); prev.src=e.target.result; prev.style.display="block"; document.getElementById(`opt-img-label-${idx}`).textContent=file.name; }; reader.readAsDataURL(file);
-  const fd=new FormData(); fd.append("file",file);
-  try{ const res=await fetch(API_BASE+"/admin/upload-option-image",{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd}); const data=await res.json(); optImages[idx]=data.image_url; showToast("Картинка загружена 📸"); }catch(e){ showToast("Ошибка загрузки",true); }
-}
-async function handleImg(){
-  const file=document.getElementById("img-input").files[0]; if(!file) return;
-  const reader=new FileReader(); reader.onload=e=>{ const p=document.getElementById("img-preview"); p.src=e.target.result; p.style.display="block"; }; reader.readAsDataURL(file);
-  const fd=new FormData(); fd.append("file",file);
-  try{ const res=await fetch(API_BASE+"/admin/upload-image",{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd}); const data=await res.json(); uploadedImg=data.image_url; showToast("Картинка загружена 📸"); } catch(e){ showToast("Ошибка загрузки фото",true); }
+  let i=optCount++;
+  let div=document.createElement("div"); div.className="option-row";
+  div.innerHTML=`<input type="text" class="form-input" placeholder="Вариант ${String.fromCharCode(65+i)}" id="opt-${i}"/><input type="radio" name="correct" value="${i}" ${i===0?"checked":""}/>`;
+  document.getElementById("opts-container").appendChild(div);
 }
 async function saveQuestion(){
-  const subjectId=document.getElementById("q-subject").value;
-  const text=document.getElementById("q-text-admin").value.trim();
-  if(!subjectId){ showToast("Выбери предмет!",true); return; }
-  if(!text&&!uploadedImg){ showToast("Введи вопрос или загрузи картинку!",true); return; }
-  const rows=document.querySelectorAll("#opts-container .option-row");
-  const opts=[];
-  for(const row of rows){
-    const idx=parseInt(row.dataset.optIndex);
-    const isImg=row.querySelector(".opt-type-btn.active")?.textContent.includes("Фото");
-    if(isImg){ if(optImages[idx]) opts.push({text:null,image_url:optImages[idx]}); } else { const t=row.querySelector("input[type=text]")?.value.trim(); if(t) opts.push({text:t,image_url:null}); }
+  let subjectId=document.getElementById("q-subject").value;
+  let text=document.getElementById("q-text-admin").value.trim();
+  if(!subjectId){ showToast("Выберите предмет",true); return; }
+  if(!text){ showToast("Введите вопрос",true); return; }
+  let options=[], correct=0;
+  for(let i=0;i<optCount;i++){
+    let opt=document.getElementById(`opt-${i}`)?.value.trim();
+    if(opt) options.push({text:opt,image_url:null});
   }
-  if(opts.length<2){ showToast("Минимум 2 варианта!",true); return; }
-  const correct=document.querySelector('input[name="correct"]:checked');
-  try{
-    const payload={subject_id:parseInt(subjectId),text:text||"[Смотри картинку]",options:opts,correct_index:correct?parseInt(correct.value):0,image_url:uploadedImg};
-    if(window._editingQuestionId){ await api("PUT",`/admin/questions/${window._editingQuestionId}`,payload); window._editingQuestionId=null; showToast("Вопрос обновлён ✅"); } else { await api("POST","/admin/questions",payload); showToast("Вопрос сохранён ✅"); }
-    document.getElementById("q-text-admin").value=""; document.getElementById("img-preview").style.display="none"; uploadedImg=null; optCount=0; Object.keys(optImages).forEach(k=>delete optImages[k]); document.getElementById("opts-container").innerHTML=""; addOpt();addOpt();addOpt();addOpt();
-  }catch(e){ showToast("Ошибка: "+e.detail,true); }
+  if(options.length<2){ showToast("Минимум 2 варианта",true); return; }
+  let radio=document.querySelector('input[name="correct"]:checked');
+  if(radio) correct=parseInt(radio.value);
+  try{ await api("POST","/admin/questions",{subject_id:parseInt(subjectId),text,options,correct_index:correct,image_url:null}); showToast("Вопрос сохранён"); document.getElementById("q-text-admin").value=""; document.getElementById("opts-container").innerHTML=""; optCount=0; addOpt();addOpt();addOpt(); }catch(e){ showToast("Ошибка",true); }
 }
 async function loadAdminResults(){
-  try{ const results=await api("GET","/admin/results"); const tbody=document.getElementById("results-table"); tbody.innerHTML=results.length?results.map(r=>{ const date=r.date?new Date(r.date).toLocaleDateString("ru-RU"):"—"; const pct=Math.round(r.score/r.total*100); const cls=pct>=70?"badge-green":pct>=50?"badge-accent":"badge-red"; return `<tr><td><b>${r.student||"—"}</b><br><span style="color:var(--muted);font-size:11px">${r.username}</span></td><td>${r.subject}</td><td><span class="badge ${cls}">${r.score}/${r.total}</span></td><td style="color:var(--muted);font-size:11px">${date}</td></tr>`; }).join(""):'<tr><td colspan="4" style="color:var(--muted2);text-align:center;padding:20px">Нет данных</td></tr>'; }catch(e){ showToast("Ошибка: "+e.detail,true); }
+  try{ let results=await api("GET","/admin/results"); let tbody=document.getElementById("results-table"); tbody.innerHTML=results.map(r=>`<tr><td>${r.student}</td><td>${r.subject}</td><td>${r.score}/${r.total}</td><td>${new Date(r.date).toLocaleDateString()}</td></tr>`).join(""); }catch(e){}
 }
-async function loadUsers(){
-  try{ const users=await api("GET","/admin/users"); const tbody=document.getElementById("users-table"); tbody.innerHTML=users.map(u=>{ const rb=u.role==="admin"?"badge-red":u.role==="teacher"?"badge-green":"badge-accent"; let ab="",ai=""; if(u.role!=="student") ab='<span class="badge badge-green">∞</span>'; else if(u.subscription_active&&u.is_trial){ const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):""; ab='<span class="badge badge-orange">пробный</span>'; ai=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:""; } else if(u.subscription_active){ const exp=u.subscription_expires?new Date(u.subscription_expires).toLocaleDateString("ru-RU"):""; ab='<span class="badge badge-green">активна</span>'; ai=exp?`<br><span style="color:var(--muted);font-size:10px">до ${exp}</span>`:""; } else ab='<span class="badge badge-red">нет</span>'; return `<tr><td><b>${u.full_name||u.username}</b><br><span style="color:var(--muted);font-size:11px">${u.username}</span><br><span style="color:var(--muted);font-size:10px">${u.phone||""}</span></td><td><span class="badge ${rb}">${u.role}</span></td><td>${ab}${ai}</td><td style="white-space:nowrap">${(!u.subscription_active||u.is_trial)?`<button onclick="activateSub(${u.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px">+30д</button>`:""}<button onclick="deleteUser(${u.id},'${u.username}')" style="background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer">🗑</button></td></tr>`; }).join(""); }catch(e){ showToast("Ошибка: "+e.detail,true); }
+async function importQuestions(){
+  if(!selectedExcelFile){ showToast("Выберите файл",true); return; }
+  let subjectId=document.getElementById("import-subject").value;
+  if(!subjectId){ showToast("Выберите предмет",true); return; }
+  let fd=new FormData(); fd.append("file",selectedExcelFile);
+  try{
+    let res=await fetch(API_BASE+"/admin/import-questions?subject_id="+subjectId,{method:"POST",headers:{Authorization:"Bearer "+token},body:fd});
+    let data=await res.json();
+    if(res.ok){ showToast(`Добавлено ${data.added} вопросов`); document.getElementById("import-result").style.display="block"; document.getElementById("import-result").innerHTML=`✅ ${data.message}`; } else { showToast(data.detail,true); }
+  }catch(e){ showToast("Ошибка",true); }
 }
+function handleExcelSelect(){ let f=document.getElementById("excel-input").files[0]; if(f) selectedExcelFile=f; }
 function openCreateUser(){ document.getElementById("modal-create-user").classList.add("active"); }
-function closeModal(){ document.getElementById("modal-create-user").classList.remove("active"); ["new-username","new-password","new-fullname"].forEach(id=>document.getElementById(id).value=""); }
+function closeModal(){ document.getElementById("modal-create-user").classList.remove("active"); }
 async function createUser(){
-  const username=document.getElementById("new-username").value.trim();
-  const password=document.getElementById("new-password").value;
-  const full_name=document.getElementById("new-fullname").value.trim();
-  const role=document.getElementById("new-role").value;
-  if(!username||!password){ showToast("Заполни логин и пароль!",true); return; }
-  try{ await api("POST","/admin/users",{username,password,full_name,role}); showToast("Пользователь создан ✅"); closeModal(); await loadUsers(); } catch(e){ showToast("Ошибка: "+e.detail,true); }
+  let username=document.getElementById("new-username").value.trim();
+  let password=document.getElementById("new-password").value;
+  let full_name=document.getElementById("new-fullname").value.trim();
+  let role=document.getElementById("new-role").value;
+  if(!username||!password){ showToast("Заполните поля",true); return; }
+  try{ await api("POST","/admin/users",{username,password,full_name,role}); showToast("Пользователь создан"); closeModal(); }catch(e){ showToast("Ошибка",true); }
 }
-async function activateSub(userId){ try{ await api("POST",`/admin/activate-subscription?user_id=${userId}&days=30`); showToast("Подписка активирована ✅"); await loadUsers(); } catch(e){ showToast("Ошибка: "+e.detail,true); } }
-async function deleteUser(userId,username){ if(!confirm(`Удалить ${username}?`)) return; try{ await api("DELETE",`/admin/users/${userId}`); showToast("Удалён ✅"); await loadUsers(); } catch(e){ showToast("Ошибка: "+e.detail,true); } }
-function switchAdminTab(id,el){ document.querySelectorAll(".admin-tab").forEach(t=>t.classList.remove("active")); document.querySelectorAll(".admin-content").forEach(t=>t.classList.remove("active")); document.getElementById(id).classList.add("active"); el.classList.add("active"); if(id==="at-results") loadAdminResults(); if(id==="at-users") loadUsers(); if(id==="at-subjects") loadAdminSubjects(); }
-async function openQBank(subjectId,title){ qbankSubjectId=subjectId; document.getElementById("qbank-title").textContent=title; document.getElementById("qbank-count").textContent="Загрузка..."; document.getElementById("qbank-search").value=""; showScreen("qbank"); const list=document.getElementById("qbank-list"); list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>'; try{ qbankAll=await api("GET",`/admin/questions/${subjectId}`); document.getElementById("qbank-count").textContent=`${qbankAll.length} вопросов`; renderQBank(qbankAll); }catch(e){ list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>'; } }
-function filterQBank(){ const q=document.getElementById("qbank-search").value.toLowerCase(); const filtered=q?qbankAll.filter(item=>item.text.toLowerCase().includes(q)||item.options.some(o=>o.text.toLowerCase().includes(q))):qbankAll; document.getElementById("qbank-count").textContent=`${filtered.length} из ${qbankAll.length}`; renderQBank(filtered); }
-function renderQBank(questions){ const letters=["A","Б","В","Г","Д"]; const list=document.getElementById("qbank-list"); if(!questions.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">Ничего не найдено</p>'; return; } list.innerHTML=questions.map((q,i)=>`<div class="qbank-item"><div class="qbank-num">#${i+1} · ID ${q.id}</div><div class="qbank-q">${q.text}</div><div class="qbank-opts">${q.options.map((o,j)=>`<div class="qbank-opt ${j===q.correct_option_id?"correct":""}">${letters[j]}. ${o.text}${j===q.correct_option_id?" ✓":""}</div>`).join("")}</div><button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer">🗑 Удалить</button></div>`).join(""); }
-async function deleteQuestion(qId){ if(!confirm("Удалить этот вопрос?")) return; try{ await api("DELETE",`/admin/questions/${qId}`); showToast("Вопрос удалён ✅"); qbankAll=qbankAll.filter(q=>q.id!==qId); filterQBank(); document.getElementById("qbank-count").textContent=`${qbankAll.length} вопросов`; }catch(e){ showToast("Ошибка: "+e.detail,true); } }
-async function initKnowledge(){ const sel=document.getElementById("kb-subject-select"); sel.innerHTML='<option value="">Выбери предмет...</option>'; allSubjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }
-async function loadKnowledgeSubject(){
-  const subjectId=document.getElementById("kb-subject-select").value;
-  const content=document.getElementById("kb-content");
-  if(!subjectId){ content.innerHTML='<div style="text-align:center;padding:60px 20px;color:var(--muted2)"><div style="font-size:48px;margin-bottom:14px">📚</div><div style="font-size:14px">Выбери предмет чтобы увидеть все вопросы</div></div>'; return; }
-  content.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка вопросов...</span></div>';
-  try{ const questions=await api("GET",`/questions-all/${subjectId}`); const letters=["A","Б","В","Г","Д"]; if(!questions.length){ content.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">В этом предмете пока нет вопросов</p>'; return; } content.innerHTML=`<div style="padding:12px 16px;background:var(--card2);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted2);display:flex;justify-content:space-between;align-items:center"><span>📝 ${questions.length} вопросов</span><span style="color:var(--green);font-weight:600">✓ = правильный ответ</span></div><div style="padding:12px 16px">${questions.map((q,i)=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px"><div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.5px">#${i+1}</div><div style="font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.55">${q.text}</div><div style="display:flex;flex-direction:column;gap:5px">${q.options.map((o,j)=>`<div style="font-size:13px;padding:8px 12px;border-radius:8px;line-height:1.4;${j===q.correct_option_id?"background:rgba(34,197,94,.1);color:var(--green);font-weight:600;border:1px solid rgba(34,197,94,.2)":"color:var(--muted2)"}">${letters[j]}. ${o.image_url?`<img src="${imgUrl(o.image_url)}" style="max-height:80px;border-radius:6px;object-fit:contain;vertical-align:middle;margin-left:4px"/>`:o.text||""}${j===q.correct_option_id?" ✓":""}</div>`).join("")}</div></div>`).join("")}</div>`; }catch(e){ content.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>'; }
+function switchAdminTab(id,el){
+  document.querySelectorAll(".admin-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".admin-content").forEach(c=>c.classList.remove("active"));
+  document.getElementById(id).classList.add("active"); el.classList.add("active");
+  if(id==="at-results") loadAdminResults();
 }
-async function showAchievements(){
-  showScreen("achievements");
-  const list=document.getElementById("achievements-list");
-  list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>';
-  try{ const data=await api("GET","/my-achievements"); const earned=data.filter(a=>a.earned); const locked=data.filter(a=>!a.earned); list.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:12px">${earned.length} из ${data.length} получено</div>${earned.map(a=>`<div style="background:var(--card);border:1.5px solid var(--accent);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px"><div style="font-size:36px;width:50px;text-align:center">${a.emoji}</div><div style="flex:1"><div style="font-weight:700;font-size:15px;margin-bottom:3px">${a.title}</div><div style="font-size:12px;color:var(--muted2)">${a.desc}</div></div><div style="color:var(--accent);font-size:18px">✓</div></div>`).join("")}${locked.length?`<div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;margin:16px 0 12px">ЗАБЛОКИРОВАНЫ</div>`:""}${locked.map(a=>`<div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;opacity:.5"><div style="font-size:36px;width:50px;text-align:center;filter:grayscale(1)">${a.emoji}</div><div style="flex:1"><div style="font-weight:700;font-size:15px;margin-bottom:3px">${a.title}</div><div style="font-size:12px;color:var(--muted2)">${a.desc}</div></div><div style="color:var(--muted);font-size:18px">🔒</div></div>`).join("")}`; }catch(e){ list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>'; }
+function showToast(msg,isError=false){
+  let t=document.getElementById("toast"); t.textContent=msg; t.className="toast"+(isError?" error":"");
+  t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),3000);
 }
-function showNewAchievements(achievements){ if(!achievements||!achievements.length)return; achievements.forEach((a,i)=>{ setTimeout(()=>{ showToast(`${a.emoji} Новое достижение: ${a.title}!`); }, i*1500); }); }
-function showDuel(){ showScreen("duel"); document.getElementById("duel-menu").style.display="block"; document.getElementById("duel-waiting").style.display="none"; document.getElementById("duel-result").style.display="none"; const sel=document.getElementById("duel-subject"); sel.innerHTML='<option value="">Выберите предмет...</option>'; allSubjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }
-async function createDuel(){ const subjectId=document.getElementById("duel-subject").value; if(!subjectId){ showToast("Выбери предмет!",true); return; } try{ const data=await api("POST",`/duel/create?subject_id=${subjectId}`); currentDuelId=data.duel_id; document.getElementById("duel-menu").style.display="none"; document.getElementById("duel-waiting").style.display="block"; document.getElementById("duel-code-display").textContent=data.code; duelPollTimer=setInterval(async()=>{ try{ const status=await api("GET",`/duel/${currentDuelId}/status`); if(status.status==="active"){ clearInterval(duelPollTimer); startDuelQuiz(currentDuelId); } }catch(e){} },2000); }catch(e){ showToast("Ошибка: "+e.detail,true); } }
-async function joinDuel(){ const code=document.getElementById("duel-code-input").value.trim().toUpperCase(); if(!code){ showToast("Введи код!",true); return; } try{ const data=await api("POST",`/duel/join/${code}`); currentDuelId=data.duel_id; startDuelQuiz(currentDuelId); }catch(e){ showToast(e.detail||"Дуэль не найдена",true); } }
-function cancelDuelWait(){ clearInterval(duelPollTimer); document.getElementById("duel-menu").style.display="block"; document.getElementById("duel-waiting").style.display="none"; }
-async function startDuelQuiz(duelId){ document.getElementById("duel-menu").style.display="none"; document.getElementById("duel-waiting").style.display="none"; document.getElementById("duel-result").style.display="none"; showToast("Дуэль началась! ⚔️"); try{ const questions=await api("GET",`/duel/${duelId}/questions`); quizState={questions,index:0,answers:{},score:0,subjectId:null,reviewData:[],isDuel:true,duelId}; showScreen("quiz"); renderQuestion(); renderNavDots(); startTestTimer(15); }catch(e){ showToast("Ошибка загрузки вопросов",true); } }
-async function finishDuel(){ clearInterval(timerInterval); try{ const r=await api("POST",`/duel/${quizState.duelId}/submit`,quizState.answers); showToast(r.finished?"Оба закончили! Смотри результат":"Ждём соперника..."); duelPollTimer=setInterval(async()=>{ try{ const status=await api("GET",`/duel/${quizState.duelId}/status`); if(status.status==="finished"){ clearInterval(duelPollTimer); showDuelResult(status); } }catch(e){} },1500); }catch(e){ showToast("Ошибка",true); } }
-function showDuelResult(status){ showScreen("duel"); document.getElementById("duel-menu").style.display="none"; document.getElementById("duel-waiting").style.display="none"; document.getElementById("duel-result").style.display="block"; document.getElementById("duel-my-score").textContent=status.my_score; document.getElementById("duel-opp-score").textContent=status.opp_score; document.getElementById("duel-opp-name").textContent=status.opp_name||"Соперник"; if(status.draw){ document.getElementById("duel-result-emoji").textContent="🤝"; document.getElementById("duel-result-title").textContent="Ничья!"; document.getElementById("duel-result-sub").textContent="Одинаковый результат — оба молодцы!"; }else if(status.i_won){ document.getElementById("duel-result-emoji").textContent="🏆"; document.getElementById("duel-result-title").textContent="Победа!"; document.getElementById("duel-result-sub").textContent=`Ты обошёл ${status.opp_name||"соперника"}!`; }else{ document.getElementById("duel-result-emoji").textContent="💪"; document.getElementById("duel-result-title").textContent="Поражение"; document.getElementById("duel-result-sub").textContent="В следующий раз повезёт! Продолжай тренироваться."; } }
-function resetDuel(){ document.getElementById("duel-result").style.display="none"; document.getElementById("duel-menu").style.display="block"; document.getElementById("duel-code-input").value=""; }
-let dbAllQuestions=[];
-async function loadDBQuestions(){ const subjectId=document.getElementById("db-subject").value; const list=document.getElementById("db-list"); const countEl=document.getElementById("db-count"); if(!subjectId){ list.innerHTML=""; countEl.textContent=""; return; } list.innerHTML='<div class="loader"><div class="spinner"></div><span>Загрузка...</span></div>'; try{ dbAllQuestions=await api("GET",`/admin/questions/${subjectId}`); countEl.textContent=dbAllQuestions.length+" вопросов"; renderDBQuestions(dbAllQuestions); }catch(e){ list.innerHTML='<p style="color:var(--red);padding:20px;text-align:center">Ошибка загрузки</p>'; } }
-function filterDBQuestions(){ const q=document.getElementById("db-search").value.toLowerCase(); const filtered=q?dbAllQuestions.filter(item=>item.text.toLowerCase().includes(q)):dbAllQuestions; document.getElementById("db-count").textContent=filtered.length+" вопросов"; renderDBQuestions(filtered); }
-function renderDBQuestions(questions){ const letters=["A","Б","В","Г","Д"]; const list=document.getElementById("db-list"); if(!questions.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:30px 0">Ничего не найдено</p>'; return; } list.innerHTML=questions.map((q,i)=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px" id="dbq-${q.id}"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:var(--muted)">#${i+1} · ID ${q.id}</div><div style="display:flex;gap:6px;flex-shrink:0"><button onclick="editDBQuestion(${q.id})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">✏️ Изменить</button><button onclick="deleteDBQuestion(${q.id})" style="background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer">🗑</button></div></div>${q.image_url?`<img src="${imgUrl(q.image_url)}" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;margin-bottom:8px;background:var(--card2)"/>`:""}<div style="font-size:14px;font-weight:500;margin-bottom:8px;line-height:1.5">${q.text}</div><div style="display:flex;flex-direction:column;gap:4px">${q.options.map((o,j)=>`<div style="font-size:12px;padding:6px 10px;border-radius:7px;${j===q.correct_option_id?"background:rgba(34,197,94,.1);color:var(--green);font-weight:600":"color:var(--muted2)"}">${letters[j]}. ${o.image_url?`<img src="${imgUrl(o.image_url)}" style="max-height:50px;border-radius:4px;vertical-align:middle"/>`:o.text||""}${j===q.correct_option_id?" ✓":""}</div>`).join("")}</div></div>`).join(""); }
-async function deleteDBQuestion(qId){ if(!confirm("Удалить этот вопрос?")) return; try{ await api("DELETE",`/admin/questions/${qId}`); showToast("Вопрос удалён ✅"); dbAllQuestions=dbAllQuestions.filter(q=>q.id!==qId); document.getElementById("db-count").textContent=dbAllQuestions.length+" вопросов"; document.getElementById(`dbq-${qId}`)?.remove(); }catch(e){ showToast("Ошибка: "+e.detail,true); } }
-function editDBQuestion(qId){ const q=dbAllQuestions.find(x=>x.id===qId); if(!q)return; switchAdminTab("at-questions", document.querySelector('.admin-tab')); document.getElementById("q-text-admin").value=q.text; const subjectId=document.getElementById("db-subject").value; document.getElementById("q-subject").value=subjectId; optCount=0; document.getElementById("opts-container").innerHTML=""; const letters=["A","Б","В","Г","Д"]; q.options.forEach((opt,i)=>{ addOpt(); const rows=document.querySelectorAll(".option-row"); const row=rows[rows.length-1]; if(opt.text) row.querySelector("input[type=text]").value=opt.text; if(i===q.correct_option_id) row.querySelector(".correct-radio").checked=true; }); uploadedImg=q.image_url||null; if(q.image_url){ const prev=document.getElementById("img-preview"); prev.src=imgUrl(q.image_url); prev.style.display="block"; } window._editingQuestionId=qId; showToast("Заполни форму и нажми Сохранить"); document.getElementById("q-text-admin").scrollIntoView({behavior:"smooth"}); }
-function showToast(msg,isError=false){ const t=document.getElementById("toast"); t.textContent=msg; t.className="toast"+(isError?" error":""); t.classList.remove("show"); void t.offsetHeight; t.classList.add("show"); clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove("show"),3000); }
-addOpt();addOpt();addOpt();addOpt();
+for(let i=0;i<4;i++) addOpt();
 init();
 </script>
 </body>
 </html>
-
