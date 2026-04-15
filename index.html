@@ -394,25 +394,37 @@
 <!-- ВХОД -->
 <div id="screen-login" class="screen active">
   <div class="login-logo">UNI<span>QUIZ</span></div>
-  <div class="login-sub">Платформа для университетских тестов</div>
+  <div class="login-sub">UniQuiz · Университет тестлари</div>
+
+  <!-- Выбор языка -->
+  <div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:360px">
+    <button id="lang-ru" onclick="setLang('ru')" style="flex:1;padding:9px 4px;border-radius:8px;border:1.5px solid var(--accent);background:var(--accent);color:#000;font-size:12px;font-weight:700;cursor:pointer">🇷🇺 RU</button>
+    <button id="lang-uz" onclick="setLang('uz')" style="flex:1;padding:9px 4px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer">🇺🇿 UZ</button>
+    <button id="lang-en" onclick="setLang('en')" style="flex:1;padding:9px 4px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer">🇬🇧 EN</button>
+  </div>
+
   <div class="login-box">
     <div class="auth-tabs">
       <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login')">Войти</button>
       <button class="auth-tab" id="tab-reg-btn" onclick="switchAuthTab('register')">Регистрация</button>
     </div>
     <div class="error-box" id="login-error"></div>
+
+    <!-- Вход -->
     <div id="form-login">
-      <div class="form-group"><label class="form-label">Логин</label><input type="text" class="form-input" id="login-username" placeholder="Введи логин" autocomplete="username"/></div>
-      <div class="form-group"><label class="form-label">Пароль</label><input type="password" class="form-input" id="login-password" placeholder="Введи пароль" autocomplete="current-password"/></div>
+      <input type="text" class="form-input" id="login-username" placeholder="Логин" autocomplete="username"/>
+      <input type="password" class="form-input" id="login-password" placeholder="Пароль" autocomplete="current-password"/>
       <button class="btn btn-accent" id="login-btn" onclick="doLogin()">Войти</button>
     </div>
+
+    <!-- Регистрация -->
     <div id="form-register" style="display:none">
-      <div class="form-group"><label class="form-label">Имя</label><input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/></div>
-      <div class="form-group"><label class="form-label">Логин</label><input type="text" class="form-input" id="reg-username" placeholder="aziz2005"/></div>
-      <div class="form-group"><label class="form-label">Пароль</label><input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/></div>
-      <div class="form-group"><label class="form-label">Номер телефона</label><input type="tel" class="form-input" id="reg-phone" placeholder="+998 XX XXX XX XX"/></div>
+      <input type="text" class="form-input" id="reg-fullname" placeholder="Азиз Каримов"/>
+      <input type="text" class="form-input" id="reg-username" placeholder="aziz2005" autocomplete="username"/>
+      <input type="password" class="form-input" id="reg-password" placeholder="Минимум 4 символа"/>
+      <input type="tel" class="form-input" id="reg-phone" placeholder="+998 XX XXX XX XX"/>
       <button class="btn btn-accent" id="reg-btn" onclick="doRegister()">Зарегистрироваться</button>
-      <p style="text-align:center;margin-top:12px;font-size:12px;color:var(--muted2)">После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉</p>
+      <p id="free-trial-text" style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted2)">После регистрации — <b style="color:var(--orange)">3 дня бесплатно</b> 🎉</p>
     </div>
   </div>
 </div>
@@ -821,10 +833,8 @@ if(window.Telegram&&window.Telegram.WebApp){
   const tg=window.Telegram.WebApp;
   tg.ready();
   tg.expand();
-  // Полный экран — новый API для ПК и ноутбуков
-  if(tg.requestFullscreen){
-    tg.requestFullscreen();
-  }
+  // requestFullscreen поддерживается только в Telegram 7.0+
+  try{if(tg.requestFullscreen)tg.requestFullscreen();}catch(e){}
   if(tg.disableVerticalSwipes) tg.disableVerticalSwipes();
   try{tg.setHeaderColor('#13141a');}catch(e){}
   try{tg.setBackgroundColor('#13141a');}catch(e){}
