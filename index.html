@@ -357,6 +357,45 @@ async function api(method,path,body){
 
 function imgUrl(url){ if(!url)return null; return url.startsWith("http")?url:API_BASE+url; }
 function t(key){ return key; }
+const AUTH_TEXTS={
+  ru:{
+    enter_credentials:"Введи логин и пароль",
+    invalid_credentials:"Неверный логин или пароль",
+    fill_all_fields:"Заполни все поля",
+    username_short:"Логин минимум 3 символа",
+    password_short:"Пароль минимум 4 символа",
+    invalid_phone:"Введи номер телефона",
+    register_error:"Ошибка регистрации",
+    server_unavailable:"Сервер недоступен",
+    welcome_trial:"Добро пожаловать! 3 дня бесплатно 🎉",
+  },
+  uz:{
+    enter_credentials:"Login va parolni kiriting",
+    invalid_credentials:"Login yoki parol noto'g'ri",
+    fill_all_fields:"Barcha maydonlarni to'ldiring",
+    username_short:"Login kamida 3 ta belgi bo'lishi kerak",
+    password_short:"Parol kamida 4 ta belgi bo'lishi kerak",
+    invalid_phone:"Telefon raqamini kiriting",
+    register_error:"Ro'yxatdan o'tishda xatolik",
+    server_unavailable:"Server mavjud emas",
+    welcome_trial:"Xush kelibsiz! 3 kun bepul 🎉",
+  },
+  en:{
+    enter_credentials:"Enter username and password",
+    invalid_credentials:"Invalid username or password",
+    fill_all_fields:"Fill in all fields",
+    username_short:"Username must be at least 3 characters",
+    password_short:"Password must be at least 4 characters",
+    invalid_phone:"Enter your phone number",
+    register_error:"Registration error",
+    server_unavailable:"Server is unavailable",
+    welcome_trial:"Welcome! 3 days free 🎉",
+  }
+};
+function authText(key){
+  const dict=AUTH_TEXTS[currentLang]||AUTH_TEXTS.ru;
+  return dict[key]||AUTH_TEXTS.ru[key]||key;
+}
 
 function updateLangButtons(){
   ["ru","uz","en"].forEach(l=>{
@@ -400,14 +439,15 @@ async function doLogin(){
   const username=document.getElementById("login-username").value.trim();
   const password=document.getElementById("login-password").value;
   const errBox=document.getElementById("login-error");
-  if(!username||!password){ errBox.textContent="Введи логин и пароль"; errBox.style.display="block"; return; }
+  if(!username||!password){ errBox.textContent=authText("enter_credentials"); errBox.style.display="block"; return; }
   try{
-    const res=await fetch(API_BASE+"/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,password})});
+    const res=await fetch(API_BASE+"/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username,password,lang:currentLang})});
     const result=await res.json();
-    if(!res.ok){ errBox.textContent=result.detail||"Неверный логин или пароль"; errBox.style.display="block"; return; }
+    if(!res.ok){ errBox.textContent=result.detail||authText("invalid_credentials"); errBox.style.display="block"; return; }
     token=result.token; currentUser=result.user; localStorage.setItem("token",token); localStorage.setItem("user",JSON.stringify(result.user));
+    if(result.user?.lang){ currentLang=result.user.lang; localStorage.setItem("lang",currentLang); updateLangButtons(); }
     setupUI(); await loadSubjects(); showScreen("home");
-  }catch(e){ errBox.textContent="Сервер недоступен"; errBox.style.display="block"; }
+  }catch(e){ errBox.textContent=authText("server_unavailable"); errBox.style.display="block"; }
 }
 
 async function doRegister(){
@@ -416,17 +456,18 @@ async function doRegister(){
   const password=document.getElementById("reg-password").value;
   const phone=document.getElementById("reg-phone").value.trim();
   const errBox=document.getElementById("login-error");
-  if(!full_name||!username||!password||!phone){ errBox.textContent="Заполни все поля"; errBox.style.display="block"; return; }
-  if(username.length<3){ errBox.textContent="Логин минимум 3 символа"; errBox.style.display="block"; return; }
-  if(password.length<4){ errBox.textContent="Пароль минимум 4 символа"; errBox.style.display="block"; return; }
-  if(phone.replace(/[^0-9]/g,"").length<9){ errBox.textContent="Введи номер телефона"; errBox.style.display="block"; return; }
+  if(!full_name||!username||!password||!phone){ errBox.textContent=authText("fill_all_fields"); errBox.style.display="block"; return; }
+  if(username.length<3){ errBox.textContent=authText("username_short"); errBox.style.display="block"; return; }
+  if(password.length<4){ errBox.textContent=authText("password_short"); errBox.style.display="block"; return; }
+  if(phone.replace(/[^0-9]/g,"").length<9){ errBox.textContent=authText("invalid_phone"); errBox.style.display="block"; return; }
   try{
-    const res=await fetch(API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({full_name,username,password,phone})});
+    const res=await fetch(API_BASE+"/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({full_name,username,password,phone,lang:currentLang})});
     const result=await res.json();
-    if(!res.ok){ errBox.textContent=result.detail||"Ошибка регистрации"; errBox.style.display="block"; return; }
+    if(!res.ok){ errBox.textContent=result.detail||authText("register_error"); errBox.style.display="block"; return; }
     token=result.token; currentUser=result.user; localStorage.setItem("token",token); localStorage.setItem("user",JSON.stringify(result.user));
-    setupUI(); await loadSubjects(); showScreen("home"); showToast("Добро пожаловать! 3 дня бесплатно 🎉");
-  }catch(e){ errBox.textContent="Сервер недоступен"; errBox.style.display="block"; }
+    if(result.user?.lang){ currentLang=result.user.lang; localStorage.setItem("lang",currentLang); updateLangButtons(); }
+    setupUI(); await loadSubjects(); showScreen("home"); showToast(authText("welcome_trial"));
+  }catch(e){ errBox.textContent=authText("server_unavailable"); errBox.style.display="block"; }
 }
 
 function logout(){ token=null; currentUser=null; localStorage.removeItem("token"); localStorage.removeItem("user"); showLoginScreen(); }
