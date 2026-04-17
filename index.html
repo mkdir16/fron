@@ -247,6 +247,10 @@
 
     .sub-form{display:flex;gap:8px}.sub-form .form-input{margin-bottom:0;flex:1}
 
+    .tests-lang-row{display:flex;gap:6px}
+    .tests-lang-btn{flex:1;padding:9px 4px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer}
+    .tests-lang-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+
     #desktop-sidebar{display:none!important}
 
     @media (min-width: 768px){
@@ -294,7 +298,7 @@
   </div>
 </div>
 
-<div id="screen-home" class="screen"><div id="trial-banner" style="display:none"><div class="trial-banner"><span style="font-size:20px">⏰</span><div class="trial-text">Пробный период: осталось <b id="trial-days-left">3</b> дня. После — 20 000 сум/мес.</div></div></div><div id="progress-card-wrap" style="display:none"><div class="progress-card"><div class="progress-card-top"><div class="progress-card-label">📊 Прогресс по базе</div><div class="progress-card-pct" id="home-pct">0%</div></div><div class="progress-bar-wrap"><div class="progress-bar-fill" id="home-bar" style="width:0%"></div></div><div class="progress-stats"><span class="progress-stat stat-green" id="home-correct">✓ 0</span><span class="progress-stat stat-red" id="home-wrong">✗ 0</span><span class="progress-stat stat-muted" id="home-total">из 0</span></div></div></div><div id="paywall-block" style="display:none"><div class="paywall"><div class="paywall-icon" id="paywall-icon">🔒</div><h2 id="paywall-title">Нужна подписка</h2><p id="paywall-text">Для прохождения тестов оформи подписку на месяц.</p><div class="price-tag">20 000 <span style="font-size:13px;font-weight:500">сум/мес</span></div><div class="pay-steps"><div class="pay-step"><div class="pay-step-num">1</div><div class="pay-step-text">Переведи <b style="color:var(--text)">20 000 сум</b> на Payme или Click</div></div><div class="pay-step"><div class="pay-step-num">2</div><div class="pay-step-text">Напиши администратору что оплатил</div></div><div class="pay-step"><div class="pay-step-num">3</div><div class="pay-step-text">Получи доступ в течение 5 минут</div></div></div><a href="https://t.me/mkdir16" target="_blank" class="btn btn-accent" style="text-decoration:none">✍️ Написать администратору</a><a href="https://t.me/+vpPlzmuE9Zc3MzRi" target="_blank" class="btn btn-outline" style="text-decoration:none;margin-top:8px">💬 Наша группа</a></div></div><div id="subjects-block" style="display:none"><div style="display:flex;gap:10px;padding:14px 16px 4px"><div onclick="showDuel()" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;text-align:center"><div style="font-size:24px;margin-bottom:4px">⚔️</div><div style="font-size:11px;font-weight:700">ДУЭЛЬ</div></div><div onclick="showAchievements()" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;text-align:center"><div style="font-size:24px;margin-bottom:4px">🏅</div><div style="font-size:11px;font-weight:700">БЕЙДЖИ</div></div></div><div class="section-label" style="margin-top:14px">ПРЕДМЕТЫ</div><div class="subjects-list" id="subjects-grid"></div></div></div>
+<div id="screen-home" class="screen"><div id="trial-banner" style="display:none"><div class="trial-banner"><span style="font-size:20px">⏰</span><div class="trial-text">Пробный период: осталось <b id="trial-days-left">3</b> дня. После — 20 000 сум/мес.</div></div></div><div id="progress-card-wrap" style="display:none"><div class="progress-card"><div class="progress-card-top"><div class="progress-card-label">📊 Прогресс по базе</div><div class="progress-card-pct" id="home-pct">0%</div></div><div class="progress-bar-wrap"><div class="progress-bar-fill" id="home-bar" style="width:0%"></div></div><div class="progress-stats"><span class="progress-stat stat-green" id="home-correct">✓ 0</span><span class="progress-stat stat-red" id="home-wrong">✗ 0</span><span class="progress-stat stat-muted" id="home-total">из 0</span></div></div></div><div id="paywall-block" style="display:none"><div class="paywall"><div class="paywall-icon" id="paywall-icon">🔒</div><h2 id="paywall-title">Нужна подписка</h2><p id="paywall-text">Для прохождения тестов оформи подписку на месяц.</p><div class="price-tag">20 000 <span style="font-size:13px;font-weight:500">сум/мес</span></div><div class="pay-steps"><div class="pay-step"><div class="pay-step-num">1</div><div class="pay-step-text">Переведи <b style="color:var(--text)">20 000 сум</b> на Payme или Click</div></div><div class="pay-step"><div class="pay-step-num">2</div><div class="pay-step-text">Напиши администратору что оплатил</div></div><div class="pay-step"><div class="pay-step-num">3</div><div class="pay-step-text">Получи доступ в течение 5 минут</div></div></div><a href="https://t.me/mkdir16" target="_blank" class="btn btn-accent" style="text-decoration:none">✍️ Написать администратору</a><a href="https://t.me/+vpPlzmuE9Zc3MzRi" target="_blank" class="btn btn-outline" style="text-decoration:none;margin-top:8px">💬 Наша группа</a></div></div><div id="subjects-block" style="display:none"><div style="display:flex;gap:10px;padding:14px 16px 4px"><div onclick="showDuel()" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;text-align:center"><div style="font-size:24px;margin-bottom:4px">⚔️</div><div style="font-size:11px;font-weight:700">ДУЭЛЬ</div></div><div onclick="showAchievements()" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;text-align:center"><div style="font-size:24px;margin-bottom:4px">🏅</div><div style="font-size:11px;font-weight:700">БЕЙДЖИ</div></div></div><div style="padding:12px 16px 0"><div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:8px" id="tests-lang-label">Язык тестов</div><div class="tests-lang-row" id="tests-lang-row"><button type="button" class="tests-lang-btn" id="tests-lang-ru" onclick="setTestsLang('ru')">🇷🇺 RU</button><button type="button" class="tests-lang-btn" id="tests-lang-uz" onclick="setTestsLang('uz')">🇺🇿 UZ</button><button type="button" class="tests-lang-btn" id="tests-lang-en" onclick="setTestsLang('en')">🇬🇧 EN</button></div></div><div class="section-label" style="margin-top:14px">ПРЕДМЕТЫ</div><div class="subjects-list" id="subjects-grid"></div></div></div>
 
 <div id="screen-quiz" class="screen"><div class="quiz-topbar"><div class="quiz-btn-icon" onclick="pauseQuiz()">⏸</div><div class="quiz-timer" id="timer-badge"><span class="quiz-timer-icon">⏱</span><span id="timer-text">60:00</span></div><div style="font-size:12px;font-weight:700;color:var(--muted2)" id="q-score-live">0 ✓</div></div><div class="q-nav-wrap" id="q-nav"></div><div class="quiz-body"><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:10px" id="q-counter">Вопрос 1 из 30</div><img id="q-image" class="question-img" alt=""/><p class="question-text" id="q-text"></p><div class="options-list" id="options-list"></div></div><div class="quiz-actions"><button class="btn btn-outline" id="prev-btn" onclick="goToQuestion(quizState.index-1)" style="display:none;flex:1">← Назад</button><button class="btn btn-accent" id="next-btn" onclick="nextQuestion()" style="display:none;flex:1">Следующий →</button><button class="btn btn-green" id="finish-btn" onclick="finishQuiz()" style="display:none;flex:1">Завершить ✓</button></div></div>
 
@@ -342,6 +346,7 @@ let currentUser=null, token=localStorage.getItem("token")||null;
 let quizState={questions:[],index:0,answers:{},score:0,subjectId:null,reviewData:[]};
 let optCount=0, uploadedImg=null, timerInterval=null, testTimeLeft=0, allSubjects=[];
 let selectedExcelFile=null, qbankAll=[], qbankSubjectId=null, currentLang=localStorage.getItem("lang")||"ru";
+let testsLang=(function(){ try{ const t=localStorage.getItem("testsLang"); if(t&&["ru","uz","en"].includes(t))return t; }catch(e){} return "ru"; })();
 let currentDuelId=null, duelPollTimer=null;
 
 async function api(method,path,body){
@@ -403,10 +408,64 @@ function updateLangButtons(){
     if(btn){ btn.style.background=currentLang===l?"var(--accent)":"transparent"; btn.style.color=currentLang===l?"#000":"var(--muted2)"; btn.style.borderColor=currentLang===l?"var(--accent)":"var(--border)"; }
   });
 }
-function setLang(lang){ currentLang=lang; localStorage.setItem("lang",lang); updateLangButtons(); if(token&&currentUser)api("POST",`/me/lang?lang=${lang}`).catch(()=>{}); }
+function setLang(lang){ currentLang=lang; localStorage.setItem("lang",lang); updateLangButtons(); updateTestsLangLabel(); if(token&&currentUser)api("POST",`/me/lang?lang=${lang}`).catch(()=>{}); }
+
+function ensureTestsLang(){
+  try{
+    const s=localStorage.getItem("testsLang");
+    if(s&&["ru","uz","en"].includes(s)){ testsLang=s; return; }
+  }catch(e){}
+  const def=(currentUser&&currentUser.lang)||currentLang||"ru";
+  testsLang=["ru","uz","en"].includes(def)?def:"ru";
+  try{ localStorage.setItem("testsLang",testsLang); }catch(e){}
+}
+function subjectMatchesTestsLang(s){
+  const l=(s&&s.lang!=null&&s.lang!=="")?s.lang:"all";
+  if(l==="all")return true;
+  return l===testsLang;
+}
+function subjectsForTestsLang(){ return allSubjects.filter(subjectMatchesTestsLang); }
+function updateTestsLangButtons(){
+  ["ru","uz","en"].forEach(l=>{
+    const btn=document.getElementById("tests-lang-"+l);
+    if(btn) btn.classList.toggle("active",testsLang===l);
+  });
+}
+function updateTestsLangLabel(){
+  const el=document.getElementById("tests-lang-label");
+  if(!el)return;
+  const map={ru:"Язык тестов",uz:"Test tili",en:"Test language"};
+  el.textContent=map[currentLang]||map.ru;
+}
+function setTestsLang(lang){
+  if(!["ru","uz","en"].includes(lang))return;
+  testsLang=lang;
+  try{ localStorage.setItem("testsLang",lang); }catch(e){}
+  updateTestsLangButtons();
+  renderSubjectsGrid();
+  try{
+    const kb=document.getElementById("kb-subject-select");
+    if(kb&&kb.closest("#screen-knowledge")&&document.getElementById("screen-knowledge").classList.contains("active")) initKnowledge();
+  }catch(e){}
+}
+function renderSubjectsGrid(){
+  const grid=document.getElementById("subjects-grid");
+  if(!grid)return;
+  grid.innerHTML="";
+  const filtered=subjectsForTestsLang();
+  for(const s of filtered){
+    const row=document.createElement("div"); row.className="subject-row";
+    row.style.flexDirection="column"; row.style.alignItems="stretch"; row.style.gap="0";
+    row.innerHTML=`<div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="startQuiz(${s.id})"><div class="subject-emoji">${s.emoji}</div><div class="subject-info"><div class="subject-name">${s.title}</div><div class="subject-meta">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} вопросов</div></div><div class="subject-start">▶</div></div><div id="prog-${s.id}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);margin-bottom:5px"><span>Мой прогресс</span><span id="prog-txt-${s.id}"></span></div><div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div id="prog-bar-${s.id}" style="height:100%;background:var(--accent);border-radius:3px;width:0%"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;margin-top:5px"><span style="color:var(--muted2)" id="prog-attempts-${s.id}"></span><span style="color:var(--muted2)" id="prog-best-${s.id}"></span></div></div>`;
+    grid.appendChild(row);
+    loadSubjectProgress(s.id);
+  }
+  updateTestsLangButtons();
+}
 
 async function init(){
   updateLangButtons();
+  updateTestsLangLabel();
   if(!token){ showLoginScreen(); return; }
   const cached=localStorage.getItem("user");
   if(cached){ try{ currentUser=JSON.parse(cached); setupUI(); showScreen("home"); }catch(e){} }
@@ -505,16 +564,8 @@ function showScreen(name){
 
 async function loadSubjects(){
   allSubjects=await api("GET","/subjects");
-  const grid=document.getElementById("subjects-grid"); grid.innerHTML="";
-  const userLang=currentUser?.lang||currentLang;
-  const filtered=allSubjects.filter(s=>!s.lang||s.lang==="all"||s.lang===userLang);
-  for(const s of filtered){
-    const row=document.createElement("div"); row.className="subject-row";
-    row.style.flexDirection="column"; row.style.alignItems="stretch"; row.style.gap="0";
-    row.innerHTML=`<div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="startQuiz(${s.id})"><div class="subject-emoji">${s.emoji}</div><div class="subject-info"><div class="subject-name">${s.title}</div><div class="subject-meta">⏱ ${s.time_limit||60} мин · 📝 ${s.question_count||30} вопросов</div></div><div class="subject-start">▶</div></div><div id="prog-${s.id}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted2);margin-bottom:5px"><span>Мой прогресс</span><span id="prog-txt-${s.id}"></span></div><div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div id="prog-bar-${s.id}" style="height:100%;background:var(--accent);border-radius:3px;width:0%"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;margin-top:5px"><span style="color:var(--muted2)" id="prog-attempts-${s.id}"></span><span style="color:var(--muted2)" id="prog-best-${s.id}"></span></div></div>`;
-    grid.appendChild(row);
-    loadSubjectProgress(s.id);
-  }
+  ensureTestsLang();
+  renderSubjectsGrid();
   const u=currentUser;
   const hasAccess=u.subscription_active||(u.role==="teacher"||u.role==="admin");
   const tb=document.getElementById("trial-banner");
@@ -782,7 +833,7 @@ async function openQBank(subjectId,title){ qbankSubjectId=subjectId; document.ge
 function filterQBank(){ const q=document.getElementById("qbank-search").value.toLowerCase(); const filtered=q?qbankAll.filter(item=>item.text.toLowerCase().includes(q)||item.options.some(o=>o.text.toLowerCase().includes(q))):qbankAll; document.getElementById("qbank-count").textContent=`${filtered.length} из ${qbankAll.length}`; renderQBank(filtered); }
 function renderQBank(questions){ const letters=["A","Б","В","Г","Д"]; const list=document.getElementById("qbank-list"); if(!questions.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">Ничего не найдено</p>'; return; } list.innerHTML=questions.map((q,i)=>`<div class="qbank-item"><div class="qbank-num">#${i+1} · ID ${q.id}</div><div class="qbank-q">${q.text}</div><div class="qbank-opts">${q.options.map((o,j)=>`<div class="qbank-opt ${j===q.correct_option_id?"correct":""}">${letters[j]}. ${o.text}${j===q.correct_option_id?" ✓":""}</div>`).join("")}</div><button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer">🗑 Удалить</button></div>`).join(""); }
 async function deleteQuestion(qId){ if(!confirm("Удалить этот вопрос?")) return; try{ await api("DELETE",`/admin/questions/${qId}`); showToast("Вопрос удалён ✅"); qbankAll=qbankAll.filter(q=>q.id!==qId); filterQBank(); document.getElementById("qbank-count").textContent=`${qbankAll.length} вопросов`; }catch(e){ showToast("Ошибка: "+e.detail,true); } }
-async function initKnowledge(){ const sel=document.getElementById("kb-subject-select"); sel.innerHTML='<option value="">Выбери предмет...</option>'; allSubjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }
+async function initKnowledge(){ const sel=document.getElementById("kb-subject-select"); sel.innerHTML='<option value="">Выбери предмет...</option>'; subjectsForTestsLang().forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }
 async function loadKnowledgeSubject(){
   const subjectId=document.getElementById("kb-subject-select").value;
   const content=document.getElementById("kb-content");
@@ -797,7 +848,7 @@ async function showAchievements(){
   try{ const data=await api("GET","/my-achievements"); const earned=data.filter(a=>a.earned); const locked=data.filter(a=>!a.earned); list.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:12px">${earned.length} из ${data.length} получено</div>${earned.map(a=>`<div style="background:var(--card);border:1.5px solid var(--accent);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px"><div style="font-size:36px;width:50px;text-align:center">${a.emoji}</div><div style="flex:1"><div style="font-weight:700;font-size:15px;margin-bottom:3px">${a.title}</div><div style="font-size:12px;color:var(--muted2)">${a.desc}</div></div><div style="color:var(--accent);font-size:18px">✓</div></div>`).join("")}${locked.length?`<div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:1px;margin:16px 0 12px">ЗАБЛОКИРОВАНЫ</div>`:""}${locked.map(a=>`<div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;opacity:.5"><div style="font-size:36px;width:50px;text-align:center;filter:grayscale(1)">${a.emoji}</div><div style="flex:1"><div style="font-weight:700;font-size:15px;margin-bottom:3px">${a.title}</div><div style="font-size:12px;color:var(--muted2)">${a.desc}</div></div><div style="color:var(--muted);font-size:18px">🔒</div></div>`).join("")}`; }catch(e){ list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">Ошибка загрузки</p>'; }
 }
 function showNewAchievements(achievements){ if(!achievements||!achievements.length)return; achievements.forEach((a,i)=>{ setTimeout(()=>{ showToast(`${a.emoji} Новое достижение: ${a.title}!`); }, i*1500); }); }
-function showDuel(){ showScreen("duel"); document.getElementById("duel-menu").style.display="block"; document.getElementById("duel-waiting").style.display="none"; document.getElementById("duel-result").style.display="none"; const sel=document.getElementById("duel-subject"); sel.innerHTML='<option value="">Выберите предмет...</option>'; allSubjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }
+function showDuel(){ showScreen("duel"); document.getElementById("duel-menu").style.display="block"; document.getElementById("duel-waiting").style.display="none"; document.getElementById("duel-result").style.display="none"; const sel=document.getElementById("duel-subject"); sel.innerHTML='<option value="">Выберите предмет...</option>'; subjectsForTestsLang().forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }
 async function createDuel(){ const subjectId=document.getElementById("duel-subject").value; if(!subjectId){ showToast("Выбери предмет!",true); return; } try{ const data=await api("POST",`/duel/create?subject_id=${subjectId}`); currentDuelId=data.duel_id; document.getElementById("duel-menu").style.display="none"; document.getElementById("duel-waiting").style.display="block"; document.getElementById("duel-code-display").textContent=data.code; duelPollTimer=setInterval(async()=>{ try{ const status=await api("GET",`/duel/${currentDuelId}/status`); if(status.status==="active"){ clearInterval(duelPollTimer); startDuelQuiz(currentDuelId); } }catch(e){} },2000); }catch(e){ showToast("Ошибка: "+e.detail,true); } }
 async function joinDuel(){ const code=document.getElementById("duel-code-input").value.trim().toUpperCase(); if(!code){ showToast("Введи код!",true); return; } try{ const data=await api("POST",`/duel/join/${code}`); currentDuelId=data.duel_id; startDuelQuiz(currentDuelId); }catch(e){ showToast(e.detail||"Дуэль не найдена",true); } }
 function cancelDuelWait(){ clearInterval(duelPollTimer); document.getElementById("duel-menu").style.display="block"; document.getElementById("duel-waiting").style.display="none"; }
