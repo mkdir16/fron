@@ -599,16 +599,13 @@ function applyLang(){
   if(sl) sl.textContent=T("subjects_label");
 
   // Кнопки ДУЭЛЬ / БЕЙДЖИ
-  const duelBtn=document.querySelector("[onclick="showDuel()"] .home-btn-label");
-  const badgesBtn=document.querySelector("[onclick="showAchievements()"] .home-btn-label");
-  // fallback — найдём по font-size
-  document.querySelectorAll("[onclick="showDuel()"]").forEach(el=>{
-    const lbl=el.querySelector("div:last-child"); if(lbl) lbl.textContent=T("duel_btn");
+  // Update duel/badges buttons by iterating containers
+  document.querySelectorAll('#subjects-block [onclick="showDuel()"]').forEach(el=>{
+    const lbl=el.querySelector('div:last-child'); if(lbl) lbl.textContent=T('duel_btn');
   });
-  document.querySelectorAll("[onclick="showAchievements()"]").forEach(el=>{
-    const lbl=el.querySelector("div:last-child"); if(lbl) lbl.textContent=T("badges_btn");
+  document.querySelectorAll('#subjects-block [onclick="showAchievements()"]').forEach(el=>{
+    const lbl=el.querySelector('div:last-child'); if(lbl) lbl.textContent=T('badges_btn');
   });
-
   // Достижения заголовок
   const achH=document.querySelector("#screen-achievements [style*='font-weight:800']");
   if(achH) achH.textContent=T("ach_title");
