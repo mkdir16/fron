@@ -9,6 +9,10 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2313141a'/><text y='75' font-size='70' text-anchor='middle' x='50'>🎓</text></svg>"/>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     :root{
@@ -184,6 +188,12 @@
     .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;color:var(--muted2);font-size:13px;margin-bottom:10px}
     .upload-zone:active{border-color:var(--accent)}
     .preview-img{width:100%;border-radius:10px;margin-top:10px;display:none;max-height:180px;object-fit:cover}
+    .math-hint{font-size:11px;color:var(--muted);margin:-6px 0 8px;line-height:1.5}
+    .math-hint code{background:var(--card2);color:var(--accent);padding:1px 6px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',Menlo,Consolas,monospace}
+    .math-preview{background:var(--card2);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;font-size:14px;line-height:1.5;color:var(--text);overflow-x:auto}
+    .math-preview-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+    .katex{font-size:1.05em!important}
+    .katex-display{margin:6px 0!important;overflow-x:auto;overflow-y:hidden}
     .divider{text-align:center;color:var(--muted);font-size:11px;margin:14px 0;position:relative}
     .divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
     .divider span{position:relative;background:var(--bg);padding:0 10px}
@@ -312,7 +322,7 @@
 
 <div id="screen-qbank" class="screen"><div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:60px;background:var(--bg)"><div class="quiz-btn-icon" onclick="showScreen('admin')">←</div><div style="flex:1"><div style="font-size:14px;font-weight:700" id="qbank-title">База вопросов</div><div style="font-size:11px;color:var(--muted)" id="qbank-count"></div></div></div><div style="padding:12px 16px;border-bottom:1px solid var(--border)"><input type="text" class="form-input" id="qbank-search" placeholder="🔍 Поиск..." oninput="filterQBank()" style="margin:0"/></div><div class="page" id="qbank-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div></div>
 
-<div id="screen-admin" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800" id="admin-head-title">Панель управления</div></div><div class="admin-tabs"><div class="admin-tab active" id="adm-tab-questions" onclick="switchAdminTab('at-questions',this)">Вопросы</div><div class="admin-tab" id="adm-tab-subjects" onclick="switchAdminTab('at-subjects',this)">Предметы</div><div class="admin-tab" id="adm-tab-results" onclick="switchAdminTab('at-results',this)">Результаты</div><div class="admin-tab" onclick="switchAdminTab('at-users',this)" id="tab-users-btn" style="display:none"><span id="adm-tab-users-label">Студенты</span></div><div class="admin-tab" onclick="switchAdminTab('at-db',this)" id="tab-db-btn" style="display:none"><span id="adm-tab-db-label">База ⚙️</span></div></div><div id="at-questions" class="admin-content active"><div class="import-box"><div class="import-title" id="import-box-title">📥 Импорт из Excel</div><div class="form-group"><label class="form-label" id="lbl-import-subject">Предмет</label><select id="import-subject" class="form-input"><option value="" id="import-subject-opt0">Выберите предмет...</option></select></div><div class="upload-zone" onclick="document.getElementById('excel-input').click()" id="upload-zone-mix">📊 Excel или 📝 Word файл<div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div></div><input type="file" id="excel-input" accept=".xlsx,.xls,.docx,.doc" style="display:none" onchange="handleExcelSelect()"/><div style="display:flex;gap:8px"><button class="btn btn-green" id="btn-import-upload" onclick="importQuestions()" style="flex:1">⬆️ Загрузить</button><button class="btn btn-outline" id="btn-download-template" onclick="downloadTemplate()" style="flex:1">⬇️ Шаблон</button></div><div id="import-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div></div><div class="divider"><span id="divider-or-manual">или добавь вручную</span></div><div class="form-group"><label class="form-label" id="lbl-q-subject">Предмет</label><select id="q-subject" class="form-input"><option value="" id="q-subject-opt0">Выберите предмет...</option></select></div><div class="form-group"><label class="form-label" id="lbl-q-text">Вопрос</label><textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..."></textarea></div><div class="form-group"><label class="form-label" id="lbl-q-image">Картинка (необязательно)</label><div class="upload-zone" onclick="document.getElementById('img-input').click()" id="upload-q-image-zone">🖼 Загрузить картинку<img class="preview-img" id="img-preview"/></div><input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImg()"/></div><div class="form-group"><label class="form-label" id="lbl-q-options">Варианты <span style="color:var(--muted);font-size:10px">(✓ = правильный · 📝 текст · 🖼 картинка)</span></label><div id="opts-container"></div><button class="add-opt-btn" id="btn-add-option" onclick="addOpt()">+ Добавить вариант</button></div><button class="btn btn-accent" id="btn-save-question" onclick="saveQuestion()">Сохранить вопрос</button></div><div id="at-subjects" class="admin-content"><div class="form-group"><label class="form-label" id="lbl-subj-name">Название</label><div class="sub-form"><input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center;margin-bottom:0"/><input type="text" class="form-input" id="subj-title" placeholder="Название предмета" style="margin-bottom:0"/></div></div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:center"><div style="flex:1"><label class="form-label" id="lbl-subj-time">⏱ Время (мин)</label><input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="margin:0"/></div><div style="flex:1"><label class="form-label" id="lbl-subj-qcount">📝 Вопросов</label><input type="number" class="form-input" id="subj-qcount" value="30" min="5" max="500" style="margin:0"/></div></div><div class="form-group"><label class="form-label" id="lbl-subj-lang">Язык предмета</label><select id="subj-lang" class="form-input"><option value="all" id="opt-lang-all">🌍 Все языки</option><option value="ru" id="opt-lang-ru">🇷🇺 Русский</option><option value="uz" id="opt-lang-uz">🇺🇿 Узбекский</option><option value="en" id="opt-lang-en">🇬🇧 Английский</option></select></div><button class="btn btn-accent" id="btn-add-subject" onclick="createSubject()" style="margin-bottom:20px">Добавить предмет</button><label class="form-label" id="lbl-existing-subjects">Существующие</label><div id="subjects-admin-list"></div></div><div id="at-results" class="admin-content"><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" id="btn-admin-refresh-results" onclick="loadAdminResults()" style="flex:1">🔄 Обновить</button><button class="btn btn-green" id="btn-admin-export" onclick="exportExcel()" style="flex:1">📥 Excel</button></div><div style="overflow-x:auto"><table><thead><tr><th id="th-res-student">Студент</th><th id="th-res-subject">Предмет</th><th id="th-res-score">Балл</th><th id="th-res-date">Дата</th></tr></thead><tbody id="results-table"></tbody></table></div></div><div id="at-db" class="admin-content"><div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px" id="db-section-title">⚙️ Управление базой данных</div><div class="form-group"><label class="form-label" id="lbl-db-subject">Предмет</label><select id="db-subject" class="form-input" onchange="loadDBQuestions()"><option value="" id="db-subject-opt0">Выберите предмет...</option></select></div><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" id="btn-db-load" onclick="loadDBQuestions()" style="flex:1">🔄 Загрузить</button><div style="font-size:12px;color:var(--muted2);align-self:center" id="db-count"></div></div><input type="text" class="form-input" id="db-search" placeholder="🔍 Поиск по вопросам..." oninput="filterDBQuestions()" style="margin-bottom:10px"/></div><div id="db-list"></div></div><div id="at-users" class="admin-content"><button class="btn btn-accent" id="btn-users-add" onclick="openCreateUser()" style="margin-bottom:8px">+ Добавить студента</button><button class="btn btn-outline" id="btn-users-refresh" onclick="loadUsers()" style="margin-bottom:14px">🔄 Обновить</button><div style="overflow-x:auto"><table><thead><tr><th id="th-users-name">Имя/Логин</th><th id="th-users-role">Роль</th><th id="th-users-access">Доступ</th><th></th></tr></thead><tbody id="users-table"></tbody></table></div></div></div>
+<div id="screen-admin" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800" id="admin-head-title">Панель управления</div></div><div class="admin-tabs"><div class="admin-tab active" id="adm-tab-questions" onclick="switchAdminTab('at-questions',this)">Вопросы</div><div class="admin-tab" id="adm-tab-subjects" onclick="switchAdminTab('at-subjects',this)">Предметы</div><div class="admin-tab" id="adm-tab-results" onclick="switchAdminTab('at-results',this)">Результаты</div><div class="admin-tab" onclick="switchAdminTab('at-users',this)" id="tab-users-btn" style="display:none"><span id="adm-tab-users-label">Студенты</span></div><div class="admin-tab" onclick="switchAdminTab('at-db',this)" id="tab-db-btn" style="display:none"><span id="adm-tab-db-label">База ⚙️</span></div></div><div id="at-questions" class="admin-content active"><div class="import-box"><div class="import-title" id="import-box-title">📥 Импорт из Excel</div><div class="form-group"><label class="form-label" id="lbl-import-subject">Предмет</label><select id="import-subject" class="form-input"><option value="" id="import-subject-opt0">Выберите предмет...</option></select></div><div class="upload-zone" onclick="document.getElementById('excel-input').click()" id="upload-zone-mix">📊 Excel или 📝 Word файл<div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div></div><input type="file" id="excel-input" accept=".xlsx,.xls,.docx,.doc" style="display:none" onchange="handleExcelSelect()"/><div style="display:flex;gap:8px"><button class="btn btn-green" id="btn-import-upload" onclick="importQuestions()" style="flex:1">⬆️ Загрузить</button><button class="btn btn-outline" id="btn-download-template" onclick="downloadTemplate()" style="flex:1">⬇️ Шаблон</button></div><div id="import-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div></div><div class="divider"><span id="divider-or-manual">или добавь вручную</span></div><div class="form-group"><label class="form-label" id="lbl-q-subject">Предмет</label><select id="q-subject" class="form-input"><option value="" id="q-subject-opt0">Выберите предмет...</option></select></div><div class="form-group"><label class="form-label" id="lbl-q-text">Вопрос</label><textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..." oninput="updateMathPreview()"></textarea><div class="math-hint" id="q-math-hint">💡 Формулы: <code>$x^2$</code> · <code>$$\frac{a}{b}$$</code> · <code>\(\sqrt{2}\)</code></div><div id="q-math-preview" class="math-preview" style="display:none"></div></div><div class="form-group"><label class="form-label" id="lbl-q-image">Картинка (необязательно)</label><div class="upload-zone" onclick="document.getElementById('img-input').click()" id="upload-q-image-zone">🖼 Загрузить картинку<img class="preview-img" id="img-preview"/></div><input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImg()"/></div><div class="form-group"><label class="form-label" id="lbl-q-options">Варианты <span style="color:var(--muted);font-size:10px">(✓ = правильный · 📝 текст · 🖼 картинка)</span></label><div id="opts-container"></div><button class="add-opt-btn" id="btn-add-option" onclick="addOpt()">+ Добавить вариант</button></div><button class="btn btn-accent" id="btn-save-question" onclick="saveQuestion()">Сохранить вопрос</button></div><div id="at-subjects" class="admin-content"><div class="form-group"><label class="form-label" id="lbl-subj-name">Название</label><div class="sub-form"><input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center;margin-bottom:0"/><input type="text" class="form-input" id="subj-title" placeholder="Название предмета" style="margin-bottom:0"/></div></div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:center"><div style="flex:1"><label class="form-label" id="lbl-subj-time">⏱ Время (мин)</label><input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="margin:0"/></div><div style="flex:1"><label class="form-label" id="lbl-subj-qcount">📝 Вопросов</label><input type="number" class="form-input" id="subj-qcount" value="30" min="5" max="500" style="margin:0"/></div></div><div class="form-group"><label class="form-label" id="lbl-subj-lang">Язык предмета</label><select id="subj-lang" class="form-input"><option value="all" id="opt-lang-all">🌍 Все языки</option><option value="ru" id="opt-lang-ru">🇷🇺 Русский</option><option value="uz" id="opt-lang-uz">🇺🇿 Узбекский</option><option value="en" id="opt-lang-en">🇬🇧 Английский</option></select></div><button class="btn btn-accent" id="btn-add-subject" onclick="createSubject()" style="margin-bottom:20px">Добавить предмет</button><label class="form-label" id="lbl-existing-subjects">Существующие</label><div id="subjects-admin-list"></div></div><div id="at-results" class="admin-content"><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" id="btn-admin-refresh-results" onclick="loadAdminResults()" style="flex:1">🔄 Обновить</button><button class="btn btn-green" id="btn-admin-export" onclick="exportExcel()" style="flex:1">📥 Excel</button></div><div style="overflow-x:auto"><table><thead><tr><th id="th-res-student">Студент</th><th id="th-res-subject">Предмет</th><th id="th-res-score">Балл</th><th id="th-res-date">Дата</th></tr></thead><tbody id="results-table"></tbody></table></div></div><div id="at-db" class="admin-content"><div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px" id="db-section-title">⚙️ Управление базой данных</div><div class="form-group"><label class="form-label" id="lbl-db-subject">Предмет</label><select id="db-subject" class="form-input" onchange="loadDBQuestions()"><option value="" id="db-subject-opt0">Выберите предмет...</option></select></div><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" id="btn-db-load" onclick="loadDBQuestions()" style="flex:1">🔄 Загрузить</button><div style="font-size:12px;color:var(--muted2);align-self:center" id="db-count"></div></div><input type="text" class="form-input" id="db-search" placeholder="🔍 Поиск по вопросам..." oninput="filterDBQuestions()" style="margin-bottom:10px"/></div><div id="db-list"></div></div><div id="at-users" class="admin-content"><button class="btn btn-accent" id="btn-users-add" onclick="openCreateUser()" style="margin-bottom:8px">+ Добавить студента</button><button class="btn btn-outline" id="btn-users-refresh" onclick="loadUsers()" style="margin-bottom:14px">🔄 Обновить</button><div style="overflow-x:auto"><table><thead><tr><th id="th-users-name">Имя/Логин</th><th id="th-users-role">Роль</th><th id="th-users-access">Доступ</th><th></th></tr></thead><tbody id="users-table"></tbody></table></div></div></div>
 
 <div class="modal-overlay" id="modal-pause"><div class="modal"><div class="modal-handle"></div><h3 id="pause-modal-title">⏸ Тест на паузе</h3><div style="background:var(--card2);border-radius:var(--radius-sm);padding:14px;margin-bottom:18px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:var(--muted2)" id="pause-lbl-answered">Отвечено</span><span style="font-weight:700;color:var(--green)" id="pause-answered">0</span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted2)" id="pause-lbl-left">Осталось</span><span style="font-weight:700;color:var(--accent)" id="pause-left">0</span></div></div><button class="btn btn-accent" id="pause-btn-resume" onclick="resumeQuiz()">▶ Продолжить</button><button class="btn btn-outline" id="pause-btn-exit" onclick="exitQuiz()" style="margin-top:8px">← Выйти (прогресс сохранится)</button></div></div>
 
@@ -361,6 +371,68 @@ async function api(method,path,body){
 }
 
 function imgUrl(url){ if(!url)return null; return url.startsWith("http")?url:API_BASE+url; }
+
+// ===== Math (KaTeX) helpers =====
+// Безопасно экранируем HTML, чтобы избежать XSS при выводе пользовательского текста.
+function escapeHTML(str){
+  if(str===null||str===undefined) return "";
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#39;");
+}
+
+// Поддерживаемые разделители формул:
+//   $...$    — инлайн
+//   $$...$$  — блок
+//   \( ... \) — инлайн
+//   \[ ... \] — блок
+const MATH_DELIMITERS=[
+  {left:"$$",right:"$$",display:true},
+  {left:"\\[",right:"\\]",display:true},
+  {left:"\\(",right:"\\)",display:false},
+  {left:"$",right:"$",display:false}
+];
+
+// Рендерит элемент: формулы → KaTeX, всё остальное — как обычный текст.
+// Безопасно вызывать до загрузки KaTeX — тогда формулы просто останутся текстом.
+function applyMath(el){
+  if(!el) return;
+  if(typeof window.renderMathInElement!=="function") return;
+  try{
+    window.renderMathInElement(el,{
+      delimiters: MATH_DELIMITERS,
+      throwOnError: false,
+      strict: "ignore",
+      output: "html"
+    });
+  }catch(e){ /* ignore */ }
+}
+
+// Заменяет содержимое элемента простым текстом (с экранированием) и рендерит формулы.
+function setTextWithMath(el,text){
+  if(!el) return;
+  el.textContent = text==null?"":String(text);
+  applyMath(el);
+}
+
+// Возвращает HTML-фрагмент для встраивания в шаблоны: экранирует HTML, но сохраняет
+// разделители формул, чтобы applyMath() позже превратил их в формулы.
+function htmlWithMath(text){ return escapeHTML(text); }
+
+// Рендерит формулы во всём поддереве (например, после innerHTML с шаблонами).
+function applyMathDeep(root){ applyMath(root); }
+
+// На случай, если KaTeX/auto-render загрузятся ПОСЛЕ первой отрисовки контента,
+// перерендериваем весь видимый текст один раз после полной загрузки страницы.
+window.addEventListener("load", function(){
+  if(typeof window.renderMathInElement==="function"){
+    try{ applyMath(document.body); }catch(e){}
+  }
+});
+
 const AUTH_TEXTS={
   ru:{
     enter_credentials:"Введи логин и пароль",
@@ -1554,7 +1626,7 @@ function renderQuestion(){
   const total=quizState.questions.length;
   document.getElementById("q-counter").textContent=T("q_counter_tpl",quizState.index+1,total);
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
-  document.getElementById("q-text").textContent=q.text;
+  setTextWithMath(document.getElementById("q-text"), q.text);
   const img=document.getElementById("q-image");
   if(q.image_url){ img.src=imgUrl(q.image_url); img.style.display="block"; } else img.style.display="none";
   const letters=["A","Б","В","Г","Д"];
@@ -1563,11 +1635,12 @@ function renderQuestion(){
   q.options.forEach((opt,i)=>{
     const btn=document.createElement("button"); btn.className="option-btn";
     btn.dataset.origIndex=i;
-    const optContent = opt.image_url ? `<img src="${imgUrl(opt.image_url)}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block" loading="lazy"/>` : `<span>${opt.text||""}</span>`;
+    const optContent = opt.image_url ? `<img src="${imgUrl(opt.image_url)}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block" loading="lazy"/>` : `<span class="opt-math">${htmlWithMath(opt.text||"")}</span>`;
     btn.innerHTML=`<span class="option-letter">${letters[i]}</span>${optContent}`;
     if(alreadyAnswered){ btn.disabled=true; if(i===q.correct_option_id)btn.classList.add("correct"); else if(i===quizState.answers[q.id])btn.classList.add("wrong"); } else btn.onclick=()=>selectAnswer(i,btn,q);
     list.appendChild(btn);
   });
+  applyMathDeep(list);
   const isLast=quizState.index===total-1;
   const allAnswered=Object.keys(quizState.answers).length===total;
   document.getElementById("prev-btn").style.display=quizState.index>0?"block":"none";
@@ -1625,7 +1698,9 @@ function showResult(r){
 function showReview(){
   showScreen("review");
   const letters=["A","Б","В","Г","Д"];
-  document.getElementById("review-list").innerHTML=quizState.reviewData.map((item,qi)=>{ const q=item.question; const si=item.isCorrect?"✅":"❌"; const optsHtml=q.options.map((opt,i)=>{ let cls="neutral"; if(i===item.correct) cls="correct"; else if(i===item.chosen&&!item.isCorrect) cls="wrong"; return `<div class="review-opt ${cls}">${letters[i]}. ${opt.text}${i===item.correct?" ✓":""}</div>`; }).join(""); return `<div class="review-item"><div class="review-status">${si} ${Ttpl("review_q_tpl",{i:qi+1})}</div><div class="review-q">${q.text}</div>${optsHtml}</div>`; }).join("");
+  const list=document.getElementById("review-list");
+  list.innerHTML=quizState.reviewData.map((item,qi)=>{ const q=item.question; const si=item.isCorrect?"✅":"❌"; const optsHtml=q.options.map((opt,i)=>{ let cls="neutral"; if(i===item.correct) cls="correct"; else if(i===item.chosen&&!item.isCorrect) cls="wrong"; const body = opt.image_url ? `<img src="${imgUrl(opt.image_url)}" style="max-height:100px;max-width:100%;border-radius:6px;object-fit:contain;display:block;margin-top:4px"/>` : htmlWithMath(opt.text||""); return `<div class="review-opt ${cls}">${letters[i]}. ${body}${i===item.correct?" ✓":""}</div>`; }).join(""); const qImg = q.image_url ? `<img src="${imgUrl(q.image_url)}" style="max-height:160px;max-width:100%;border-radius:8px;object-fit:contain;display:block;margin-bottom:8px"/>` : ""; return `<div class="review-item"><div class="review-status">${si} ${Ttpl("review_q_tpl",{i:qi+1})}</div>${qImg}<div class="review-q">${htmlWithMath(q.text)}</div>${optsHtml}</div>`; }).join("");
+  applyMathDeep(list);
 }
 async function loadHistory(){
   const list=document.getElementById("history-list");
@@ -1649,6 +1724,53 @@ async function exportExcel(){
 }
 function handleExcelSelect(){ const f=document.getElementById("excel-input").files[0]; if(!f)return; selectedExcelFile=f; document.getElementById("import-filename").textContent="📄 "+f.name; }
 function downloadTemplate(){ const data=[["Вопрос *","Вариант A *","Вариант Б *","Вариант В","Вариант Г","Вариант Д","Правильный ответ * (A/Б/В/Г/Д)"],["⚠️ Обязательные поля отмечены *","","","","","",""],["Столица Узбекистана?","Ташкент","Самарканд","Бухара","Наманган","","A"],["Сколько будет 2+2?","3","4","5","6","","Б"],["","","","","","",""]]; const wb=XLSX.utils.book_new(); const ws=XLSX.utils.aoa_to_sheet(data); ws["!cols"]=[{wch:60},{wch:25},{wch:25},{wch:25},{wch:25},{wch:25},{wch:30}]; XLSX.utils.book_append_sheet(wb,ws,"Вопросы"); XLSX.writeFile(wb,"UniQuiz_шаблон_вопросов.xlsx"); showToast("Шаблон скачан ✅"); }
+// Конвертирует data:URI → Blob (для загрузки картинки из .docx на /admin/upload-image).
+function dataUrlToBlob(dataUrl){
+  const m=/^data:([^;]+);base64,(.+)$/.exec(dataUrl);
+  if(!m) return null;
+  const mime=m[1]; const b64=m[2];
+  const bin=atob(b64); const len=bin.length; const arr=new Uint8Array(len);
+  for(let i=0;i<len;i++) arr[i]=bin.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+
+async function uploadDocxImage(dataUrl){
+  const blob=dataUrlToBlob(dataUrl); if(!blob) return null;
+  const ext=(blob.type.split("/")[1]||"png").split("+")[0];
+  const file=new File([blob],`docx-${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`,{type:blob.type});
+  const fd=new FormData(); fd.append("file",file);
+  try{
+    const res=await fetch(API_BASE+"/admin/upload-image",{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
+    if(!res.ok) return null;
+    const data=await res.json(); return data.image_url||null;
+  }catch(e){ return null; }
+}
+
+// Превращает HTML-результат mammoth в plain text с маркерами [[IMG:N]] на месте картинок
+// и возвращает массив data:URI всех найденных изображений.
+function extractDocxTextAndImages(html){
+  const doc=new DOMParser().parseFromString(html||"","text/html");
+  const images=[];
+  doc.querySelectorAll("img").forEach((img,i)=>{
+    const src=img.getAttribute("src")||"";
+    images.push(src);
+    const marker=doc.createTextNode(` [[IMG:${i}]] `);
+    img.parentNode.replaceChild(marker,img);
+  });
+  // Разделители абзацев → переводы строк
+  doc.querySelectorAll("p,br,li,h1,h2,h3,h4,h5,h6,tr").forEach(el=>{
+    el.appendChild(doc.createTextNode("\n"));
+  });
+  const text=(doc.body.textContent||"").replace(/\u00A0/g," ").replace(/\n{3,}/g,"\n\n");
+  return {text,images};
+}
+
+// Извлекает [[IMG:N]] маркеры из текста, возвращает {clean, indices}.
+function extractImageMarkers(text){
+  const indices=[]; const clean=String(text||"").replace(/\[\[IMG:(\d+)\]\]/g,(_,n)=>{ indices.push(parseInt(n,10)); return ""; }).replace(/\s+/g," ").trim();
+  return {clean,indices};
+}
+
 async function importQuestions(){
   const subjectId=document.getElementById("import-subject").value;
   const resultDiv=document.getElementById("import-result");
@@ -1660,13 +1782,34 @@ async function importQuestions(){
   try{
     if(isWord){
       const arrayBuffer=await selectedExcelFile.arrayBuffer();
-      const result=await mammoth.extractRawText({arrayBuffer});
-      const text=result.value;
+      // Получаем HTML с встроенными картинками (data:URI), затем превращаем в текст с маркерами.
+      const result=await mammoth.convertToHtml({arrayBuffer});
+      const {text,images}=extractDocxTextAndImages(result.value);
       const questions=parseQuestionsFromText(text);
       if(!questions.length){ resultDiv.style.background="rgba(249,115,22,.1)"; resultDiv.style.color="var(--orange)"; resultDiv.textContent=authText("word_no_questions"); return; }
+      // Загружаем все картинки один раз — кешируем URL по индексу.
+      const imageUrlCache={};
+      const getImageUrl=async(idx)=>{
+        if(idx==null||!images[idx]) return null;
+        if(imageUrlCache[idx]!==undefined) return imageUrlCache[idx];
+        const url=await uploadDocxImage(images[idx]);
+        imageUrlCache[idx]=url||null;
+        return imageUrlCache[idx];
+      };
       let saved=0,errors=0;
       for(const q of questions){
-        try{ await api("POST","/admin/questions",{subject_id:parseInt(subjectId),text:q.question,options:q.options.map(o=>({text:o,image_url:null})),correct_index:q.correct,image_url:null}); saved++; }catch(e2){ errors++; }
+        try{
+          const qMark=extractImageMarkers(q.question);
+          const qImage=qMark.indices.length?await getImageUrl(qMark.indices[0]):null;
+          const opts=[];
+          for(const o of q.options){
+            const oMark=extractImageMarkers(o);
+            const oImage=oMark.indices.length?await getImageUrl(oMark.indices[0]):null;
+            opts.push({text: oImage && !oMark.clean ? null : oMark.clean, image_url:oImage});
+          }
+          await api("POST","/admin/questions",{subject_id:parseInt(subjectId),text: qMark.clean || (qImage?authText("visual_question"):""),options:opts,correct_index:q.correct,image_url:qImage});
+          saved++;
+        }catch(e2){ errors++; }
       }
       resultDiv.style.background="rgba(34,197,94,.1)"; resultDiv.style.color="var(--green)"; resultDiv.textContent=Ttpl("toast_questions_added",{n:saved})+(errors?"\n⚠️ "+errors:"");
       showToast(Ttpl("toast_questions_added",{n:saved}));
@@ -1718,6 +1861,20 @@ async function createSubject(){
   if(!title){ showToast(authText("toast_title_required"),true); return; }
   try{ await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}&question_count=${question_count}&lang=${lang}`); showToast(authText("toast_subject_added")); document.getElementById("subj-title").value=""; await loadAdminSubjects(); } catch(e){ showToast(Ttpl("err_detail_tpl",{detail:e.detail||""}),true); }
 }
+// Live-предпросмотр LaTeX в админском редакторе вопроса.
+function updateMathPreview(){
+  const ta = document.getElementById("q-text-admin");
+  const preview = document.getElementById("q-math-preview");
+  if(!ta || !preview) return;
+  const txt = ta.value || "";
+  // Показываем превью только если текст содержит разделители формул, иначе прячем.
+  const hasMath = /(\$.+?\$|\\\(.+?\\\)|\\\[.+?\\\])/s.test(txt);
+  if(!txt.trim() || !hasMath){ preview.style.display="none"; preview.innerHTML=""; return; }
+  preview.style.display="block";
+  preview.innerHTML = `<div class="math-preview-label">📐 Предпросмотр формул</div><div class="math-preview-body">${htmlWithMath(txt)}</div>`;
+  applyMath(preview);
+}
+
 function addOpt(){
   const letters=["A","Б","В","Г","Д","Е"]; const i=optCount++;
   const row=document.createElement("div"); row.className="option-row"; row.style.cssText="flex-direction:column;align-items:stretch;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;gap:8px"; row.dataset.optIndex=i;
@@ -1783,7 +1940,21 @@ async function deleteUser(userId,username){ if(!confirm(Ttpl("confirm_delete_use
 function switchAdminTab(id,el){ document.querySelectorAll(".admin-tab").forEach(t=>t.classList.remove("active")); document.querySelectorAll(".admin-content").forEach(t=>t.classList.remove("active")); document.getElementById(id).classList.add("active"); el.classList.add("active"); if(id==="at-results") loadAdminResults(); if(id==="at-users") loadUsers(); if(id==="at-subjects") loadAdminSubjects(); }
 async function openQBank(subjectId,title){ qbankSubjectId=subjectId; document.getElementById("qbank-title").textContent=title; document.getElementById("qbank-count").textContent=T("loading"); document.getElementById("qbank-search").value=""; showScreen("qbank"); applyStaticLabels(); const list=document.getElementById("qbank-list"); list.innerHTML='<div class="loader"><div class="spinner"></div><span>'+T("loading")+'</span></div>'; try{ qbankAll=await api("GET",`/admin/questions/${subjectId}`); document.getElementById("qbank-count").textContent=Ttpl("qbank_count_tpl",{n:qbankAll.length}); renderQBank(qbankAll); }catch(e){ list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">'+authText("error_load")+'</p>'; } }
 function filterQBank(){ const q=document.getElementById("qbank-search").value.toLowerCase(); const filtered=q?qbankAll.filter(item=>item.text.toLowerCase().includes(q)||item.options.some(o=>o.text&&o.text.toLowerCase().includes(q))):qbankAll; document.getElementById("qbank-count").textContent=Ttpl("qbank_filter_tpl",{i:filtered.length,n:qbankAll.length}); renderQBank(filtered); }
-function renderQBank(questions){ const letters=["A","Б","В","Г","Д"]; const list=document.getElementById("qbank-list"); const del=authText("qbank_delete_btn"); if(!questions.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">'+authText("nothing_found")+'</p>'; return; } list.innerHTML=questions.map((q,i)=>`<div class="qbank-item"><div class="qbank-num">#${i+1} · ID ${q.id}</div><div class="qbank-q">${q.text}</div><div class="qbank-opts">${q.options.map((o,j)=>`<div class="qbank-opt ${j===q.correct_option_id?"correct":""}">${letters[j]}. ${o.text}${j===q.correct_option_id?" ✓":""}</div>`).join("")}</div><button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer">${del}</button></div>`).join(""); }
+function renderQBank(questions){
+  const letters=["A","Б","В","Г","Д"];
+  const list=document.getElementById("qbank-list");
+  const del=authText("qbank_delete_btn");
+  if(!questions.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">'+authText("nothing_found")+'</p>'; return; }
+  list.innerHTML=questions.map((q,i)=>{
+    const qImg = q.image_url ? `<img src="${imgUrl(q.image_url)}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block;margin:6px 0"/>` : "";
+    const opts = q.options.map((o,j)=>{
+      const body = o.image_url ? `<img src="${imgUrl(o.image_url)}" style="max-height:80px;max-width:100%;border-radius:6px;object-fit:contain;display:inline-block;vertical-align:middle"/>` : htmlWithMath(o.text||"");
+      return `<div class="qbank-opt ${j===q.correct_option_id?"correct":""}">${letters[j]}. ${body}${j===q.correct_option_id?" ✓":""}</div>`;
+    }).join("");
+    return `<div class="qbank-item"><div class="qbank-num">#${i+1} · ID ${q.id}</div>${qImg}<div class="qbank-q">${htmlWithMath(q.text)}</div><div class="qbank-opts">${opts}</div><button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer">${del}</button></div>`;
+  }).join("");
+  applyMathDeep(list);
+}
 async function deleteQuestion(qId){ if(!confirm(authText("confirm_delete_q"))) return; try{ await api("DELETE",`/admin/questions/${qId}`); showToast(authText("toast_q_deleted")); qbankAll=qbankAll.filter(q=>q.id!==qId); filterQBank(); document.getElementById("qbank-count").textContent=Ttpl("qbank_count_tpl",{n:qbankAll.length}); }catch(e){ showToast(Ttpl("err_detail_tpl",{detail:e.detail||""}),true); } }
 async function initKnowledge(){ const sel=document.getElementById("kb-subject-select"); sel.innerHTML='<option value="" id="kb-default-opt">'+authText("kb_select")+'</option>'; subjectsForTestsLang().forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }
 async function loadKnowledgeSubject(){
