@@ -9,10 +9,6 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2313141a'/><text y='75' font-size='70' text-anchor='middle' x='50'>🎓</text></svg>"/>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
-  <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     :root{
@@ -132,6 +128,13 @@
     .quiz-body{padding:16px}
     .question-text{font-size:17px;font-weight:600;line-height:1.6;margin-bottom:16px}
     .question-img{width:100%;border-radius:var(--radius-sm);margin-bottom:14px;display:none;max-height:220px;object-fit:cover}
+    /* Smart Import */
+    #smart-drop-zone.drag-over{border-color:var(--accent);background:var(--accent-dim);transform:scale(1.01)}
+    #smart-drop-zone.has-file{border-color:var(--accent);border-style:solid}
+    .si-preview-item{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;font-size:13px}
+    .si-preview-q{font-weight:600;margin-bottom:4px;line-height:1.4}
+    .si-preview-opt{color:var(--muted2);font-size:12px;padding:2px 0}
+    .si-preview-opt.correct{color:var(--green);font-weight:700}
 
     .options-list{display:flex;flex-direction:column;gap:8px}
     .option-btn{background:var(--card);border:2px solid var(--border);color:var(--text);border-radius:var(--radius);padding:14px 16px;text-align:left;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;width:100%}
@@ -188,12 +191,6 @@
     .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;color:var(--muted2);font-size:13px;margin-bottom:10px}
     .upload-zone:active{border-color:var(--accent)}
     .preview-img{width:100%;border-radius:10px;margin-top:10px;display:none;max-height:180px;object-fit:cover}
-    .math-hint{font-size:11px;color:var(--muted);margin:-6px 0 8px;line-height:1.5}
-    .math-hint code{background:var(--card2);color:var(--accent);padding:1px 6px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono',Menlo,Consolas,monospace}
-    .math-preview{background:var(--card2);border:1px dashed var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;font-size:14px;line-height:1.5;color:var(--text);overflow-x:auto}
-    .math-preview-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-    .katex{font-size:1.05em!important}
-    .katex-display{margin:6px 0!important;overflow-x:auto;overflow-y:hidden}
     .divider{text-align:center;color:var(--muted);font-size:11px;margin:14px 0;position:relative}
     .divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
     .divider span{position:relative;background:var(--bg);padding:0 10px}
@@ -322,7 +319,69 @@
 
 <div id="screen-qbank" class="screen"><div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:60px;background:var(--bg)"><div class="quiz-btn-icon" onclick="showScreen('admin')">←</div><div style="flex:1"><div style="font-size:14px;font-weight:700" id="qbank-title">База вопросов</div><div style="font-size:11px;color:var(--muted)" id="qbank-count"></div></div></div><div style="padding:12px 16px;border-bottom:1px solid var(--border)"><input type="text" class="form-input" id="qbank-search" placeholder="🔍 Поиск..." oninput="filterQBank()" style="margin:0"/></div><div class="page" id="qbank-list"><div class="loader"><div class="spinner"></div><span>Загрузка...</span></div></div></div>
 
-<div id="screen-admin" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800" id="admin-head-title">Панель управления</div></div><div class="admin-tabs"><div class="admin-tab active" id="adm-tab-questions" onclick="switchAdminTab('at-questions',this)">Вопросы</div><div class="admin-tab" id="adm-tab-subjects" onclick="switchAdminTab('at-subjects',this)">Предметы</div><div class="admin-tab" id="adm-tab-results" onclick="switchAdminTab('at-results',this)">Результаты</div><div class="admin-tab" onclick="switchAdminTab('at-users',this)" id="tab-users-btn" style="display:none"><span id="adm-tab-users-label">Студенты</span></div><div class="admin-tab" onclick="switchAdminTab('at-db',this)" id="tab-db-btn" style="display:none"><span id="adm-tab-db-label">База ⚙️</span></div></div><div id="at-questions" class="admin-content active"><div class="import-box"><div class="import-title" id="import-box-title">📥 Импорт из Excel</div><div class="form-group"><label class="form-label" id="lbl-import-subject">Предмет</label><select id="import-subject" class="form-input"><option value="" id="import-subject-opt0">Выберите предмет...</option></select></div><div class="upload-zone" onclick="document.getElementById('excel-input').click()" id="upload-zone-mix">📊 Excel или 📝 Word файл<div id="import-filename" style="font-size:11px;color:var(--accent);margin-top:4px"></div></div><input type="file" id="excel-input" accept=".xlsx,.xls,.docx,.doc" style="display:none" onchange="handleExcelSelect()"/><div style="display:flex;gap:8px"><button class="btn btn-green" id="btn-import-upload" onclick="importQuestions()" style="flex:1">⬆️ Загрузить</button><button class="btn btn-outline" id="btn-download-template" onclick="downloadTemplate()" style="flex:1">⬇️ Шаблон</button></div><div id="import-result" style="display:none;margin-top:10px;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div></div><div class="divider"><span id="divider-or-manual">или добавь вручную</span></div><div class="form-group"><label class="form-label" id="lbl-q-subject">Предмет</label><select id="q-subject" class="form-input"><option value="" id="q-subject-opt0">Выберите предмет...</option></select></div><div class="form-group"><label class="form-label" id="lbl-q-text">Вопрос</label><textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..." oninput="updateMathPreview()"></textarea><div class="math-hint" id="q-math-hint">💡 Формулы: <code>$x^2$</code> · <code>$$\frac{a}{b}$$</code> · <code>\(\sqrt{2}\)</code></div><div id="q-math-preview" class="math-preview" style="display:none"></div></div><div class="form-group"><label class="form-label" id="lbl-q-image">Картинка (необязательно)</label><div class="upload-zone" onclick="document.getElementById('img-input').click()" id="upload-q-image-zone">🖼 Загрузить картинку<img class="preview-img" id="img-preview"/></div><input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImg()"/></div><div class="form-group"><label class="form-label" id="lbl-q-options">Варианты <span style="color:var(--muted);font-size:10px">(✓ = правильный · 📝 текст · 🖼 картинка)</span></label><div id="opts-container"></div><button class="add-opt-btn" id="btn-add-option" onclick="addOpt()">+ Добавить вариант</button></div><button class="btn btn-accent" id="btn-save-question" onclick="saveQuestion()">Сохранить вопрос</button></div><div id="at-subjects" class="admin-content"><div class="form-group"><label class="form-label" id="lbl-subj-name">Название</label><div class="sub-form"><input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center;margin-bottom:0"/><input type="text" class="form-input" id="subj-title" placeholder="Название предмета" style="margin-bottom:0"/></div></div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:center"><div style="flex:1"><label class="form-label" id="lbl-subj-time">⏱ Время (мин)</label><input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="margin:0"/></div><div style="flex:1"><label class="form-label" id="lbl-subj-qcount">📝 Вопросов</label><input type="number" class="form-input" id="subj-qcount" value="30" min="5" max="500" style="margin:0"/></div></div><div class="form-group"><label class="form-label" id="lbl-subj-lang">Язык предмета</label><select id="subj-lang" class="form-input"><option value="all" id="opt-lang-all">🌍 Все языки</option><option value="ru" id="opt-lang-ru">🇷🇺 Русский</option><option value="uz" id="opt-lang-uz">🇺🇿 Узбекский</option><option value="en" id="opt-lang-en">🇬🇧 Английский</option></select></div><button class="btn btn-accent" id="btn-add-subject" onclick="createSubject()" style="margin-bottom:20px">Добавить предмет</button><label class="form-label" id="lbl-existing-subjects">Существующие</label><div id="subjects-admin-list"></div></div><div id="at-results" class="admin-content"><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" id="btn-admin-refresh-results" onclick="loadAdminResults()" style="flex:1">🔄 Обновить</button><button class="btn btn-green" id="btn-admin-export" onclick="exportExcel()" style="flex:1">📥 Excel</button></div><div style="overflow-x:auto"><table><thead><tr><th id="th-res-student">Студент</th><th id="th-res-subject">Предмет</th><th id="th-res-score">Балл</th><th id="th-res-date">Дата</th></tr></thead><tbody id="results-table"></tbody></table></div></div><div id="at-db" class="admin-content"><div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px" id="db-section-title">⚙️ Управление базой данных</div><div class="form-group"><label class="form-label" id="lbl-db-subject">Предмет</label><select id="db-subject" class="form-input" onchange="loadDBQuestions()"><option value="" id="db-subject-opt0">Выберите предмет...</option></select></div><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" id="btn-db-load" onclick="loadDBQuestions()" style="flex:1">🔄 Загрузить</button><div style="font-size:12px;color:var(--muted2);align-self:center" id="db-count"></div></div><input type="text" class="form-input" id="db-search" placeholder="🔍 Поиск по вопросам..." oninput="filterDBQuestions()" style="margin-bottom:10px"/></div><div id="db-list"></div></div><div id="at-users" class="admin-content"><button class="btn btn-accent" id="btn-users-add" onclick="openCreateUser()" style="margin-bottom:8px">+ Добавить студента</button><button class="btn btn-outline" id="btn-users-refresh" onclick="loadUsers()" style="margin-bottom:14px">🔄 Обновить</button><div style="overflow-x:auto"><table><thead><tr><th id="th-users-name">Имя/Логин</th><th id="th-users-role">Роль</th><th id="th-users-access">Доступ</th><th></th></tr></thead><tbody id="users-table"></tbody></table></div></div></div>
+<div id="screen-admin" class="screen"><div style="padding:16px;border-bottom:1px solid var(--border)"><div style="font-size:16px;font-weight:800" id="admin-head-title">Панель управления</div></div><div class="admin-tabs"><div class="admin-tab active" id="adm-tab-questions" onclick="switchAdminTab('at-questions',this)">Вопросы</div><div class="admin-tab" id="adm-tab-subjects" onclick="switchAdminTab('at-subjects',this)">Предметы</div><div class="admin-tab" id="adm-tab-results" onclick="switchAdminTab('at-results',this)">Результаты</div><div class="admin-tab" onclick="switchAdminTab('at-users',this)" id="tab-users-btn" style="display:none"><span id="adm-tab-users-label">Студенты</span></div><div class="admin-tab" onclick="switchAdminTab('at-db',this)" id="tab-db-btn" style="display:none"><span id="adm-tab-db-label">База ⚙️</span></div></div><div id="at-questions" class="admin-content active"><div class="import-box" id="smart-import-box">
+  <!-- Заголовок + шаблон -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div style="font-size:15px;font-weight:800" id="import-box-title">⚡ Быстрый импорт</div>
+    <button class="btn btn-outline btn-sm" onclick="downloadTemplate()" id="btn-download-template">⬇️ Шаблон</button>
+  </div>
+
+  <!-- DRAG & DROP зона -->
+  <div id="smart-drop-zone" onclick="document.getElementById('smart-file-input').click()"
+    style="border:2px dashed var(--border);border-radius:var(--radius);padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--card2);margin-bottom:14px"
+    ondragover="smartDragOver(event)" ondragleave="smartDragLeave(event)" ondrop="smartDrop(event)">
+    <div style="font-size:36px;margin-bottom:8px">📂</div>
+    <div style="font-weight:700;font-size:14px;margin-bottom:4px" id="drop-title">Перетащи файл или нажми</div>
+    <div style="font-size:11px;color:var(--muted2)" id="drop-sub">Excel (.xlsx) или Word (.docx) · до 50 МБ</div>
+    <div id="drop-filenames" style="font-size:12px;color:var(--accent);margin-top:8px;font-weight:600"></div>
+  </div>
+  <input type="file" id="smart-file-input" accept=".xlsx,.xls,.docx,.doc" style="display:none" multiple onchange="smartFileSelect(event)"/>
+  <!-- скрытый старый инпут для совместимости -->
+  <input type="file" id="excel-input" accept=".xlsx,.xls,.docx,.doc" style="display:none" onchange="handleExcelSelect()"/>
+
+  <!-- Предмет: выбрать существующий ИЛИ создать новый -->
+  <div style="margin-bottom:14px">
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button id="si-tab-exist" class="btn btn-accent btn-sm" style="flex:1" onclick="siSwitchTab('exist')">Существующий</button>
+      <button id="si-tab-new" class="btn btn-outline btn-sm" style="flex:1" onclick="siSwitchTab('new')">+ Новый предмет</button>
+    </div>
+    <div id="si-panel-exist">
+      <select id="import-subject" class="form-input" style="margin:0"><option value="" id="import-subject-opt0">Выберите предмет...</option></select>
+    </div>
+    <div id="si-panel-new" style="display:none">
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input type="text" class="form-input" id="si-new-emoji" value="📚" maxlength="2" style="max-width:52px;text-align:center;margin:0;padding:12px 8px"/>
+        <input type="text" class="form-input" id="si-new-title" placeholder="Название предмета" style="margin:0"/>
+      </div>
+      <div style="display:flex;gap:8px">
+        <input type="number" class="form-input" id="si-new-time" value="60" min="5" max="300" style="margin:0;flex:1" placeholder="⏱ мин"/>
+        <input type="number" class="form-input" id="si-new-qcount" value="30" min="5" max="500" style="margin:0;flex:1" placeholder="📝 вопросов"/>
+        <select class="form-input" id="si-new-lang" style="margin:0;flex:1">
+          <option value="all">🌍</option><option value="ru">🇷🇺</option><option value="uz">🇺🇿</option><option value="en">🇬🇧</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Кнопка ЗАГРУЗИТЬ -->
+  <button class="btn btn-accent" id="si-upload-btn" onclick="smartImport()" style="margin-bottom:10px;font-size:15px">
+    ⚡ Загрузить в 1 клик
+  </button>
+
+  <!-- Прогресс-бар -->
+  <div id="si-progress" style="display:none;margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px">
+      <span id="si-progress-label">Загрузка...</span>
+      <span id="si-progress-pct">0%</span>
+    </div>
+    <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden">
+      <div id="si-progress-bar" style="height:100%;background:var(--accent);border-radius:4px;width:0%;transition:width .3s"></div>
+    </div>
+  </div>
+
+  <!-- Результат -->
+  <div id="import-result" style="display:none;padding:12px;border-radius:var(--radius-xs);font-size:13px;white-space:pre-line"></div>
+</div><div class="divider"><span id="divider-or-manual">или добавь вручную</span></div><div class="form-group"><label class="form-label" id="lbl-q-subject">Предмет</label><select id="q-subject" class="form-input"><option value="" id="q-subject-opt0">Выберите предмет...</option></select></div><div class="form-group"><label class="form-label" id="lbl-q-text">Вопрос</label><textarea id="q-text-admin" class="form-input" placeholder="Введи вопрос..."></textarea></div><div class="form-group"><label class="form-label" id="lbl-q-image">Картинка (необязательно)</label><div class="upload-zone" onclick="document.getElementById('img-input').click()" id="upload-q-image-zone">🖼 Загрузить картинку<img class="preview-img" id="img-preview"/></div><input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImg()"/></div><div class="form-group"><label class="form-label" id="lbl-q-options">Варианты <span style="color:var(--muted);font-size:10px">(✓ = правильный · 📝 текст · 🖼 картинка)</span></label><div id="opts-container"></div><button class="add-opt-btn" id="btn-add-option" onclick="addOpt()">+ Добавить вариант</button></div><button class="btn btn-accent" id="btn-save-question" onclick="saveQuestion()">Сохранить вопрос</button></div><div id="at-subjects" class="admin-content"><div class="form-group"><label class="form-label" id="lbl-subj-name">Название</label><div class="sub-form"><input type="text" class="form-input" id="subj-emoji" placeholder="📚" maxlength="2" value="📚" style="max-width:60px;text-align:center;margin-bottom:0"/><input type="text" class="form-input" id="subj-title" placeholder="Название предмета" style="margin-bottom:0"/></div></div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:center"><div style="flex:1"><label class="form-label" id="lbl-subj-time">⏱ Время (мин)</label><input type="number" class="form-input" id="subj-time" value="60" min="5" max="300" style="margin:0"/></div><div style="flex:1"><label class="form-label" id="lbl-subj-qcount">📝 Вопросов</label><input type="number" class="form-input" id="subj-qcount" value="30" min="5" max="500" style="margin:0"/></div></div><div class="form-group"><label class="form-label" id="lbl-subj-lang">Язык предмета</label><select id="subj-lang" class="form-input"><option value="all" id="opt-lang-all">🌍 Все языки</option><option value="ru" id="opt-lang-ru">🇷🇺 Русский</option><option value="uz" id="opt-lang-uz">🇺🇿 Узбекский</option><option value="en" id="opt-lang-en">🇬🇧 Английский</option></select></div><button class="btn btn-accent" id="btn-add-subject" onclick="createSubject()" style="margin-bottom:20px">Добавить предмет</button><label class="form-label" id="lbl-existing-subjects">Существующие</label><div id="subjects-admin-list"></div></div><div id="at-results" class="admin-content"><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" id="btn-admin-refresh-results" onclick="loadAdminResults()" style="flex:1">🔄 Обновить</button><button class="btn btn-green" id="btn-admin-export" onclick="exportExcel()" style="flex:1">📥 Excel</button></div><div style="overflow-x:auto"><table><thead><tr><th id="th-res-student">Студент</th><th id="th-res-subject">Предмет</th><th id="th-res-score">Балл</th><th id="th-res-date">Дата</th></tr></thead><tbody id="results-table"></tbody></table></div></div><div id="at-db" class="admin-content"><div style="margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px" id="db-section-title">⚙️ Управление базой данных</div><div class="form-group"><label class="form-label" id="lbl-db-subject">Предмет</label><select id="db-subject" class="form-input" onchange="loadDBQuestions()"><option value="" id="db-subject-opt0">Выберите предмет...</option></select></div><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btn-outline" id="btn-db-load" onclick="loadDBQuestions()" style="flex:1">🔄 Загрузить</button><div style="font-size:12px;color:var(--muted2);align-self:center" id="db-count"></div></div><input type="text" class="form-input" id="db-search" placeholder="🔍 Поиск по вопросам..." oninput="filterDBQuestions()" style="margin-bottom:10px"/></div><div id="db-list"></div></div><div id="at-users" class="admin-content"><button class="btn btn-accent" id="btn-users-add" onclick="openCreateUser()" style="margin-bottom:8px">+ Добавить студента</button><button class="btn btn-outline" id="btn-users-refresh" onclick="loadUsers()" style="margin-bottom:14px">🔄 Обновить</button><div style="overflow-x:auto"><table><thead><tr><th id="th-users-name">Имя/Логин</th><th id="th-users-role">Роль</th><th id="th-users-access">Доступ</th><th></th></tr></thead><tbody id="users-table"></tbody></table></div></div></div>
 
 <div class="modal-overlay" id="modal-pause"><div class="modal"><div class="modal-handle"></div><h3 id="pause-modal-title">⏸ Тест на паузе</h3><div style="background:var(--card2);border-radius:var(--radius-sm);padding:14px;margin-bottom:18px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:var(--muted2)" id="pause-lbl-answered">Отвечено</span><span style="font-weight:700;color:var(--green)" id="pause-answered">0</span></div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--muted2)" id="pause-lbl-left">Осталось</span><span style="font-weight:700;color:var(--accent)" id="pause-left">0</span></div></div><button class="btn btn-accent" id="pause-btn-resume" onclick="resumeQuiz()">▶ Продолжить</button><button class="btn btn-outline" id="pause-btn-exit" onclick="exitQuiz()" style="margin-top:8px">← Выйти (прогресс сохранится)</button></div></div>
 
@@ -371,68 +430,6 @@ async function api(method,path,body){
 }
 
 function imgUrl(url){ if(!url)return null; return url.startsWith("http")?url:API_BASE+url; }
-
-// ===== Math (KaTeX) helpers =====
-// Безопасно экранируем HTML, чтобы избежать XSS при выводе пользовательского текста.
-function escapeHTML(str){
-  if(str===null||str===undefined) return "";
-  return String(str)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#39;");
-}
-
-// Поддерживаемые разделители формул:
-//   $...$    — инлайн
-//   $$...$$  — блок
-//   \( ... \) — инлайн
-//   \[ ... \] — блок
-const MATH_DELIMITERS=[
-  {left:"$$",right:"$$",display:true},
-  {left:"\\[",right:"\\]",display:true},
-  {left:"\\(",right:"\\)",display:false},
-  {left:"$",right:"$",display:false}
-];
-
-// Рендерит элемент: формулы → KaTeX, всё остальное — как обычный текст.
-// Безопасно вызывать до загрузки KaTeX — тогда формулы просто останутся текстом.
-function applyMath(el){
-  if(!el) return;
-  if(typeof window.renderMathInElement!=="function") return;
-  try{
-    window.renderMathInElement(el,{
-      delimiters: MATH_DELIMITERS,
-      throwOnError: false,
-      strict: "ignore",
-      output: "html"
-    });
-  }catch(e){ /* ignore */ }
-}
-
-// Заменяет содержимое элемента простым текстом (с экранированием) и рендерит формулы.
-function setTextWithMath(el,text){
-  if(!el) return;
-  el.textContent = text==null?"":String(text);
-  applyMath(el);
-}
-
-// Возвращает HTML-фрагмент для встраивания в шаблоны: экранирует HTML, но сохраняет
-// разделители формул, чтобы applyMath() позже превратил их в формулы.
-function htmlWithMath(text){ return escapeHTML(text); }
-
-// Рендерит формулы во всём поддереве (например, после innerHTML с шаблонами).
-function applyMathDeep(root){ applyMath(root); }
-
-// На случай, если KaTeX/auto-render загрузятся ПОСЛЕ первой отрисовки контента,
-// перерендериваем весь видимый текст один раз после полной загрузки страницы.
-window.addEventListener("load", function(){
-  if(typeof window.renderMathInElement==="function"){
-    try{ applyMath(document.body); }catch(e){}
-  }
-});
-
 const AUTH_TEXTS={
   ru:{
     enter_credentials:"Введи логин и пароль",
@@ -1626,7 +1623,7 @@ function renderQuestion(){
   const total=quizState.questions.length;
   document.getElementById("q-counter").textContent=T("q_counter_tpl",quizState.index+1,total);
   document.getElementById("q-score-live").textContent=quizState.score+" ✓";
-  setTextWithMath(document.getElementById("q-text"), q.text);
+  document.getElementById("q-text").textContent=q.text;
   const img=document.getElementById("q-image");
   if(q.image_url){ img.src=imgUrl(q.image_url); img.style.display="block"; } else img.style.display="none";
   const letters=["A","Б","В","Г","Д"];
@@ -1635,12 +1632,11 @@ function renderQuestion(){
   q.options.forEach((opt,i)=>{
     const btn=document.createElement("button"); btn.className="option-btn";
     btn.dataset.origIndex=i;
-    const optContent = opt.image_url ? `<img src="${imgUrl(opt.image_url)}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block" loading="lazy"/>` : `<span class="opt-math">${htmlWithMath(opt.text||"")}</span>`;
+    const optContent = opt.image_url ? `<img src="${imgUrl(opt.image_url)}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block" loading="lazy"/>` : `<span>${opt.text||""}</span>`;
     btn.innerHTML=`<span class="option-letter">${letters[i]}</span>${optContent}`;
     if(alreadyAnswered){ btn.disabled=true; if(i===q.correct_option_id)btn.classList.add("correct"); else if(i===quizState.answers[q.id])btn.classList.add("wrong"); } else btn.onclick=()=>selectAnswer(i,btn,q);
     list.appendChild(btn);
   });
-  applyMathDeep(list);
   const isLast=quizState.index===total-1;
   const allAnswered=Object.keys(quizState.answers).length===total;
   document.getElementById("prev-btn").style.display=quizState.index>0?"block":"none";
@@ -1698,9 +1694,7 @@ function showResult(r){
 function showReview(){
   showScreen("review");
   const letters=["A","Б","В","Г","Д"];
-  const list=document.getElementById("review-list");
-  list.innerHTML=quizState.reviewData.map((item,qi)=>{ const q=item.question; const si=item.isCorrect?"✅":"❌"; const optsHtml=q.options.map((opt,i)=>{ let cls="neutral"; if(i===item.correct) cls="correct"; else if(i===item.chosen&&!item.isCorrect) cls="wrong"; const body = opt.image_url ? `<img src="${imgUrl(opt.image_url)}" style="max-height:100px;max-width:100%;border-radius:6px;object-fit:contain;display:block;margin-top:4px"/>` : htmlWithMath(opt.text||""); return `<div class="review-opt ${cls}">${letters[i]}. ${body}${i===item.correct?" ✓":""}</div>`; }).join(""); const qImg = q.image_url ? `<img src="${imgUrl(q.image_url)}" style="max-height:160px;max-width:100%;border-radius:8px;object-fit:contain;display:block;margin-bottom:8px"/>` : ""; return `<div class="review-item"><div class="review-status">${si} ${Ttpl("review_q_tpl",{i:qi+1})}</div>${qImg}<div class="review-q">${htmlWithMath(q.text)}</div>${optsHtml}</div>`; }).join("");
-  applyMathDeep(list);
+  document.getElementById("review-list").innerHTML=quizState.reviewData.map((item,qi)=>{ const q=item.question; const si=item.isCorrect?"✅":"❌"; const optsHtml=q.options.map((opt,i)=>{ let cls="neutral"; if(i===item.correct) cls="correct"; else if(i===item.chosen&&!item.isCorrect) cls="wrong"; return `<div class="review-opt ${cls}">${letters[i]}. ${opt.text}${i===item.correct?" ✓":""}</div>`; }).join(""); return `<div class="review-item"><div class="review-status">${si} ${Ttpl("review_q_tpl",{i:qi+1})}</div><div class="review-q">${q.text}</div>${optsHtml}</div>`; }).join("");
 }
 async function loadHistory(){
   const list=document.getElementById("history-list");
@@ -1724,131 +1718,257 @@ async function exportExcel(){
 }
 function handleExcelSelect(){ const f=document.getElementById("excel-input").files[0]; if(!f)return; selectedExcelFile=f; document.getElementById("import-filename").textContent="📄 "+f.name; }
 function downloadTemplate(){ const data=[["Вопрос *","Вариант A *","Вариант Б *","Вариант В","Вариант Г","Вариант Д","Правильный ответ * (A/Б/В/Г/Д)"],["⚠️ Обязательные поля отмечены *","","","","","",""],["Столица Узбекистана?","Ташкент","Самарканд","Бухара","Наманган","","A"],["Сколько будет 2+2?","3","4","5","6","","Б"],["","","","","","",""]]; const wb=XLSX.utils.book_new(); const ws=XLSX.utils.aoa_to_sheet(data); ws["!cols"]=[{wch:60},{wch:25},{wch:25},{wch:25},{wch:25},{wch:25},{wch:30}]; XLSX.utils.book_append_sheet(wb,ws,"Вопросы"); XLSX.writeFile(wb,"UniQuiz_шаблон_вопросов.xlsx"); showToast("Шаблон скачан ✅"); }
-// Конвертирует data:URI → Blob (для загрузки картинки из .docx на /admin/upload-image).
-function dataUrlToBlob(dataUrl){
-  const m=/^data:([^;]+);base64,(.+)$/.exec(dataUrl);
-  if(!m) return null;
-  const mime=m[1]; const b64=m[2];
-  const bin=atob(b64); const len=bin.length; const arr=new Uint8Array(len);
-  for(let i=0;i<len;i++) arr[i]=bin.charCodeAt(i);
-  return new Blob([arr],{type:mime});
+
+// ═══════════════════════════════════════════════════════════════════════
+//  SMART IMPORT  — полная замена старого importQuestions
+// ═══════════════════════════════════════════════════════════════════════
+
+let smartFiles = [];          // выбранные файлы
+let siCurrentTab = 'exist';   // exist | new
+
+function siSwitchTab(tab) {
+  siCurrentTab = tab;
+  const isNew = tab === 'new';
+  document.getElementById('si-panel-exist').style.display = isNew ? 'none' : 'block';
+  document.getElementById('si-panel-new').style.display  = isNew ? 'block' : 'none';
+  document.getElementById('si-tab-exist').className = isNew ? 'btn btn-outline btn-sm' : 'btn btn-accent btn-sm';
+  document.getElementById('si-tab-new').className   = isNew ? 'btn btn-accent btn-sm' : 'btn btn-outline btn-sm';
+  // Пробуем угадать название из имени файла
+  if (isNew && smartFiles.length) {
+    const name = smartFiles[0].name.replace(/\.xlsx?|\.docx?/i,'').replace(/[_-]/g,' ').trim();
+    const titleEl = document.getElementById('si-new-title');
+    if (titleEl && !titleEl.value) titleEl.value = capitalize(name);
+  }
 }
 
-async function uploadDocxImage(dataUrl){
-  const blob=dataUrlToBlob(dataUrl); if(!blob) return null;
-  const ext=(blob.type.split("/")[1]||"png").split("+")[0];
-  const file=new File([blob],`docx-${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`,{type:blob.type});
-  const fd=new FormData(); fd.append("file",file);
-  try{
-    const res=await fetch(API_BASE+"/admin/upload-image",{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
-    if(!res.ok) return null;
-    const data=await res.json(); return data.image_url||null;
-  }catch(e){ return null; }
+function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ── Drag & Drop ─────────────────────────────────────────────────────────
+function smartDragOver(e){
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('smart-drop-zone').classList.add('drag-over');
+}
+function smartDragLeave(e){
+  document.getElementById('smart-drop-zone').classList.remove('drag-over');
+}
+function smartDrop(e){
+  e.preventDefault(); e.stopPropagation();
+  smartDragLeave(e);
+  const files = [...e.dataTransfer.files].filter(f =>
+    /\.(xlsx?|docx?)$/i.test(f.name)
+  );
+  if (files.length) setSmartFiles(files);
+}
+function smartFileSelect(e){
+  const files = [...e.target.files].filter(f => /\.(xlsx?|docx?)$/i.test(f.name));
+  if (files.length) setSmartFiles(files);
 }
 
-// Превращает HTML-результат mammoth в plain text с маркерами [[IMG:N]] на месте картинок
-// и возвращает массив data:URI всех найденных изображений.
-function extractDocxTextAndImages(html){
-  const doc=new DOMParser().parseFromString(html||"","text/html");
-  const images=[];
-  doc.querySelectorAll("img").forEach((img,i)=>{
-    const src=img.getAttribute("src")||"";
-    images.push(src);
-    const marker=doc.createTextNode(` [[IMG:${i}]] `);
-    img.parentNode.replaceChild(marker,img);
-  });
-  // Разделители абзацев → переводы строк
-  doc.querySelectorAll("p,br,li,h1,h2,h3,h4,h5,h6,tr").forEach(el=>{
-    el.appendChild(doc.createTextNode("\n"));
-  });
-  const text=(doc.body.textContent||"").replace(/\u00A0/g," ").replace(/\n{3,}/g,"\n\n");
-  return {text,images};
+function setSmartFiles(files){
+  smartFiles = files;
+  const zone = document.getElementById('smart-drop-zone');
+  zone.classList.add('has-file');
+  const names = files.map(f=>f.name).join(', ');
+  document.getElementById('drop-filenames').textContent = '📄 ' + names;
+  document.getElementById('drop-title').textContent = files.length > 1
+    ? `${files.length} файла выбрано` : '1 файл выбран';
+  // Автозаполняем название предмета для нового
+  if (siCurrentTab === 'new' && files.length === 1) {
+    const name = files[0].name.replace(/\.xlsx?|\.docx?/i,'').replace(/[_\-]/g,' ').trim();
+    const titleEl = document.getElementById('si-new-title');
+    if (titleEl && !titleEl.value) titleEl.value = capitalize(name);
+  }
 }
 
-// Извлекает [[IMG:N]] маркеры из текста, возвращает {clean, indices}.
-function extractImageMarkers(text){
-  const indices=[]; const clean=String(text||"").replace(/\[\[IMG:(\d+)\]\]/g,(_,n)=>{ indices.push(parseInt(n,10)); return ""; }).replace(/\s+/g," ").trim();
-  return {clean,indices};
+// ── Совместимость со старым handleExcelSelect ────────────────────────────
+function handleExcelSelect(){
+  const f = document.getElementById('excel-input').files[0];
+  if (f) setSmartFiles([f]);
 }
 
-async function importQuestions(){
-  const subjectId=document.getElementById("import-subject").value;
-  const resultDiv=document.getElementById("import-result");
-  if(!subjectId){ showToast(authText("toast_subject_pick"),true); return; }
-  if(!selectedExcelFile){ showToast(authText("toast_file_pick"),true); return; }
-  resultDiv.style.display="block"; resultDiv.style.background="var(--card2)"; resultDiv.style.color="var(--muted2)"; resultDiv.textContent=authText("processing_file");
-  const fname=selectedExcelFile.name.toLowerCase();
-  const isWord=fname.endsWith(".docx")||fname.endsWith(".doc");
-  try{
-    if(isWord){
-      const arrayBuffer=await selectedExcelFile.arrayBuffer();
-      // Получаем HTML с встроенными картинками (data:URI), затем превращаем в текст с маркерами.
-      const result=await mammoth.convertToHtml({arrayBuffer});
-      const {text,images}=extractDocxTextAndImages(result.value);
-      const questions=parseQuestionsFromText(text);
-      if(!questions.length){ resultDiv.style.background="rgba(249,115,22,.1)"; resultDiv.style.color="var(--orange)"; resultDiv.textContent=authText("word_no_questions"); return; }
-      // Загружаем все картинки один раз — кешируем URL по индексу.
-      const imageUrlCache={};
-      const getImageUrl=async(idx)=>{
-        if(idx==null||!images[idx]) return null;
-        if(imageUrlCache[idx]!==undefined) return imageUrlCache[idx];
-        const url=await uploadDocxImage(images[idx]);
-        imageUrlCache[idx]=url||null;
-        return imageUrlCache[idx];
-      };
-      let saved=0,errors=0;
-      for(const q of questions){
-        try{
-          const qMark=extractImageMarkers(q.question);
-          const qImage=qMark.indices.length?await getImageUrl(qMark.indices[0]):null;
-          const opts=[];
-          for(const o of q.options){
-            const oMark=extractImageMarkers(o);
-            const oImage=oMark.indices.length?await getImageUrl(oMark.indices[0]):null;
-            opts.push({text: oImage && !oMark.clean ? null : oMark.clean, image_url:oImage});
-          }
-          await api("POST","/admin/questions",{subject_id:parseInt(subjectId),text: qMark.clean || (qImage?authText("visual_question"):""),options:opts,correct_index:q.correct,image_url:qImage});
-          saved++;
-        }catch(e2){ errors++; }
-      }
-      resultDiv.style.background="rgba(34,197,94,.1)"; resultDiv.style.color="var(--green)"; resultDiv.textContent=Ttpl("toast_questions_added",{n:saved})+(errors?"\n⚠️ "+errors:"");
-      showToast(Ttpl("toast_questions_added",{n:saved}));
-    } else {
-      const fd=new FormData(); fd.append("file",selectedExcelFile);
-      const res=await fetch(API_BASE+"/admin/import-questions?subject_id="+subjectId,{method:"POST",headers:{"Authorization":"Bearer "+token},body:fd});
-      const data=await res.json();
-      if(!res.ok){ resultDiv.style.background="rgba(239,68,68,.1)"; resultDiv.style.color="var(--red)"; resultDiv.textContent="❌ "+data.detail; return; }
-      let msg="✅ "+data.message;
-      if(data.errors&&data.errors.length){ msg+="\n\n"+authText("import_errors_tpl")+data.errors.join("\n"); resultDiv.style.background="rgba(249,115,22,.1)"; resultDiv.style.color="var(--orange)"; } else { resultDiv.style.background="rgba(34,197,94,.1)"; resultDiv.style.color="var(--green)"; }
-      resultDiv.textContent=msg;
-      showToast(Ttpl("toast_questions_added",{n:data.added}));
+// ── Главная функция импорта ──────────────────────────────────────────────
+async function smartImport(){
+  if (!smartFiles.length){ showToast(authText('toast_file_pick'), true); return; }
+
+  let subjectId = null;
+
+  // Создать новый предмет если выбран таб "новый"
+  if (siCurrentTab === 'new') {
+    const title = document.getElementById('si-new-title').value.trim();
+    const emoji = document.getElementById('si-new-emoji').value.trim() || '📚';
+    const time_limit = parseInt(document.getElementById('si-new-time').value) || 60;
+    const question_count = parseInt(document.getElementById('si-new-qcount').value) || 30;
+    const lang = document.getElementById('si-new-lang').value || 'all';
+    if (!title){ showToast('Введи название предмета!', true); return; }
+    try{
+      const s = await api('POST', '/admin/subjects', {title, emoji, time_limit, question_count, lang});
+      subjectId = s.id;
+      await loadAdminSubjects();
+      document.getElementById('import-subject').value = subjectId;
+      showToast(`${emoji} Предмет «${title}» создан ✅`);
+    } catch(e){ showToast('Ошибка создания предмета', true); return; }
+  } else {
+    subjectId = document.getElementById('import-subject').value;
+    if (!subjectId){ showToast(authText('toast_subject_pick'), true); return; }
+  }
+
+  // Запускаем импорт для каждого файла
+  const resultDiv = document.getElementById('import-result');
+  resultDiv.style.display = 'block';
+  resultDiv.style.background = 'var(--card2)';
+  resultDiv.style.color = 'var(--muted2)';
+
+  let totalSaved = 0, totalErrors = 0;
+
+  for (let fi = 0; fi < smartFiles.length; fi++) {
+    const file = smartFiles[fi];
+    const progress = Math.round((fi / smartFiles.length) * 100);
+    showImportProgress(`📄 ${file.name}`, progress);
+    resultDiv.textContent = `⏳ Обработка: ${file.name} (${fi+1}/${smartFiles.length})`;
+
+    try {
+      const {saved, errors} = await importOneFile(file, subjectId);
+      totalSaved += saved;
+      totalErrors += errors;
+    } catch(e){
+      totalErrors++;
+      console.error('Import error:', e);
     }
-    selectedExcelFile=null; document.getElementById("excel-input").value=""; document.getElementById("import-filename").textContent="";
-  } catch(e){ resultDiv.style.background="rgba(239,68,68,.1)"; resultDiv.style.color="var(--red)"; resultDiv.textContent=Ttpl("err_detail_tpl",{detail:e.message||""}); }
+  }
+
+  // Финальный результат
+  showImportProgress('Готово!', 100);
+  setTimeout(() => document.getElementById('si-progress').style.display = 'none', 2000);
+
+  if (totalErrors === 0) {
+    resultDiv.style.background = 'rgba(34,197,94,.1)';
+    resultDiv.style.color = 'var(--green)';
+    resultDiv.textContent = `✅ Загружено ${totalSaved} вопросов из ${smartFiles.length} файла(ов)!`;
+  } else {
+    resultDiv.style.background = 'rgba(249,115,22,.1)';
+    resultDiv.style.color = 'var(--orange)';
+    resultDiv.textContent = `✅ Загружено: ${totalSaved}\n⚠️ Ошибок: ${totalErrors}`;
+  }
+  showToast(`✅ ${totalSaved} вопросов загружено!`);
+
+  // Сброс
+  smartFiles = [];
+  document.getElementById('smart-file-input').value = '';
+  document.getElementById('drop-filenames').textContent = '';
+  document.getElementById('drop-title').textContent = 'Перетащи файл или нажми';
+  document.getElementById('smart-drop-zone').classList.remove('has-file');
 }
+
+// Для совместимости со старым кодом
+async function importQuestions(){ await smartImport(); }
+
+function showImportProgress(label, pct){
+  const prog = document.getElementById('si-progress');
+  prog.style.display = 'block';
+  document.getElementById('si-progress-label').textContent = label;
+  document.getElementById('si-progress-pct').textContent = pct + '%';
+  document.getElementById('si-progress-bar').style.width = pct + '%';
+}
+
+// ── Импорт одного файла ──────────────────────────────────────────────────
+async function importOneFile(file, subjectId){
+  const fname = file.name.toLowerCase();
+  const isWord = fname.endsWith('.docx') || fname.endsWith('.doc');
+  let saved = 0, errors = 0;
+
+  if (isWord) {
+    // Word: парсим локально
+    const buf = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({arrayBuffer: buf});
+    const questions = parseQuestionsFromText(result.value);
+    const total = questions.length;
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
+      showImportProgress(`💬 ${i+1}/${total}: ${q.question.slice(0,40)}...`, Math.round((i/total)*100));
+      try {
+        await api('POST', '/admin/questions', {
+          subject_id: parseInt(subjectId),
+          text: q.question,
+          options: q.options.map(o => ({text: o, image_url: null})),
+          correct_index: q.correct,
+          image_url: null
+        });
+        saved++;
+      } catch(e){ errors++; }
+    }
+  } else {
+    // Excel: отправляем на сервер
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch(API_BASE + '/admin/import-questions?subject_id=' + subjectId, {
+      method: 'POST',
+      headers: {'Authorization': 'Bearer ' + token},
+      body: fd
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Server error');
+    saved = data.added || 0;
+    errors = (data.errors || []).length;
+  }
+  return {saved, errors};
+}
+
+// ── Умный парсер Word — понимает много форматов ──────────────────────────
 function parseQuestionsFromText(text){
-  text=text.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
-  const questions=[];
-  const lmap={"A":0,"B":1,"C":2,"D":3,"E":4,"А":0,"Б":1,"В":2,"Г":3,"Д":4,"a":0,"b":1,"c":2,"d":3,"e":4,"а":0,"б":1,"в":2,"г":3,"д":4};
-  const blocks=text.split(/\n(?=\d+[\.\)]\s)/);
-  for(const block of blocks){
-    if(!block.trim()) continue;
-    const lines=block.split("\n").map(l=>l.trim()).filter(Boolean);
-    if(!lines.length) continue;
-    const qLine=lines[0].replace(/^\d+[\.\)]\s*/,"").trim();
-    if(!qLine||qLine.length<5) continue;
-    const options=[]; let correctIndex=-1;
-    for(let i=1;i<lines.length;i++){
-      const line=lines[i];
-      const ansMatch=line.match(/^(ответ|правильный[\s_]ответ|answer|ans)[\s:\.\)]+([A-EА-ДABCDEabcdeабвгдАБВГД])/i);
-      if(ansMatch){ correctIndex=lmap[ansMatch[2].toUpperCase()]??-1; continue; }
-      const optMatch=line.match(/^([A-EА-ДABCDEabcdeабвгдАБВГД])[\.\)\s]\s*(.+)/);
-      if(optMatch&&optMatch[2].trim()) options.push(optMatch[2].trim());
+  text = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const questions = [];
+  const lmap = {
+    'A':0,'B':1,'C':2,'D':3,'E':4,
+    'А':0,'Б':1,'В':2,'Г':3,'Д':4,
+    'a':0,'b':1,'c':2,'d':3,'e':4,
+    'а':0,'б':1,'в':2,'г':3,'д':4,
+    '1':0,'2':1,'3':2,'4':3,'5':4
+  };
+
+  // Паттерн: строка начинается с числа (1. / 1) / 1 -)
+  const blocks = text.split(/\n(?=\d+[\s\.\)\-]+[А-ЯA-Z\w])/);
+  
+  for (const block of blocks) {
+    if (!block.trim()) continue;
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    if (!lines.length) continue;
+
+    // Вопрос — первая строка, убираем номер
+    const qLine = lines[0].replace(/^\d+[\s\.\)\-]+/, '').trim();
+    if (!qLine || qLine.length < 3) continue;
+
+    const options = [];
+    let correctIndex = -1;
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Ответ: "Ответ: A", "Answer: B", "Правильный: В", "*A", "+B"
+      const ansMatch = line.match(/^(?:ответ|правильный[\s_]?ответ|answer|ans|жавоб|to['`']g['`']ri)[\s:\.\)]+([A-EА-Д1-5])/i)
+        || line.match(/^[\*\+]([A-EА-Д1-5])[\s\.\)]/i);
+      if (ansMatch) {
+        correctIndex = lmap[ansMatch[1].toUpperCase()] ?? lmap[ansMatch[1]] ?? -1;
+        continue;
+      }
+
+      // Варианты: A. B) В- 1. 2)
+      const optMatch = line.match(/^([A-EА-Д1-5])[\s\.\)\-]\s*(.+)/);
+      if (optMatch && optMatch[2].trim()) {
+        options.push(optMatch[2].trim());
+      }
     }
-    if(options.length>=2) questions.push({question:qLine,options,correct:correctIndex>=0?correctIndex:0});
+
+    // Если нет явного ответа — ищем жирный/маркированный или первый
+    if (correctIndex < 0 && options.length >= 2) correctIndex = 0;
+
+    if (options.length >= 2) {
+      questions.push({question: qLine, options, correct: correctIndex >= 0 ? correctIndex : 0});
+    }
   }
   return questions;
 }
+
+
 async function loadAdminSubjects(){
   try{ const subjects=await api("GET","/subjects"); allSubjects=subjects; const ph=authText("sel_subject_ph"); ["q-subject","import-subject","ai-subject","db-subject"].forEach(id=>{ const sel=document.getElementById(id); if(!sel)return; sel.innerHTML='<option value="">'+ph+'</option>'; subjects.forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }); const list=document.getElementById("subjects-admin-list"); const bank=authText("admin_open_bank"); list.innerHTML=subjects.length?subjects.map(s=>`<div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px"><span style="font-size:24px">${s.emoji}</span><div style="flex:1"><div style="font-weight:600;font-size:14px">${s.title}</div><div style="color:var(--muted);font-size:11px;margin-top:2px">${Ttpl("subj_meta_tpl",{t:s.time_limit||60,q:s.question_count||30})} · ${s.total_questions||0} · ${s.lang==="all"?"🌍":s.lang==="ru"?"🇷🇺":s.lang==="uz"?"🇺🇿":"🇬🇧"}</div></div><button onclick="openQBank(${s.id},${JSON.stringify(s.title)})" style="background:var(--accent-dim);color:var(--accent);border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer">${bank}</button></div>`).join(""):'<p style="color:var(--muted2);font-size:13px">'+authText("nothing_found")+'</p>'; }catch(e){}
 }
@@ -1861,20 +1981,6 @@ async function createSubject(){
   if(!title){ showToast(authText("toast_title_required"),true); return; }
   try{ await api("POST",`/admin/subjects?title=${encodeURIComponent(title)}&emoji=${encodeURIComponent(emoji)}&time_limit=${time_limit}&question_count=${question_count}&lang=${lang}`); showToast(authText("toast_subject_added")); document.getElementById("subj-title").value=""; await loadAdminSubjects(); } catch(e){ showToast(Ttpl("err_detail_tpl",{detail:e.detail||""}),true); }
 }
-// Live-предпросмотр LaTeX в админском редакторе вопроса.
-function updateMathPreview(){
-  const ta = document.getElementById("q-text-admin");
-  const preview = document.getElementById("q-math-preview");
-  if(!ta || !preview) return;
-  const txt = ta.value || "";
-  // Показываем превью только если текст содержит разделители формул, иначе прячем.
-  const hasMath = /(\$.+?\$|\\\(.+?\\\)|\\\[.+?\\\])/s.test(txt);
-  if(!txt.trim() || !hasMath){ preview.style.display="none"; preview.innerHTML=""; return; }
-  preview.style.display="block";
-  preview.innerHTML = `<div class="math-preview-label">📐 Предпросмотр формул</div><div class="math-preview-body">${htmlWithMath(txt)}</div>`;
-  applyMath(preview);
-}
-
 function addOpt(){
   const letters=["A","Б","В","Г","Д","Е"]; const i=optCount++;
   const row=document.createElement("div"); row.className="option-row"; row.style.cssText="flex-direction:column;align-items:stretch;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;gap:8px"; row.dataset.optIndex=i;
@@ -1940,21 +2046,7 @@ async function deleteUser(userId,username){ if(!confirm(Ttpl("confirm_delete_use
 function switchAdminTab(id,el){ document.querySelectorAll(".admin-tab").forEach(t=>t.classList.remove("active")); document.querySelectorAll(".admin-content").forEach(t=>t.classList.remove("active")); document.getElementById(id).classList.add("active"); el.classList.add("active"); if(id==="at-results") loadAdminResults(); if(id==="at-users") loadUsers(); if(id==="at-subjects") loadAdminSubjects(); }
 async function openQBank(subjectId,title){ qbankSubjectId=subjectId; document.getElementById("qbank-title").textContent=title; document.getElementById("qbank-count").textContent=T("loading"); document.getElementById("qbank-search").value=""; showScreen("qbank"); applyStaticLabels(); const list=document.getElementById("qbank-list"); list.innerHTML='<div class="loader"><div class="spinner"></div><span>'+T("loading")+'</span></div>'; try{ qbankAll=await api("GET",`/admin/questions/${subjectId}`); document.getElementById("qbank-count").textContent=Ttpl("qbank_count_tpl",{n:qbankAll.length}); renderQBank(qbankAll); }catch(e){ list.innerHTML='<p style="color:var(--red);text-align:center;padding:20px">'+authText("error_load")+'</p>'; } }
 function filterQBank(){ const q=document.getElementById("qbank-search").value.toLowerCase(); const filtered=q?qbankAll.filter(item=>item.text.toLowerCase().includes(q)||item.options.some(o=>o.text&&o.text.toLowerCase().includes(q))):qbankAll; document.getElementById("qbank-count").textContent=Ttpl("qbank_filter_tpl",{i:filtered.length,n:qbankAll.length}); renderQBank(filtered); }
-function renderQBank(questions){
-  const letters=["A","Б","В","Г","Д"];
-  const list=document.getElementById("qbank-list");
-  const del=authText("qbank_delete_btn");
-  if(!questions.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">'+authText("nothing_found")+'</p>'; return; }
-  list.innerHTML=questions.map((q,i)=>{
-    const qImg = q.image_url ? `<img src="${imgUrl(q.image_url)}" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:contain;display:block;margin:6px 0"/>` : "";
-    const opts = q.options.map((o,j)=>{
-      const body = o.image_url ? `<img src="${imgUrl(o.image_url)}" style="max-height:80px;max-width:100%;border-radius:6px;object-fit:contain;display:inline-block;vertical-align:middle"/>` : htmlWithMath(o.text||"");
-      return `<div class="qbank-opt ${j===q.correct_option_id?"correct":""}">${letters[j]}. ${body}${j===q.correct_option_id?" ✓":""}</div>`;
-    }).join("");
-    return `<div class="qbank-item"><div class="qbank-num">#${i+1} · ID ${q.id}</div>${qImg}<div class="qbank-q">${htmlWithMath(q.text)}</div><div class="qbank-opts">${opts}</div><button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer">${del}</button></div>`;
-  }).join("");
-  applyMathDeep(list);
-}
+function renderQBank(questions){ const letters=["A","Б","В","Г","Д"]; const list=document.getElementById("qbank-list"); const del=authText("qbank_delete_btn"); if(!questions.length){ list.innerHTML='<p style="color:var(--muted2);text-align:center;padding:40px 0">'+authText("nothing_found")+'</p>'; return; } list.innerHTML=questions.map((q,i)=>`<div class="qbank-item"><div class="qbank-num">#${i+1} · ID ${q.id}</div><div class="qbank-q">${q.text}</div><div class="qbank-opts">${q.options.map((o,j)=>`<div class="qbank-opt ${j===q.correct_option_id?"correct":""}">${letters[j]}. ${o.text}${j===q.correct_option_id?" ✓":""}</div>`).join("")}</div><button onclick="deleteQuestion(${q.id})" style="margin-top:10px;background:rgba(239,68,68,.1);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer">${del}</button></div>`).join(""); }
 async function deleteQuestion(qId){ if(!confirm(authText("confirm_delete_q"))) return; try{ await api("DELETE",`/admin/questions/${qId}`); showToast(authText("toast_q_deleted")); qbankAll=qbankAll.filter(q=>q.id!==qId); filterQBank(); document.getElementById("qbank-count").textContent=Ttpl("qbank_count_tpl",{n:qbankAll.length}); }catch(e){ showToast(Ttpl("err_detail_tpl",{detail:e.detail||""}),true); } }
 async function initKnowledge(){ const sel=document.getElementById("kb-subject-select"); sel.innerHTML='<option value="" id="kb-default-opt">'+authText("kb_select")+'</option>'; subjectsForTestsLang().forEach(s=>sel.add(new Option(`${s.emoji} ${s.title}`,s.id))); }
 async function loadKnowledgeSubject(){
